@@ -1,0 +1,55 @@
+.home-header {
+    background-color: #080705;
+    height: 72px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 176.8px;
+    padding-right: 176.8px;
+
+    a {
+        text-decoration: none;
+    }
+
+    &__logo {
+        color: #c4962a;
+        letter-spacing: 0.35rem;
+        font-size: 17.6px;
+    }
+
+    nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2.5rem;
+
+        a {
+            color: #8A7B67;
+            text-decoration: none; /* Ensure native underlines are turned off */
+            position: relative;    /* Required anchor for the absolute line */
+            display: inline-block; /* Bounds the line to the text size */
+
+            /* 1. Setup the invisible underline at the bottom left */
+            &::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: -5px;              /* Matches your 5px offset requirement */
+                width: 0;                  /* Starts at zero width */
+                height: 2px;               /* Thickness of the underline */
+                background-color: #c4962a; /* Matches your gold underline color */
+                transition: width 0.4s ease; /* Controls the speed/smoothness */
+            }
+        }
+
+        /* 2. Trigger the color swap AND the underline growth simultaneously */
+        a:hover {
+            color: white;
+
+            &::after {
+                width: 100%; /* Expands the line smoothly to the right */
+            }
+        }
+    }
+
+}

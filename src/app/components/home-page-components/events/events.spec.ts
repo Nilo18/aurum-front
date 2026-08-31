@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RequestEventCta } from './request-event-cta';
+import { Events } from './events';
 
-describe('RequestEventCta', () => {
-  let component: RequestEventCta;
-  let fixture: ComponentFixture<RequestEventCta>;
+describe('Events', () => {
+  let component: Events;
+  let fixture: ComponentFixture<Events>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RequestEventCta]
+      imports: [Events]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(RequestEventCta);
+    fixture = TestBed.createComponent(Events);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
