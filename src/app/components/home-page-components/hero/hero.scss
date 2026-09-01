@@ -19,13 +19,15 @@
 
   &__info {
     display: flex;
-    justify-content: flex-end;
+    justify-content: start;
+    align-items: center;
     padding: 94px 48px 0 max(32px, calc((100vw - 1343px) / 2));
     background: #050504;
+    width: 100%;
   }
 
   &__content {
-    width: min(100%, 575px);
+    width: 100%;
   }
 
   &__image {

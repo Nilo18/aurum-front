@@ -1,1 +1,59 @@
-<p>services works!</p>
+<section class="services" id="services" aria-labelledby="services-title">
+  <div class="services__inner">
+    <header class="services__heading">
+      <div>
+        <p class="services__eyebrow">Our services</p>
+        <h2 id="services-title">What we create</h2>
+      </div>
+      <p class="services__intro">
+        Three disciplines, brought together to create<br />
+        one exceptional event experience.
+      </p>
+    </header>
+
+    <div class="services__tabs" role="tablist" aria-label="Event services">
+      @for (service of services; track service.title; let index = $index) {
+        <button
+          class="services__tab"
+          type="button"
+          role="tab"
+          [id]="'service-tab-' + index"
+          [class.services__tab--active]="activeIndex() === index"
+          [attr.aria-selected]="activeIndex() === index"
+          [attr.aria-controls]="'service-panel-' + index"
+          (click)="selectService(index)"
+        >
+          <span class="services__number">{{ service.numeral }}</span>
+          <span class="services__tab-copy">
+            <strong>{{ service.title }}</strong>
+            <small>{{ service.subtitle }}</small>
+          </span>
+        </button>
+      }
+    </div>
+
+    @for (service of services; track service.title; let index = $index) {
+      @if (activeIndex() === index) {
+        <article
+          class="services__panel"
+          role="tabpanel"
+          [id]="'service-panel-' + index"
+          [attr.aria-labelledby]="'service-tab-' + index"
+        >
+          <div class="services__details">
+            <p>{{ service.description }}</p>
+            <ul>
+              @for (feature of service.features; track feature) {
+                <li><span aria-hidden="true">✓</span>{{ feature }}</li>
+              }
+            </ul>
+          </div>
+
+          <div class="services__visual">
+            <img [src]="service.image" [alt]="service.imageAlt" />
+          </div>
+        </article>
+      }
+    }
+  </div>
+</section>
