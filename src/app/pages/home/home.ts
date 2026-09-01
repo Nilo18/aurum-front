@@ -9,10 +9,23 @@ import { Team } from '../../components/home-page-components/team/team';
 import { RequestEventCta } from '../../components/home-page-components/request-event-cta/request-event-cta';
 import { Process } from '../../components/home-page-components/process/process';
 import { Footer } from '../../components/home-page-components/footer/footer';
+import { Locations } from '../../components/home-page-components/locations/locations';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, Hero, Services, About, Events, RequestEventCta, Process, Team, ContactUs, Footer],
+  imports: [
+    Header,
+    Hero,
+    Services,
+    About,
+    Events,
+    RequestEventCta,
+    Process,
+    Team,
+    Locations,
+    ContactUs,
+    Footer,
+  ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

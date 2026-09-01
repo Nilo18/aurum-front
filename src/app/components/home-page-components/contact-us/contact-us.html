@@ -1,1 +1,97 @@
-<p>contact-us works!</p>
+<section class="contact" id="contact" aria-labelledby="contact-title">
+  <div class="contact__inner">
+    <div class="contact__information">
+      <p class="contact__eyebrow">Get in touch</p>
+      <h2 id="contact-title">Contact us</h2>
+      <span class="contact__accent" aria-hidden="true"></span>
+
+      <p class="contact__intro">
+        Begin with a private consultation. Your dedicated manager will respond within 24 hours
+        with the next steps for shaping your event.
+      </p>
+
+      <address class="contact__details">
+        <a href="tel:+995322000000">
+          <span aria-hidden="true">⌕</span>
+          +995 32 2 00 00 00
+        </a>
+        <a href="mailto:info@aurumi.ge">
+          <span aria-hidden="true">✉</span>
+          info&#64;aurumi.ge
+        </a>
+        <a href="https://maps.google.com/?q=Tbilisi,Georgia" target="_blank" rel="noreferrer">
+          <span aria-hidden="true">⌾</span>
+          Tbilisi, Georgia
+        </a>
+      </address>
+
+      <div class="contact__hours">
+        <p>Working hours</p>
+        <div>
+          <span><small>Monday – Friday</small><strong>10:00 – 20:00</strong></span>
+          <span><small>Saturday – Sunday</small><strong>11:00 – 18:00</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <form class="contact__form" (submit)="submitForm($event)">
+      <div class="contact__row">
+        <label>
+          <span>First and last name</span>
+          <input type="text" name="name" placeholder="Your full name" autocomplete="name" required />
+        </label>
+        <label>
+          <span>Phone number</span>
+          <input type="tel" name="phone" placeholder="+995 5XX XXX XXX" autocomplete="tel" required />
+        </label>
+      </div>
+
+      <label>
+        <span>Email address</span>
+        <input type="email" name="email" placeholder="example@email.com" autocomplete="email" required />
+      </label>
+
+      <div class="contact__row">
+        <label>
+          <span>Event type</span>
+          <select name="eventType" required>
+            <option value="" selected disabled>— Select —</option>
+            <option value="wedding">Exclusive wedding</option>
+            <option value="state-reception">State reception</option>
+            <option value="corporate">Corporate event</option>
+            <option value="private">Private celebration</option>
+          </select>
+        </label>
+        <label>
+          <span>Number of guests</span>
+          <input type="number" name="guests" min="1" placeholder="120" required />
+        </label>
+      </div>
+
+      <label>
+        <span>Preferred date</span>
+        <input type="date" name="date" required />
+      </label>
+
+      <label>
+        <span>Message</span>
+        <textarea
+          name="message"
+          rows="4"
+          placeholder="Tell us a little about your vision..."
+          required
+        ></textarea>
+      </label>
+
+      <button type="submit">
+        Request a consultation
+        <span aria-hidden="true">→</span>
+      </button>
+
+      <p class="contact__privacy">By submitting, you agree to our confidential consultation policy.</p>
+      @if (submitted()) {
+        <p class="contact__success" role="status">Thank you. We’ll be in touch within 24 hours.</p>
+      }
+    </form>
+  </div>
+</section>
