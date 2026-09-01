@@ -1,0 +1,224 @@
+:host {
+  display: block;
+}
+
+.team {
+  min-height: 600px;
+  padding: 22px 32px 30px;
+  background: #050504;
+  color: #eee7db;
+
+  &__inner {
+    width: min(100%, 1168px);
+    margin: 0 auto;
+  }
+
+  &__heading {
+    min-height: 117px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    > div > p {
+      margin-bottom: 17px;
+      color: #b98518;
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.52em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
+      font-size: clamp(50px, 4vw, 62px);
+      font-weight: 400;
+      line-height: 0.95;
+    }
+  }
+
+  &__contact {
+    margin-top: 56px;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #514637;
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-size: 8px;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: color 180ms ease;
+
+    span {
+      font-size: 14px;
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: #b98518;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  &__card {
+    height: 160px;
+    padding: 32px 40px;
+    border: 0;
+    border-right: 1px solid rgba(185, 133, 24, 0.17);
+    border-bottom: 1px solid rgba(185, 133, 24, 0.17);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: transparent;
+    color: #eee7db;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 220ms ease;
+
+    &:nth-child(3n) {
+      border-right: 0;
+    }
+
+    &:nth-child(n + 4) {
+      border-bottom: 0;
+    }
+
+    &:hover,
+    &:focus-visible,
+    &--active {
+      height: 287px;
+      margin-bottom: -127px;
+      z-index: 2;
+      background: #0d0c0a;
+    }
+
+    strong {
+      font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.1;
+    }
+  }
+
+  &__number {
+    margin-bottom: 17px;
+    color: rgba(185, 133, 24, 0.22);
+    font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
+    font-size: 38px;
+    line-height: 0.8;
+  }
+
+  &__role {
+    margin-bottom: 9px;
+    color: #625017;
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  &__accent {
+    width: 25px;
+    height: 1px;
+    margin-top: 15px;
+    background: #806016;
+  }
+
+  &__details {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    color: #7d705e;
+    font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
+    font-size: 11px;
+    line-height: 1.55;
+    transition:
+      max-height 250ms ease,
+      opacity 200ms ease;
+  }
+
+  &__card:hover &__details,
+  &__card:focus-visible &__details,
+  &__card--active &__details {
+    max-height: 150px;
+    margin-top: 15px;
+    opacity: 1;
+  }
+
+  &__description {
+    display: block;
+    padding-top: 13px;
+    border-top: 1px solid rgba(185, 133, 24, 0.18);
+  }
+
+  &__list {
+    margin-top: 10px;
+    display: grid;
+    gap: 2px;
+    color: #695c4c;
+  }
+}
+
+@media (max-width: 850px) {
+  .team {
+    &__card {
+      padding: 30px 25px;
+    }
+  }
+}
+
+@media (max-width: 680px) {
+  .team {
+    min-height: auto;
+    padding: 60px 20px;
+
+    &__heading {
+      min-height: auto;
+      margin-bottom: 46px;
+      display: block;
+    }
+
+    &__contact {
+      margin-top: 28px;
+    }
+
+    &__grid {
+      grid-template-columns: 1fr;
+    }
+
+    &__card,
+    &__card:nth-child(3n),
+    &__card:nth-child(n + 4) {
+      height: auto;
+      min-height: 156px;
+      margin: 0;
+      border-right: 0;
+      border-bottom: 1px solid rgba(185, 133, 24, 0.17);
+    }
+
+    &__card:last-child {
+      border-bottom: 0;
+    }
+
+    &__card:hover,
+    &__card:focus-visible,
+    &__card--active {
+      height: auto;
+      min-height: 287px;
+      margin: 0;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team__card,
+  .team__details {
+    transition: none;
+  }
+}

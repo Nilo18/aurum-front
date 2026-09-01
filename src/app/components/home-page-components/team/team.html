@@ -1,1 +1,40 @@
-<p>team works!</p>
+<section class="team" id="team" aria-labelledby="team-title">
+  <div class="team__inner">
+    <header class="team__heading">
+      <div>
+        <p>Organizational structure</p>
+        <h2 id="team-title">Meet our team</h2>
+      </div>
+      <a href="#contact" class="team__contact">
+        <span aria-hidden="true">♧</span>
+        Speak with our team
+      </a>
+    </header>
+
+    <div class="team__grid">
+      @for (item of roles; track item.number; let index = $index) {
+        <button
+          class="team__card"
+          type="button"
+          [class.team__card--active]="activeIndex() === index"
+          [attr.aria-expanded]="activeIndex() === index"
+          (click)="toggleRole(index)"
+        >
+          <span class="team__number">{{ item.number }}</span>
+          <span class="team__role">{{ item.role }}</span>
+          <strong>{{ item.title }}</strong>
+          <span class="team__accent" aria-hidden="true"></span>
+
+          <span class="team__details">
+            <span class="team__description">{{ item.description }}</span>
+            <span class="team__list">
+              @for (detail of item.details; track detail) {
+                <span>— {{ detail }}</span>
+              }
+            </span>
+          </span>
+        </button>
+      }
+    </div>
+  </div>
+</section>
