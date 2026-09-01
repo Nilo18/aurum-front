@@ -6,10 +6,11 @@ import { About } from '../../components/home-page-components/about/about';
 import { Events } from '../../components/home-page-components/events/events';
 import { ContactUs } from '../../components/home-page-components/contact-us/contact-us';
 import { Team } from '../../components/home-page-components/team/team';
+import { RequestEventCta } from '../../components/home-page-components/request-event-cta/request-event-cta';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, Hero, Services, About, Events, Team, ContactUs],
+  imports: [Header, Hero, Services, About, Events, RequestEventCta, Team, ContactUs],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
