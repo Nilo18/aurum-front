@@ -1,1 +1,50 @@
-<p>process works!</p>
+<section class="process" id="process" aria-labelledby="process-title">
+  <div class="process__inner">
+    <header class="process__heading">
+      <p>How it works</p>
+      <h2 id="process-title">Our process</h2>
+    </header>
+
+    <div class="process__workspace">
+      <div class="process__steps" role="tablist" aria-label="Event planning process">
+        @for (step of steps; track step.number; let index = $index) {
+          <button
+            class="process__step"
+            type="button"
+            role="tab"
+            [id]="'process-tab-' + index"
+            [class.process__step--active]="activeIndex() === index"
+            [attr.aria-selected]="activeIndex() === index"
+            [attr.aria-controls]="'process-panel-' + index"
+            (click)="selectStep(index)"
+          >
+            <span class="process__step-number">{{ step.number }}</span>
+            <span class="process__step-copy">
+              <small>{{ step.role }}</small>
+              <strong>{{ step.title }}</strong>
+            </span>
+            <span class="process__arrow" aria-hidden="true">›</span>
+          </button>
+        }
+      </div>
+
+      @for (step of steps; track step.number; let index = $index) {
+        @if (activeIndex() === index) {
+          <article
+            class="process__panel"
+            role="tabpanel"
+            [id]="'process-panel-' + index"
+            [attr.aria-labelledby]="'process-tab-' + index"
+          >
+            <span class="process__panel-number" aria-hidden="true">{{ step.number }}</span>
+            <p class="process__role">{{ step.role }}</p>
+            <h3>{{ step.title }}</h3>
+            <span class="process__accent" aria-hidden="true"></span>
+            <p class="process__lead">{{ step.lead }}</p>
+            <p class="process__description">{{ step.description }}</p>
+          </article>
+        }
+      }
+    </div>
+  </div>
+</section>

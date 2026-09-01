@@ -7,10 +7,12 @@ import { Events } from '../../components/home-page-components/events/events';
 import { ContactUs } from '../../components/home-page-components/contact-us/contact-us';
 import { Team } from '../../components/home-page-components/team/team';
 import { RequestEventCta } from '../../components/home-page-components/request-event-cta/request-event-cta';
+import { Process } from '../../components/home-page-components/process/process';
+import { Footer } from '../../components/home-page-components/footer/footer';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, Hero, Services, About, Events, RequestEventCta, Team, ContactUs],
+  imports: [Header, Hero, Services, About, Events, RequestEventCta, Process, Team, ContactUs, Footer],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
