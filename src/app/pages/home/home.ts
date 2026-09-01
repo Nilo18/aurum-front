@@ -3,7 +3,7 @@ import { Header } from '../../components/home-page-components/header/header';
 import { Hero } from '../../components/home-page-components/hero/hero';
 import { Services } from '../../components/home-page-components/services/services';
 import { About } from '../../components/home-page-components/about/about';
-import { Events } from '../../components/staff-page-components/events/events';
+import { Events } from '../../components/home-page-components/events/events';
 import { ContactUs } from '../../components/home-page-components/contact-us/contact-us';
 import { Team } from '../../components/home-page-components/team/team';
 
