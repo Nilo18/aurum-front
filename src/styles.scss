@@ -1,6 +1,31 @@
-/* You can add global styles to this file, and also import other style files */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  background: #050504;
+  color: #f0eadf;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a:focus-visible {
+  outline: 1px solid #c6921d;
+  outline-offset: 4px;
 }

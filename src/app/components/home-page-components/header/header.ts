@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, signal, WritableSignal } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -7,5 +7,12 @@ import { Component } from '@angular/core';
   styleUrl: './header.scss',
 })
 export class Header {
+  isScrolled: WritableSignal<boolean> = signal(false)
 
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const scrollPosition = window.scrollY || document.documentElement.scrollTop
+
+    this.isScrolled.set(scrollPosition > 50)
+  }
 }

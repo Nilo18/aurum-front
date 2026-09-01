@@ -1,55 +1,139 @@
+:host {
+  display: block;
+}
+
 .home-header {
-    background-color: #080705;
-    height: 72px;
-    display: flex;
-    justify-content: space-between;
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 72px;
+  color: #857761;
+  background-color: transparent;
+  transition: background-color 250ms ease-in-out;
+
+  &__inner {
+    width: min(1303px, calc(100% - 64px));
+    height: 100%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 252px 1fr auto;
     align-items: center;
-    padding-left: 176.8px;
-    padding-right: 176.8px;
+    gap: 28px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  &__logo {
+    color: #c6921d !important;
+    font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
+    // font-size: 16px;
+    letter-spacing: 0.42em;
+  }
+
+  nav {
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(24px, 2.6vw, 47px);
 
     a {
-        text-decoration: none;
-    }
+      position: relative;
+    //   padding: 29px 0 12px;
+    //   font-size: 10px;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      transition: color 180ms ease;
 
-    &__logo {
-        color: #c4962a;
-        letter-spacing: 0.35rem;
-        font-size: 17.6px;
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        // top: 10px;
+        bottom: -5px;
+        height: 1px;
+        background: #b9891d;
+        width: 0;
+        transition: width 180ms ease;
+      }
+
+      &:hover,
+      &:focus-visible,
+      &.active {
+        color: #b9891d;
+      }
+
+      &:hover::after,
+      &:focus-visible::after,
+      &.active::after {
+        width: 100%;
+      }
+    }
+  }
+
+  &__consultation {
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    display: grid;
+    place-items: center;
+    min-width: 138px;
+    height: 40px;
+    border: 1px solid rgba(185, 137, 29, 0.42);
+    color: #bd8c1c !important;
+    font-size: 10px;
+    letter-spacing: 0.13em;
+    transition: background-color 180ms ease, color 180ms ease;
+
+    &:hover,
+    &:focus-visible {
+      background: #b9891d;
+      color: #080705 !important;
+    }
+  }
+}
+
+.home-header--scroll {
+  background-color: #080705;
+  border-bottom: 1px solid #2a261f;
+}
+
+@media (max-width: 1100px) {
+  .home-header {
+    &__inner {
+      grid-template-columns: auto 1fr auto;
     }
 
     nav {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 2.5rem;
-
-        a {
-            color: #8A7B67;
-            text-decoration: none; /* Ensure native underlines are turned off */
-            position: relative;    /* Required anchor for the absolute line */
-            display: inline-block; /* Bounds the line to the text size */
-
-            /* 1. Setup the invisible underline at the bottom left */
-            &::after {
-                content: '';
-                position: absolute;
-                left: 0;
-                bottom: -5px;              /* Matches your 5px offset requirement */
-                width: 0;                  /* Starts at zero width */
-                height: 2px;               /* Thickness of the underline */
-                background-color: #c4962a; /* Matches your gold underline color */
-                transition: width 0.4s ease; /* Controls the speed/smoothness */
-            }
-        }
-
-        /* 2. Trigger the color swap AND the underline growth simultaneously */
-        a:hover {
-            color: white;
-
-            &::after {
-                width: 100%; /* Expands the line smoothly to the right */
-            }
-        }
+      gap: 18px;
     }
 
+    nav a:nth-child(2),
+    nav a:nth-child(5) {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .home-header {
+    height: 68px;
+    &__inner {
+      width: calc(100% - 40px);
+      grid-template-columns: 1fr auto;
+    }
+
+    nav {
+      display: none;
+    }
+
+    &__consultation {
+      min-width: 124px;
+      height: 38px;
+    }
+  }
 }

@@ -1,0 +1,271 @@
+:host {
+  display: block;
+}
+
+.home-hero {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%;
+  min-height: 682px;
+  overflow: hidden;
+  background: #050504;
+  color: #f0eadf;
+
+  &__info,
+  &__image {
+    min-width: 0;
+    min-height: 682px;
+  }
+
+  &__info {
+    display: flex;
+    justify-content: flex-end;
+    padding: 94px 48px 0 max(32px, calc((100vw - 1343px) / 2));
+    background: #050504;
+  }
+
+  &__content {
+    width: min(100%, 575px);
+  }
+
+  &__image {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(5, 5, 4, 0.56), transparent 27%),
+        linear-gradient(180deg, rgba(3, 3, 2, 0.28), transparent 25%, rgba(5, 5, 4, 0.15));
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
+
+  &__image::before {
+    background: linear-gradient(
+    to right, 
+    #050504 0%, 
+    #050504 0%,          /* Keeps it completely solid behind the text */
+    rgba(5, 5, 4, 0.8) 15%, /* Begins dropping opacity rapidly */
+    rgba(5, 5, 4, 0) 150%    /* Reaches 100% transparency just past the halfway mark */
+    );
+  }
+
+  &__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 39px;
+    color: #c18e18;
+    font: 600 10px/1.2 'Montserrat', 'Segoe UI', sans-serif;
+    letter-spacing: 0.48em;
+    white-space: nowrap;
+
+    span {
+      width: 14px;
+      height: 1px;
+      background: currentColor;
+    }
+  }
+
+  h1 {
+    margin: 0 0 33px;
+    font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
+    font-size: clamp(78px, 7.25vw, 112px);
+    font-weight: 400;
+    line-height: 0.78;
+    letter-spacing: 0.045em;
+  }
+
+  &__signature {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 31px;
+    color: #b58417;
+
+    span {
+      width: 40px;
+      height: 1px;
+      background: rgba(181, 132, 23, 0.75);
+    }
+
+    p {
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.55em;
+    }
+  }
+
+  &__description {
+    margin: 0 0 39px;
+    color: #8d806e;
+    font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.55;
+    letter-spacing: 0.015em;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 63px;
+
+    a {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition:
+        background-color 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease;
+    }
+  }
+
+  &__primary {
+    width: 267px;
+    gap: 14px;
+    background: #c79625;
+    color: #171108;
+
+    span {
+      font: 18px/1 Arial, sans-serif;
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: #ddb448;
+    }
+  }
+
+  &__secondary {
+    width: 156px;
+    border: 1px solid rgba(185, 137, 29, 0.24);
+    color: #9c907e;
+
+    &:hover,
+    &:focus-visible {
+      border-color: #b9891d;
+      color: #d5c8b3;
+    }
+  }
+
+  &__metrics {
+    width: 100%;
+    padding-top: 32px;
+    border-top: 1px solid rgba(185, 137, 29, 0.17);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    strong {
+      color: #c9931c;
+      font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
+      font-size: 27px;
+      font-weight: 400;
+    }
+
+    span {
+      color: #756a59;
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.03em;
+    }
+  }
+
+  &__frame {
+    position: absolute;
+    z-index: 2;
+    right: 8%;
+    bottom: 21px;
+    width: 192px;
+    height: 192px;
+    border: 1px solid rgba(182, 133, 26, 0.19);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 15px 15px 15px -17px;
+      border: 1px solid rgba(182, 133, 26, 0.18);
+    }
+  }
+}
+
+@media (max-width: 1100px) {
+  .home-hero {
+    &__info {
+      padding-right: 32px;
+    }
+
+    &__eyebrow {
+      font-size: 8px;
+      letter-spacing: 0.3em;
+    }
+
+    h1 {
+      font-size: clamp(72px, 9vw, 96px);
+    }
+  }
+}
+
+@media (max-width: 760px) {
+  .home-hero {
+    grid-template-columns: 1fr;
+
+    &__info,
+    &__image {
+      min-height: auto;
+    }
+
+    &__info {
+      padding: 118px 20px 54px;
+    }
+
+    &__content {
+      width: 100%;
+    }
+
+    &__image {
+      height: 420px;
+    }
+
+    &__description br {
+      display: none;
+    }
+
+    &__actions {
+      flex-direction: column;
+      margin-bottom: 45px;
+
+      a {
+        width: 100%;
+      }
+    }
+
+    &__frame {
+      display: none;
+    }
+  }
+}
