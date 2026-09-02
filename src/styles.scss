@@ -29,3 +29,12 @@ a:focus-visible {
   outline: 1px solid #c6921d;
   outline-offset: 4px;
 }
+
+
+.error {
+  margin-top: 5px;
+  color: red;
+  line-height: 0;
+  font-size: 11px;
+  // overflow-wrap: break-word;
+}

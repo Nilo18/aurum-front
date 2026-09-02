@@ -135,6 +135,8 @@
       min-width: 0;
       display: grid;
       gap: 9px;
+      padding-bottom: 32px;
+      position: relative;
 
       > span {
         color: #8b7251;
@@ -143,6 +145,19 @@
         font-weight: 500;
         letter-spacing: 0.26em;
         text-transform: uppercase;
+      }
+
+      .error {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        margin: 0;
+        color: red;
+        font-size: 11px;
+        line-height: 14px;
+        white-space: normal;
+        overflow-wrap: anywhere;
       }
     }
 

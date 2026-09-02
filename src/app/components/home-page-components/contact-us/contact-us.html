@@ -34,24 +34,30 @@
       </div>
     </div>
 
-    <form class="contact__form" (submit)="submitForm($event)">
+    <form class="contact__form" (ngSubmit)="submitForm()" [formGroup]="contactForm">
       <div class="contact__row">
         <label>
           <span>First and last name</span>
-          <input type="text" name="name" placeholder="Your full name" autocomplete="name" required />
+          <input type="text" name="name" placeholder="Your full name" autocomplete="name" required 
+          formControlName="fullName"/>
+          <p class="error">{{ formValidator.getRequiredMaxAmountError('fullName', contactForm) }}</p>
         </label>
         <label>
           <span>Phone number</span>
-          <input type="tel" name="phone" placeholder="+995 5XX XXX XXX" autocomplete="tel" required />
+          <input type="tel" name="phone" placeholder="+995 5XX XXX XXX" autocomplete="tel" required
+          formControlName="phoneNumber"/>
+          <p class="error">{{ formValidator.getRequiredPhoneNumberError('phoneNumber', contactForm) }}</p>
         </label>
       </div>
 
       <label>
         <span>Email address</span>
-        <input type="email" name="email" placeholder="example@email.com" autocomplete="email" required />
+        <input type="email" name="email" placeholder="example@email.com" autocomplete="email" required
+        formControlName="email"/>
+        <p class="error">{{ formValidator.getRequiredEmailError('email', contactForm) }}</p>
       </label>
 
-      <div class="contact__row">
+      <!-- <div class="contact__row">
         <label>
           <span>Event type</span>
           <select name="eventType" required>
@@ -66,12 +72,12 @@
           <span>Number of guests</span>
           <input type="number" name="guests" min="1" placeholder="120" required />
         </label>
-      </div>
+      </div> -->
 
-      <label>
+      <!-- <label>
         <span>Preferred date</span>
         <input type="date" name="date" required />
-      </label>
+      </label> -->
 
       <label>
         <span>Message</span>
@@ -79,8 +85,10 @@
           name="message"
           rows="4"
           placeholder="Tell us a little about your vision..."
+          formControlName="message"
           required
         ></textarea>
+        <p class="error">{{ formValidator.getRequiredMaxAmountError('message', contactForm) }}</p>
       </label>
 
       <button type="submit">
