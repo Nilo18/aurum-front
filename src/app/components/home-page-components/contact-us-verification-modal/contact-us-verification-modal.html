@@ -1,0 +1,84 @@
+<section class="verification-modal position-relative overflow-hidden" aria-labelledby="verification-title">
+  <div class="verification-modal__glow position-absolute rounded-circle" aria-hidden="true"></div>
+
+  <div class="modal-header border-0 p-0 align-items-start">
+    <div class="d-flex align-items-center gap-3">
+      <span class="verification-modal__mark d-inline-flex align-items-center justify-content-center" aria-hidden="true">
+        <span class="verification-modal__lock">&#9671;</span>
+      </span>
+      <div>
+        <p class="verification-modal__eyebrow mb-1">Secure verification</p>
+        <p class="verification-modal__step mb-0">Final step</p>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="btn-close btn-close-white verification-modal__close"
+      aria-label="Close verification dialog"
+      (click)="close()"
+    ></button>
+  </div>
+
+  <div class="modal-body p-0">
+    <h2 id="verification-title" class="verification-modal__title">Check your inbox</h2>
+    <p class="verification-modal__copy mb-0">
+      We sent a six-digit verification code to
+      <strong class="d-block mt-2">{{ maskedEmail }}</strong>
+    </p>
+
+    <form class="mt-4" [formGroup]="verificationModal" (ngSubmit)="submitForm()" novalidate>
+      <label for="verification-code" class="form-label verification-modal__label">Verification code</label>
+      <input
+        id="verification-code"
+        type="text"
+        class="form-control form-control-lg verification-modal__input text-center"
+        formControlName="otp"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="6"
+        placeholder="000000"
+        aria-describedby="verification-hint verification-error"
+        [class.is-invalid]="verificationModal.controls['otp'].touched && verificationModal.controls['otp'].invalid"
+      />
+
+      <div id="verification-hint" class="d-flex justify-content-between gap-3 mt-2 verification-modal__hint">
+        <span>Enter the code from your email</span>
+        <span>6 digits</span>
+      </div>
+
+      @if (verificationModal.controls['otp'].touched && verificationModal.controls['otp'].invalid) {
+        <div id="verification-error" class="invalid-feedback d-block mt-2">
+          Enter the complete six-digit code.
+        </div>
+      }
+
+      @if (submissionError()) {
+        <div class="alert verification-modal__alert mt-3 mb-0" role="alert">
+          {{ submissionError() }}
+        </div>
+      }
+
+      <button
+        type="submit"
+        class="btn verification-modal__submit w-100 d-flex align-items-center justify-content-center gap-2 mt-4"
+        [disabled]="isSubmitting()"
+      >
+        @if (isSubmitting()) {
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          <span>Verifying</span>
+        } @else {
+          <span>Verify &amp; send request</span>
+          <span class="verification-modal__arrow" aria-hidden="true">&#8594;</span>
+        }
+      </button>
+    </form>
+  </div>
+
+  <div class="modal-footer border-0 p-0 justify-content-center">
+    <p class="verification-modal__privacy d-flex align-items-center gap-2 mb-0">
+      <span aria-hidden="true">&#9670;</span>
+      Your details are encrypted and kept confidential
+    </p>
+  </div>
+</section>

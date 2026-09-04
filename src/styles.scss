@@ -38,3 +38,14 @@ a:focus-visible {
   font-size: 11px;
   // overflow-wrap: break-word;
 }
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+
+.aurum-verification-modal {
+  .modal-content {
+    overflow: hidden;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+}
