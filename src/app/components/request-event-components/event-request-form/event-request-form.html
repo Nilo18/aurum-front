@@ -1,0 +1,74 @@
+<div class="request-layout">
+  <div class="form-panel">
+    @if (!reviewed()) {
+      <form [formGroup]="form" (ngSubmit)="review()" novalidate>
+        <p class="required-note"><span>*</span> Required details · Everything else can be decided together.</p>
+        @for (section of sections; track section.number) {
+          <fieldset [formGroupName]="section.group">
+            <legend><span class="section-number">{{ section.number }}</span>{{ section.title }}</legend>
+            <p class="section-description">{{ section.description }}</p>
+            @if (section.group === 'client') {
+              <div class="client-type" role="group" aria-label="Client type">
+                <label><input type="radio" formControlName="type" value="PERSON"><span>Individual</span></label>
+                <label><input type="radio" formControlName="type" value="ORGANIZATION"><span>Organization</span></label>
+              </div>
+            }
+            <div class="fields">
+              @for (field of section.fields; track field.key) {
+                <div class="field" [class.wide]="field.wide">
+                  <label [for]="field.key">{{ field.label }} @if (field.required) { <span class="required">*</span> } @else { <span class="optional">Optional</span> }</label>
+                  @if (field.type === 'select') {
+                    <select [id]="field.key" [formControlName]="field.key" [attr.aria-required]="field.required || null" [attr.aria-invalid]="!!error(section.group, field.key)" [attr.aria-describedby]="error(section.group, field.key) ? field.key + '-error' : null">
+                      <option value="" disabled>Select your occasion</option>
+                      @for (option of field.options; track option) { <option [value]="option">{{ option }}</option> }
+                    </select>
+                  } @else if (field.type === 'textarea') {
+                    <textarea [id]="field.key" [formControlName]="field.key" [placeholder]="field.placeholder || ''" rows="4"></textarea>
+                  } @else {
+                    <input [id]="field.key" [type]="field.type" [formControlName]="field.key" [placeholder]="field.placeholder || ''" [attr.autocomplete]="field.autocomplete || null" [attr.min]="field.min || null" [attr.step]="field.step || null" [attr.aria-required]="field.required || null" [attr.aria-invalid]="!!error(section.group, field.key)" [attr.aria-describedby]="error(section.group, field.key) ? field.key + '-error' : null">
+                  }
+                  @if (error(section.group, field.key); as message) { <p class="field-error" [id]="field.key + '-error'">{{ message }}</p> }
+                </div>
+              }
+            </div>
+          </fieldset>
+        }
+        <div class="form-actions">
+          <p>Take a moment to review your details.<br>Your request won’t be sent yet.</p>
+          <button type="submit">Review event request <span aria-hidden="true">→</span></button>
+        </div>
+        @if (attempted() && form.invalid) { <p class="field-error" role="alert">Please check the highlighted details before continuing.</p> }
+      </form>
+    } @else {
+      <section class="review" aria-labelledby="review-title">
+        <p class="kicker">YOUR EVENT, AT A GLANCE</p>
+        <h2 id="review-title" tabindex="-1">A beautiful beginning.</h2>
+        <p class="review-notice" role="status">Your details are ready to review. Online submission is not connected yet; this request has not been sent or saved.</p>
+        <p class="review-client">{{ request.client.type === 'PERSON' ? 'Individual' : 'Organization' }}</p>
+        @for (section of sections; track section.number) {
+          <h3>{{ section.title }}</h3>
+          <dl>
+            @for (field of section.fields; track field.key) {
+              <div><dt>{{ field.label }}</dt><dd>{{ value(section.group, field.key) }}</dd></div>
+            }
+          </dl>
+        }
+        <button type="button" (click)="edit()">← Edit details</button>
+      </section>
+    }
+  </div>
+  <aside aria-labelledby="aside-title">
+    <div class="aside-image"><img src="/service-fine-dining.png" alt="An elegantly arranged dining table for a celebration"></div>
+    <div class="aside-content">
+      <p class="kicker">THE AURUM APPROACH</p>
+      <h2 id="aside-title">Thoughtfully planned.<br><em>Beautifully remembered.</em></h2>
+      <p>Every memorable occasion starts with a conversation. Your ideas give us a place to begin.</p>
+      <ol>
+        <li><span>01</span><div><h3>Share your vision</h3><p>The occasion, the atmosphere, the little things that matter.</p></div></li>
+        <li><span>02</span><div><h3>Make it personal</h3><p>A thoughtful plan shaped around your preferences.</p></div></li>
+        <li><span>03</span><div><h3>Enjoy the moment</h3><p>Considered details, from the welcome to the last toast.</p></div></li>
+      </ol>
+      <p class="aside-note">Still finding your inspiration?<br>Leave optional details open. There’s room to imagine.</p>
+    </div>
+  </aside>
+</div>

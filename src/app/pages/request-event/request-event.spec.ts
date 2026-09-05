@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RequestEvent } from './request-event';
+import { provideRouter } from '@angular/router';
 
 describe('RequestEvent', () => {
   let component: RequestEvent;
@@ -8,7 +9,7 @@ describe('RequestEvent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RequestEvent]
+      imports: [RequestEvent], providers: [provideRouter([])]
     })
     .compileComponents();
 
