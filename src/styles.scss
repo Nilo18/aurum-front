@@ -49,3 +49,52 @@ a:focus-visible {
     background: transparent;
   }
 }
+
+// Reusable loading placeholders. Override these custom properties where needed.
+.skeleton {
+  display: block;
+  width: var(--skeleton-width, 100%);
+  height: var(--skeleton-height, 1rem);
+  border-radius: var(--skeleton-radius, 3px);
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base, #ffffff0a) 25%,
+    var(--skeleton-highlight, #ffffff14) 50%,
+    var(--skeleton-base, #ffffff0a) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+
+  &--heading {
+    --skeleton-width: 10rem;
+    --skeleton-height: 2rem;
+    max-width: 100%;
+    margin-bottom: 16px;
+  }
+
+  &--text {
+    --skeleton-height: 1.25rem;
+    margin-bottom: 20px;
+  }
+
+  &--short {
+    --skeleton-width: 65%;
+  }
+
+  &--button {
+    --skeleton-width: 4.5rem;
+    --skeleton-height: 44px;
+    margin-top: auto;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}

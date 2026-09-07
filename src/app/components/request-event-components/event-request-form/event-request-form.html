@@ -1,74 +1,208 @@
 <div class="request-layout">
-  <div class="form-panel">
-    @if (!reviewed()) {
-      <form [formGroup]="form" (ngSubmit)="review()" novalidate>
-        <p class="required-note"><span>*</span> Required details · Everything else can be decided together.</p>
-        @for (section of sections; track section.number) {
-          <fieldset [formGroupName]="section.group">
-            <legend><span class="section-number">{{ section.number }}</span>{{ section.title }}</legend>
-            <p class="section-description">{{ section.description }}</p>
-            @if (section.group === 'client') {
-              <div class="client-type" role="group" aria-label="Client type">
-                <label><input type="radio" formControlName="type" value="PERSON"><span>Individual</span></label>
-                <label><input type="radio" formControlName="type" value="ORGANIZATION"><span>Organization</span></label>
-              </div>
+  @if (!reviewed()) {
+    <form class="request-layout__form" [formGroup]="form" (ngSubmit)="review()" novalidate>
+      <p class="request-layout__note">* Required details. Optional details can be discussed together.</p>
+      <fieldset class="request-layout__section" formGroupName="client">
+        <legend class="request-layout__legend"><span class="request-layout__number">01</span>A little about you</legend>
+        <p class="request-layout__note">The right details for a personal approach.</p>
+        <div class="request-layout__fields">
+          <div class="request-layout__field">
+            <label class="request-layout__label" for="clientType">Client type *</label>
+            <select class="request-layout__control" id="clientType" formControlName="type" required>
+              <option value="PERSON">Individual</option>
+              <option value="ORGANIZATION">Organization</option>
+            </select>
+          </div>
+          <div class="request-layout__field">
+            <label class="request-layout__label" for="name">Full name / organization name *</label>
+            <input class="request-layout__control" id="name" type="text" formControlName="name" autocomplete="name" maxlength="255" required
+              [attr.aria-invalid]="!!error(client.name)" [attr.aria-describedby]="error(client.name) ? 'name-error' : null">
+            @if (error(client.name); as message) {
+              <p class="request-layout__error" id="name-error">{{ message }}</p>
             }
-            <div class="fields">
-              @for (field of section.fields; track field.key) {
-                <div class="field" [class.wide]="field.wide">
-                  <label [for]="field.key">{{ field.label }} @if (field.required) { <span class="required">*</span> } @else { <span class="optional">Optional</span> }</label>
-                  @if (field.type === 'select') {
-                    <select [id]="field.key" [formControlName]="field.key" [attr.aria-required]="field.required || null" [attr.aria-invalid]="!!error(section.group, field.key)" [attr.aria-describedby]="error(section.group, field.key) ? field.key + '-error' : null">
-                      <option value="" disabled>Select your occasion</option>
-                      @for (option of field.options; track option) { <option [value]="option">{{ option }}</option> }
-                    </select>
-                  } @else if (field.type === 'textarea') {
-                    <textarea [id]="field.key" [formControlName]="field.key" [placeholder]="field.placeholder || ''" rows="4"></textarea>
-                  } @else {
-                    <input [id]="field.key" [type]="field.type" [formControlName]="field.key" [placeholder]="field.placeholder || ''" [attr.autocomplete]="field.autocomplete || null" [attr.min]="field.min || null" [attr.step]="field.step || null" [attr.aria-required]="field.required || null" [attr.aria-invalid]="!!error(section.group, field.key)" [attr.aria-describedby]="error(section.group, field.key) ? field.key + '-error' : null">
-                  }
-                  @if (error(section.group, field.key); as message) { <p class="field-error" [id]="field.key + '-error'">{{ message }}</p> }
+          </div>
+          <div class="request-layout__field">
+            <label class="request-layout__label" for="email">Email address *</label>
+            <input class="request-layout__control" id="email" type="email" formControlName="email" autocomplete="email" required
+              [attr.aria-invalid]="!!error(client.email)" [attr.aria-describedby]="error(client.email) ? 'email-error' : null">
+            @if (error(client.email); as message) {
+              <p class="request-layout__error" id="email-error">{{ message }}</p>
+            }
+          </div>
+          <div class="request-layout__field">
+            <label class="request-layout__label" for="phone">Phone number *</label>
+            <input class="request-layout__control" id="phone" type="tel" formControlName="phone" autocomplete="tel" placeholder="+995 555 123 456" required
+              [attr.aria-invalid]="!!error(client.phone)" [attr.aria-describedby]="error(client.phone) ? 'phone-error' : null">
+            @if (error(client.phone); as message) {
+              <p class="request-layout__error" id="phone-error">{{ message }}</p>
+            }
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="request-layout__section" formGroupName="event">
+        <legend class="request-layout__legend"><span class="request-layout__number">02</span>Set the scene</legend>
+        <p class="request-layout__note">Tell us when, where, and what you’re celebrating.</p>
+        <div class="request-layout__fields">
+          <div class="request-layout__field">
+            <label class="request-layout__label" for="eventType">Event type *</label>
+            <select class="request-layout__control" id="eventType" formControlName="eventType" required
+              [attr.aria-invalid]="!!error(event.eventType)" [attr.aria-describedby]="error(event.eventType) ? 'eventType-error' : null">
+              <option value="" disabled>Select event type</option>
+              @for (type of eventTypes; track type) {
+                <option [value]="type">{{ type }}</option>
+              }
+            </select>
+            @if (error(event.eventType); as message) {
+              <p class="request-layout__error" id="eventType-error">{{ message }}</p>
+            }
+          </div>
+          <div class="request-layout__field">
+            <label class="request-layout__label" for="date">Event date *</label>
+            <input class="request-layout__control" id="date" type="date" formControlName="date" [min]="minDate" required
+              [attr.aria-invalid]="!!error(event.date)" [attr.aria-describedby]="error(event.date) ? 'date-error' : null">
+            @if (error(event.date); as message) {
+              <p class="request-layout__error" id="date-error">{{ message }}</p>
+            }
+          </div>
+          <div class="request-layout__field">
+            <label class="request-layout__label" for="guestCount">Number of guests *</label>
+            <input class="request-layout__control" id="guestCount" type="number" formControlName="guestCount" min="1" step="1" required
+              [attr.aria-invalid]="!!error(event.guestCount)" [attr.aria-describedby]="error(event.guestCount) ? 'guestCount-error' : null">
+            @if (error(event.guestCount); as message) {
+              <p class="request-layout__error" id="guestCount-error">{{ message }}</p>
+            }
+          </div>
+          <div class="request-layout__field">
+            <label class="request-layout__label" for="totalCost">Proposed total cost (optional)</label>
+            <input class="request-layout__control" id="totalCost" type="number" formControlName="totalCost" min="0" step="0.01"
+              [attr.aria-invalid]="!!error(event.totalCost)" [attr.aria-describedby]="error(event.totalCost) ? 'totalCost-error' : null">
+            @if (error(event.totalCost); as message) {
+              <p class="request-layout__error" id="totalCost-error">{{ message }}</p>
+            }
+          </div>
+          <div class="request-layout__field">
+            <label class="request-layout__label" for="location">Event location *</label>
+            <select class="request-layout__control" id="location" formControlName="location" required
+              [attr.aria-invalid]="!!error(event.location)" [attr.aria-describedby]="error(event.location) ? 'location-error' : null">
+              <option value="" disabled>Select event location</option>
+              @for (location of locations; track location) {
+                <option [value]="location">{{ location }}</option>
+              }
+            </select>
+            @if (error(event.location); as message) {
+              <p class="request-layout__error" id="location-error">{{ message }}</p>
+            }
+          </div>
+          <div class="request-layout__field request-layout__field--wide">
+            <label class="request-layout__label" for="notes">Anything else we should know? (optional)</label>
+            <textarea class="request-layout__control request-layout__control--textarea" id="notes" formControlName="notes" rows="4"
+              placeholder="Dietary requirements, budget currency, or special requests…"></textarea>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="request-layout__section">
+        <legend class="request-layout__legend"><span class="request-layout__number">03</span>A taste of your occasion</legend>
+        <div class="request-layout__menu" [attr.aria-busy]="menuLoading()">
+          <label class="request-layout__label" for="cuisineType">Cuisine preference</label>
+          <select class="request-layout__control" id="cuisineType" [value]="cuisineType()" (change)="setCuisine($any($event.target).value)">
+            @for (cuisine of cuisines; track cuisine.value) {
+              <option [value]="cuisine.value">{{ cuisine.label }}</option>
+            }
+          </select>
+          @if (menuLoading()) {
+            <span class="visually-hidden" role="status">Loading menu</span>
+            <div aria-hidden="true">
+              @for (category of categories; track category.value) {
+                <div class="request-layout__category">
+                  <div class="skeleton skeleton--heading"></div>
+                  <div class="request-layout__dishes">
+                    @for (placeholder of [0, 1]; track placeholder) {
+                      <div class="request-layout__menu-item">
+                        <div class="skeleton skeleton--text"></div>
+                        <div class="skeleton skeleton--text skeleton--short"></div>
+                        <div class="skeleton skeleton--button"></div>
+                      </div>
+                    }
+                  </div>
                 </div>
               }
             </div>
-          </fieldset>
-        }
-        <div class="form-actions">
-          <p>Take a moment to review your details.<br>Your request won’t be sent yet.</p>
-          <button type="submit">Review event request <span aria-hidden="true">→</span></button>
-        </div>
-        @if (attempted() && form.invalid) { <p class="field-error" role="alert">Please check the highlighted details before continuing.</p> }
-      </form>
-    } @else {
-      <section class="review" aria-labelledby="review-title">
-        <p class="kicker">YOUR EVENT, AT A GLANCE</p>
-        <h2 id="review-title" tabindex="-1">A beautiful beginning.</h2>
-        <p class="review-notice" role="status">Your details are ready to review. Online submission is not connected yet; this request has not been sent or saved.</p>
-        <p class="review-client">{{ request.client.type === 'PERSON' ? 'Individual' : 'Organization' }}</p>
-        @for (section of sections; track section.number) {
-          <h3>{{ section.title }}</h3>
-          <dl>
-            @for (field of section.fields; track field.key) {
-              <div><dt>{{ field.label }}</dt><dd>{{ value(section.group, field.key) }}</dd></div>
+          } @else if (menuError(); as message) {
+            <p class="request-layout__error" role="alert">{{ message }}</p>
+            <button class="request-layout__button request-layout__button--secondary" type="button" (click)="retryMenu()" [disabled]="menuLoading()">Retry menu</button>
+          } @else {
+            @for (group of menuGroups(); track group.value) {
+              <section class="request-layout__category" [attr.aria-labelledby]="'menu-' + group.value">
+                <h3 class="request-layout__heading" [id]="'menu-' + group.value">{{ group.label }}</h3>
+                <div class="request-layout__dishes">
+                  @for (item of group.items; track item.id) {
+                    <article class="request-layout__menu-item">
+                      <h4 class="request-layout__dish-name">{{ item.name }}</h4>
+                      <p class="request-layout__note">{{ item.pricePerPerson | currency:'GEL':'code' }} / person</p>
+                      <button class="request-layout__button" type="button" (click)="addDish(item)" [disabled]="isAdded(item)"
+                        [attr.aria-label]="(isAdded(item) ? 'Added ' : 'Add ') + item.name">{{ isAdded(item) ? 'Added' : 'Add' }}</button>
+                    </article>
+                  } @empty {
+                    <p class="request-layout__note">No dishes available in this category.</p>
+                  }
+                </div>
+              </section>
             }
-          </dl>
-        }
-        <button type="button" (click)="edit()">← Edit details</button>
-      </section>
-    }
-  </div>
-  <aside aria-labelledby="aside-title">
-    <div class="aside-image"><img src="/service-fine-dining.png" alt="An elegantly arranged dining table for a celebration"></div>
-    <div class="aside-content">
-      <p class="kicker">THE AURUM APPROACH</p>
-      <h2 id="aside-title">Thoughtfully planned.<br><em>Beautifully remembered.</em></h2>
-      <p>Every memorable occasion starts with a conversation. Your ideas give us a place to begin.</p>
-      <ol>
-        <li><span>01</span><div><h3>Share your vision</h3><p>The occasion, the atmosphere, the little things that matter.</p></div></li>
-        <li><span>02</span><div><h3>Make it personal</h3><p>A thoughtful plan shaped around your preferences.</p></div></li>
-        <li><span>03</span><div><h3>Enjoy the moment</h3><p>Considered details, from the welcome to the last toast.</p></div></li>
-      </ol>
-      <p class="aside-note">Still finding your inspiration?<br>Leave optional details open. There’s room to imagine.</p>
-    </div>
+          }
+        </div>
+      </fieldset>
+      <div class="request-layout__actions">
+        <p class="request-layout__note">Review your details before continuing.</p>
+        <button class="request-layout__button" type="submit">Review event request →</button>
+      </div>
+      @if (attempted() && form.invalid) {
+        <p class="request-layout__error" role="alert">Please check the highlighted details.</p>
+      }
+    </form>
+  } @else {
+    <section class="request-layout__review" aria-labelledby="review-title">
+      <h2 class="request-layout__legend" id="review-title" tabindex="-1">Your event request</h2>
+      <p class="request-layout__note" role="status">This request has not been sent or saved. Online submission is not connected yet.</p>
+      <h3 class="request-layout__heading">Client details</h3>
+      <dl class="request-layout__details">
+        <div class="request-layout__detail"><dt>Client type</dt><dd>{{ request.client.type === 'PERSON' ? 'Individual' : 'Organization' }}</dd></div>
+        <div class="request-layout__detail"><dt>Full name / organization name</dt><dd>{{ request.client.name }}</dd></div>
+        <div class="request-layout__detail"><dt>Email address</dt><dd>{{ request.client.email }}</dd></div>
+        <div class="request-layout__detail"><dt>Phone number</dt><dd>{{ request.client.phone }}</dd></div>
+      </dl>
+      <h3 class="request-layout__heading">Event details</h3>
+      <dl class="request-layout__details">
+        <div class="request-layout__detail"><dt>Event type</dt><dd>{{ request.event.eventType }}</dd></div>
+        <div class="request-layout__detail"><dt>Event date</dt><dd>{{ request.event.date }}</dd></div>
+        <div class="request-layout__detail"><dt>Number of guests</dt><dd>{{ request.event.guestCount }}</dd></div>
+        <div class="request-layout__detail"><dt>Proposed total cost</dt><dd>{{ request.event.totalCost ?? 'To be discussed' }}</dd></div>
+        <div class="request-layout__detail"><dt>Event location</dt><dd>{{ request.event.location }}</dd></div>
+        <div class="request-layout__detail"><dt>Notes</dt><dd>{{ request.event.notes || 'To be discussed' }}</dd></div>
+        <div class="request-layout__detail"><dt>Status</dt><dd>{{ request.event.status }}</dd></div>
+      </dl>
+      <button class="request-layout__button" type="button" (click)="edit()">← Edit details</button>
+    </section>
+  }
+  <aside class="request-layout__summary" aria-labelledby="selected-menu-title">
+    <h2 class="request-layout__heading" id="selected-menu-title">Your selected menu</h2>
+    <p class="request-layout__note" role="status">{{ selectedMenu().length }} dishes selected.</p>
+    <p class="request-layout__note">Prices are per person in GEL. Switching cuisines keeps your selections.</p>
+    <ul class="request-layout__selected-list">
+      @for (item of selectedDishes(); track item.id) {
+        <li class="request-layout__selected-item">
+          <h3 class="request-layout__dish-name">{{ item.name }}</h3>
+          @for (category of categories; track category.value) {
+            @if (category.value === item.category) {
+              <p class="request-layout__note">{{ category.label }} · {{ item.pricePerPerson | currency:'GEL':'code' }} / person</p>
+            }
+          }
+          @if (!reviewed()) {
+            <button class="request-layout__button request-layout__button--secondary" type="button" (click)="removeDish(item)" [attr.aria-label]="'Remove ' + item.name">Remove</button>
+          }
+        </li>
+      } @empty {
+        <li class="request-layout__note">Add dishes from the menu, or decide with us later.</li>
+      }
+    </ul>
   </aside>
 </div>
