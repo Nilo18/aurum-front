@@ -130,6 +130,11 @@
     font: 18px/1.4 Georgia, serif;
   }
 
+  &__btn-section {
+    display: flex;
+    gap: 1rem;
+  }
+
   &__button {
     min-height: 44px;
     padding: 12px 18px;

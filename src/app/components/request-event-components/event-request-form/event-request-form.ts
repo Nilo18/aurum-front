@@ -1,10 +1,58 @@
 import { Component, ElementRef, computed, inject, resource, signal } from '@angular/core';
-import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CuisineType, MenuItem, MenuItemCategory, MenuService } from '../../../services/menu-service';
-import { createEventRequestForm, fieldError, localToday } from './event-request.form';
-import { EventRequestDraft } from './event-request.models';
+import { isValidPhoneNumber } from 'libphonenumber-js';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { EventService, EventOrderRequest } from '../../../services/event-service';
+import { VerifyEventRequestModal } from '../verify-event-request-modal/verify-event-request-modal';
+import { SuccessModal } from '../../general-components/success-modal/success-modal';
+import { ClientType, EventRequestDraft } from './event-request.models';
+
+function localToday(): string {
+  const date = new Date();
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+const futureDate: ValidatorFn = control =>
+  control.value && control.value < localToday() ? { pastDate: true } : null;
+const phone: ValidatorFn = control =>
+  !control.value || isValidPhoneNumber(control.value) ? null : { phone: true };
+
+function createEventRequestForm(fb: FormBuilder) {
+  const requiredText = [Validators.required, Validators.pattern(/\S/)];
+  return fb.group({
+    client: fb.nonNullable.group({
+      type: fb.nonNullable.control<ClientType>('PERSON', Validators.required),
+      name: ['', [...requiredText, Validators.maxLength(255)]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required, phone]],
+    }),
+    event: fb.group({
+      eventType: fb.nonNullable.control('', requiredText),
+      date: fb.nonNullable.control('', [Validators.required, futureDate]),
+      totalCost: fb.control<number | null>(null, [
+        Validators.min(0), Validators.pattern(/^\d+(\.\d{1,2})?$/),
+      ]),
+      guestCount: fb.control<number | null>(null, [
+        Validators.required, Validators.min(1), Validators.pattern(/^\d+$/),
+      ]),
+      location: fb.nonNullable.control('', requiredText),
+      notes: fb.nonNullable.control(''),
+    }),
+  });
+}
+
+function fieldError(control: AbstractControl, attempted: boolean): string | null {
+  if (!control.invalid || (!control.touched && !attempted)) return null;
+  if (control.hasError('required')) return 'Please complete this field.';
+  if (control.hasError('email')) return 'Enter a valid email address.';
+  if (control.hasError('phone')) return 'Enter a valid phone number with country code.';
+  if (control.hasError('pastDate')) return 'Choose today or a future date.';
+  if (control.hasError('maxlength')) return 'Use no more than 255 characters.';
+  return 'Please check this value.';
+}
 
 @Component({
   selector: 'app-event-request-form',
@@ -13,6 +61,12 @@ import { EventRequestDraft } from './event-request.models';
   styleUrl: './event-request-form.scss',
 })
 export class EventRequestForm {
+  private readonly eventService = inject(EventService);
+  private readonly modalService = inject(NgbModal);
+  readonly isVerifying = signal(false);
+  readonly submitted = signal(false);
+  readonly submissionError = signal('');
+  private verificationOpen = false;
   private readonly menuService = inject(MenuService);
   private readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
   readonly form = createEventRequestForm(inject(FormBuilder));
@@ -24,8 +78,8 @@ export class EventRequestForm {
     'BIRTHDAY', 'GALA DINNER', 'PRODUCT LAUNCH', 'PRIVATE PARTY', 'OTHER',
   ];
   readonly locations = [
-    'AURUM BANQUET HALL', 'AURUM CONFERENCE HALL', 'PRIVATE RESIDENCE', 'PARTNER VENUE',
-    'HOTEL', 'RESTAURANT', 'OUTDOOR VENUE', 'HISTORICAL VENUE', 'CORPORATE OFFICE', 'OTHER',
+    'AURUM_BANQUET_HALL', 'AURUM_CONFERENCE_HALL', 'PRIVATE_RESIDENCE', 'PARTNER_VENUE',
+    'HOTEL', 'RESTAURANT', 'OUTDOOR_VENUE', 'HISTORICAL_VENUE', 'CORPORATE_OFFICE', 'OTHER',
   ];
   readonly reviewed = signal(false);
   readonly attempted = signal(false);
@@ -105,8 +159,6 @@ export class EventRequestForm {
     return fieldError(control, this.attempted());
   }
 
-  // Local review draft; map to the actual POST contract in a service when available.
-  // IDs are assigned on creation; the saved client ID belongs in Event.clientId.
   get request(): EventRequestDraft {
     const { client, event } = this.form.getRawValue();
     return {
@@ -125,6 +177,59 @@ export class EventRequestForm {
     }
     this.reviewed.set(true);
     setTimeout(() => this.element.nativeElement.querySelector<HTMLElement>('#review-title')?.focus());
+  }
+
+  async orderEvent() {
+    if (this.isVerifying() || this.verificationOpen || this.submitted()) return;
+    this.review();
+    if (this.form.invalid) return;
+
+    const { client, event } = this.form.getRawValue();
+    const request: Omit<EventOrderRequest, 'transactionKey' | 'otp'> = {
+      client: { clientType: client.type, name: client.name, email: client.email, phone: client.phone },
+      event: { ...event, guestCount: event.guestCount!, totalCost: event.totalCost ?? undefined },
+      menuItemIds: [...this.selectedMenu()],
+    };
+    this.isVerifying.set(true);
+    this.submissionError.set('');
+    try {
+      const response = await this.eventService.verifyCreateEventRequest(client.email);
+      if (!response?.transactionKey) throw new Error('Missing transaction key');
+      const modalRef = this.modalService.open(VerifyEventRequestModal, {
+        centered: true,
+        size: 'md',
+        windowClass: 'aurum-verification-modal',
+        backdrop: 'static',
+        keyboard: false,
+      });
+      modalRef.componentInstance.eventInfo = { ...request, transactionKey: response.transactionKey };
+      this.verificationOpen = true;
+      this.isVerifying.set(false);
+      try {
+        const result = await modalRef.result;
+        if (result === 'verified') {
+          this.submitted.set(true);
+          const successRef = this.modalService.open(SuccessModal, {
+            centered: true,
+            size: 'md',
+            windowClass: 'aurum-success-modal',
+            ariaLabelledBy: 'success-title',
+            ariaDescribedBy: 'success-message',
+          });
+          successRef.componentInstance.title = 'Your event request is in';
+          successRef.componentInstance.msg = 'Your email has been verified and your event request has been submitted successfully.';
+          void successRef.result.catch(() => {});
+        }
+      } catch {
+        // Dismissing verification keeps the request available for another attempt.
+      } finally {
+        this.verificationOpen = false;
+      }
+    } catch {
+      this.submissionError.set('We could not send your verification code. Please try again.');
+    } finally {
+      this.isVerifying.set(false);
+    }
   }
 
   edit() {

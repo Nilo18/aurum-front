@@ -1,0 +1,65 @@
+:host { display: block; }
+
+.success-modal {
+  position: relative;
+  overflow: hidden;
+  padding: 48px 38px 34px;
+  border: 1px solid rgba(201, 154, 41, .3);
+  background: radial-gradient(ellipse at top, rgba(201, 154, 41, .12), transparent 65%), #0d0c0a;
+  color: #eee7db;
+  text-align: center;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, .6);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #c99a29, transparent);
+  }
+
+  &__close { position: absolute; top: 18px; right: 18px; opacity: .65; }
+  &__close:hover { opacity: 1; }
+  &__seal {
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 28px;
+    border: 1px solid #a98a58;
+    border-radius: 50%;
+    background: rgba(201, 154, 41, .07);
+    color: #d5a331;
+    box-shadow: 0 0 0 8px rgba(201, 154, 41, .04);
+    svg { width: 40px; height: 40px; }
+  }
+  &__eyebrow, &__message, &__button { font-family: 'Montserrat', 'Segoe UI', sans-serif; }
+  &__eyebrow { margin: 0 0 14px; color: #c99a29; font-size: 9px; font-weight: 600; letter-spacing: .25em; text-transform: uppercase; }
+  &__title { margin: 0; font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif; font-size: clamp(32px, 7vw, 44px); font-weight: 400; line-height: 1.12; overflow-wrap: anywhere; }
+  &__divider { display: block; width: 42px; height: 1px; margin: 24px auto; background: #806528; }
+  &__message { margin: 0 0 30px; color: #b8ab98; font-size: 13px; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; }
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+    min-height: 52px;
+    padding: 14px 20px;
+    border: 1px solid #c99a29;
+    background: #c99a29;
+    color: #171108;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    transition: background-color 180ms ease;
+    &:hover { background: #ddb448; }
+    &:focus-visible { outline: 2px solid #eee7db; outline-offset: 4px; }
+    span { font-size: 18px; }
+  }
+}
+
+@media (max-width: 575.98px) {
+  .success-modal { padding: 42px 24px 26px; }
+}

@@ -41,7 +41,8 @@ a:focus-visible {
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
 
-.aurum-verification-modal {
+.aurum-verification-modal,
+.aurum-success-modal {
   .modal-content {
     overflow: hidden;
     border: 0;

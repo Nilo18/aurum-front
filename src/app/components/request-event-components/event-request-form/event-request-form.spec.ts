@@ -1,5 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
+import { EventService } from '../../../services/event-service';
+import { SuccessModal } from '../../general-components/success-modal/success-modal';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventRequestForm } from './event-request-form';
 import { CuisineType, MenuItem, MenuService } from '../../../services/menu-service';
 
@@ -12,10 +15,17 @@ describe('EventRequestForm', () => {
   ];
   const getMenuItems = vi.fn();
 
+  const verifyCreateEventRequest = vi.fn();
+  const open = vi.fn();
+
   beforeEach(() => {
+    verifyCreateEventRequest.mockReset().mockResolvedValue({ transactionKey: 'key' });
+    open.mockReset().mockReturnValue({ componentInstance: {}, result: Promise.resolve('verified') });
     getMenuItems.mockReset().mockResolvedValue(dishes);
     TestBed.configureTestingModule({
-      providers: [{ provide: MenuService, useValue: { getMenuItems } }],
+      providers: [{ provide: MenuService, useValue: { getMenuItems } },
+        { provide: EventService, useValue: { verifyCreateEventRequest } },
+        { provide: NgbModal, useValue: { open } }],
     });
   });
 
@@ -140,4 +150,33 @@ describe('EventRequestForm', () => {
     expect(component.menuError()).toBeNull();
     expect(fixture.nativeElement.querySelectorAll('.request-layout__menu-item').length).toBe(4);
   });
+  it('verifies only the email and passes a snapshot of the full request to the modal', async () => {
+    const fixture = await setup();
+    const component = fixture.componentInstance;
+    component.form.patchValue({
+      client: { type: 'ORGANIZATION', name: 'Company', email: 'test@example.com', phone: '+14155552671' },
+      event: { eventType: 'GALA DINNER', date: component.minDate, guestCount: 10, location: 'HOTEL', notes: 'Vegetarian' },
+    });
+    component.addDish(dishes[0]);
+    await component.orderEvent();
+    expect(verifyCreateEventRequest).toHaveBeenCalledExactlyOnceWith('test@example.com');
+    expect(open.mock.results[0].value.componentInstance.eventInfo).toEqual({
+      client: { clientType: 'ORGANIZATION', name: 'Company', email: 'test@example.com', phone: '+14155552671' },
+      event: { eventType: 'GALA DINNER', date: component.minDate, guestCount: 10, location: 'HOTEL', notes: 'Vegetarian', totalCost: undefined },
+      menuItemIds: [1], transactionKey: 'key',
+    });
+    expect(component.submitted()).toBe(true);
+    expect(open).toHaveBeenCalledTimes(2);
+    expect(open).toHaveBeenLastCalledWith(SuccessModal, expect.objectContaining({ windowClass: 'aurum-success-modal' }));
+    await component.orderEvent();
+    expect(verifyCreateEventRequest).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not send verification for an invalid form', async () => {
+    const fixture = await setup();
+    await fixture.componentInstance.orderEvent();
+    expect(verifyCreateEventRequest).not.toHaveBeenCalled();
+    expect(open).not.toHaveBeenCalled();
+  });
+
 });

@@ -1,0 +1,11 @@
+<section class="success-modal" aria-labelledby="success-title" aria-describedby="success-message">
+  <button type="button" class="btn-close btn-close-white success-modal__close" aria-label="Close success dialog" (click)="close()"></button>
+  <div class="success-modal__seal" aria-hidden="true">
+    <svg viewBox="0 0 40 40" fill="none"><path d="m11 20 6 6 12-13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  </div>
+  <p class="success-modal__eyebrow">Successfully received</p>
+  <h2 id="success-title" class="success-modal__title">{{ title }}</h2>
+  <span class="success-modal__divider" aria-hidden="true"></span>
+  <p id="success-message" class="success-modal__message">{{ msg }}</p>
+  <button type="button" class="success-modal__button" ngbAutofocus (click)="close()">{{ buttonLabel }} <span aria-hidden="true">&#8594;</span></button>
+</section>

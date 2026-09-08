@@ -49,7 +49,7 @@
               [attr.aria-invalid]="!!error(event.eventType)" [attr.aria-describedby]="error(event.eventType) ? 'eventType-error' : null">
               <option value="" disabled>Select event type</option>
               @for (type of eventTypes; track type) {
-                <option [value]="type">{{ type }}</option>
+                <option [value]="type">{{ type.replaceAll("_", " ") }}</option>
               }
             </select>
             @if (error(event.eventType); as message) {
@@ -72,21 +72,21 @@
               <p class="request-layout__error" id="guestCount-error">{{ message }}</p>
             }
           </div>
-          <div class="request-layout__field">
+          <!-- <div class="request-layout__field">
             <label class="request-layout__label" for="totalCost">Proposed total cost (optional)</label>
             <input class="request-layout__control" id="totalCost" type="number" formControlName="totalCost" min="0" step="0.01"
               [attr.aria-invalid]="!!error(event.totalCost)" [attr.aria-describedby]="error(event.totalCost) ? 'totalCost-error' : null">
             @if (error(event.totalCost); as message) {
               <p class="request-layout__error" id="totalCost-error">{{ message }}</p>
             }
-          </div>
+          </div> -->
           <div class="request-layout__field">
             <label class="request-layout__label" for="location">Event location *</label>
             <select class="request-layout__control" id="location" formControlName="location" required
               [attr.aria-invalid]="!!error(event.location)" [attr.aria-describedby]="error(event.location) ? 'location-error' : null">
               <option value="" disabled>Select event location</option>
               @for (location of locations; track location) {
-                <option [value]="location">{{ location }}</option>
+                <option [value]="location">{{ location.replaceAll("_", " ") }}</option>
               }
             </select>
             @if (error(event.location); as message) {
@@ -162,7 +162,7 @@
   } @else {
     <section class="request-layout__review" aria-labelledby="review-title">
       <h2 class="request-layout__legend" id="review-title" tabindex="-1">Your event request</h2>
-      <p class="request-layout__note" role="status">This request has not been sent or saved. Online submission is not connected yet.</p>
+      <p class="request-layout__note" role="status">{{ submitted() ? 'Your event request has been sent successfully.' : 'Order your event to verify your email and send this request.' }}</p>
       <h3 class="request-layout__heading">Client details</h3>
       <dl class="request-layout__details">
         <div class="request-layout__detail"><dt>Client type</dt><dd>{{ request.client.type === 'PERSON' ? 'Individual' : 'Organization' }}</dd></div>
@@ -175,12 +175,18 @@
         <div class="request-layout__detail"><dt>Event type</dt><dd>{{ request.event.eventType }}</dd></div>
         <div class="request-layout__detail"><dt>Event date</dt><dd>{{ request.event.date }}</dd></div>
         <div class="request-layout__detail"><dt>Number of guests</dt><dd>{{ request.event.guestCount }}</dd></div>
-        <div class="request-layout__detail"><dt>Proposed total cost</dt><dd>{{ request.event.totalCost ?? 'To be discussed' }}</dd></div>
+        <!-- <div class="request-layout__detail"><dt>Proposed total cost</dt><dd>{{ request.event.totalCost ?? 'To be discussed' }}</dd></div> -->
         <div class="request-layout__detail"><dt>Event location</dt><dd>{{ request.event.location }}</dd></div>
         <div class="request-layout__detail"><dt>Notes</dt><dd>{{ request.event.notes || 'To be discussed' }}</dd></div>
         <div class="request-layout__detail"><dt>Status</dt><dd>{{ request.event.status }}</dd></div>
       </dl>
-      <button class="request-layout__button" type="button" (click)="edit()">← Edit details</button>
+      @if (submissionError()) {
+        <p class="request-layout__error" role="alert">{{ submissionError() }}</p>
+      }
+      <div class="request-layout__btn-section">
+        <button class="request-layout__button" type="button" [disabled]="isVerifying() || submitted()" (click)="edit()">← Edit details</button>
+        <button class="request-layout__button" type="button" (click)="orderEvent()" [disabled]="isVerifying() || submitted()">{{ isVerifying() ? 'Sending code…' : submitted() ? 'Request sent' : 'Order Event' }}</button>
+      </div>
     </section>
   }
   <aside class="request-layout__summary" aria-labelledby="selected-menu-title">
