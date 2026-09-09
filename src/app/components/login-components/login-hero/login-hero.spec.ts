@@ -1,20 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Login } from './login';
-import { provideHttpClient } from '@angular/common/http';
+import { LoginHero } from './login-hero';
 
-describe('Login', () => {
-  let component: Login;
-  let fixture: ComponentFixture<Login>;
+describe('LoginHero', () => {
+  let component: LoginHero;
+  let fixture: ComponentFixture<LoginHero>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Login],
-      providers: [provideHttpClient()]
+      imports: [LoginHero]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Login);
+    fixture = TestBed.createComponent(LoginHero);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
