@@ -1,0 +1,13 @@
+.staff-page-body {
+    margin-left: 250px;
+    margin-top: 20px;
+    transition: margin-left 280ms cubic-bezier(0.22, 1, 0.36, 1);
+
+    &--collapsed {
+        margin-left: 90px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .staff-page-body { transition: none; }
+}

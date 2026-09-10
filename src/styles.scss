@@ -51,6 +51,13 @@ a:focus-visible {
   }
 }
 
+.aurum-logo {
+  color: #c6921d !important;
+  font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
+  // font-size: 16px;
+  letter-spacing: 0.42em;
+}
+
 // Reusable loading placeholders. Override these custom properties where needed.
 .skeleton {
   display: block;

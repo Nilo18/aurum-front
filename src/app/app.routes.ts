@@ -23,7 +23,7 @@ export const routes: Routes = [
         path: 'staff',
         component: Staff,
         children: [
-            { path: 'dashboard', component: Dashboard },
+            { path: '', component: Dashboard },
             { path: 'event-requests', component: EventRequests },
             { path: 'events', component: Events },
             { path: 'clients', component: Clients },

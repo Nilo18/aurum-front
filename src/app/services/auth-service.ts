@@ -3,6 +3,7 @@ import { BackendUrlHolderService } from './backend-url-holder-service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { OtpResponse } from './home-service';
+import { Router } from '@angular/router';
 
 export enum EmployeeRole { OWNER, ADMIN, STAFF }
 
@@ -35,6 +36,7 @@ export interface AuthResponse {
 })
 export class AuthService {
   private backendUrlHolder = inject(BackendUrlHolderService)
+  private router = inject(Router)
   private baseUrl = this.backendUrlHolder.getBaseUrl()
   private http = inject(HttpClient)
 
@@ -54,5 +56,10 @@ export class AuthService {
     } catch (error) {
       throw error
     }
+  }
+
+  logout() {
+    localStorage.removeItem('aurum_token')
+    this.router.navigate(['/'])
   }
 }

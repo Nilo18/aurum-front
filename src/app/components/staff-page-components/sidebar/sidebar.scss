@@ -1,0 +1,156 @@
+.staff-sidebar {
+    position: fixed;
+    top: 0;
+    width: 219.2px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background: #050504;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 20px;
+        padding-left: 12px;
+        padding-right: 12px;
+
+        p {
+            margin-top: 5px;
+            margin-bottom: 0;
+        }
+
+        button {
+            background: transparent;
+            border: none;
+        }
+
+        svg {
+            color: #8A7B67;
+            cursor: pointer;
+            transition: 0.15s ease-in-out;
+        }
+
+        svg:hover {
+            color: rgb(177, 177, 177);
+        }
+    }
+
+    .active-section {
+        background-color: #1e1810;
+        border-left-color: #ffc83b;
+        color: #ffc83b;
+        // padding: 10px 12px;
+        // font-weight: 300;
+    }
+
+    &__section {
+        background: transparent;
+        border: none;
+        border-left: 2px solid transparent;
+        display: flex;
+        gap: 0.75rem;
+        height: 43px;
+        padding: 10px 12px;
+        color: #8A7B67;
+        font-weight: 300;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-left-color 0.15s ease-in-out;
+        // margin: 0;
+    }
+
+    &__section:not(.active-section):hover {
+        color: white;   
+    }
+
+    // &__footer {
+    //     margin-top: auto;
+    //     background: white;
+    // }
+
+    &__signout {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        padding: 22px 12px;
+        background: #050504;
+        border: none;
+        color: #8A7B67;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 300;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-left-color 0.15s ease-in-out;
+
+        p {
+            margin-bottom: 0;
+            // margin-top: 5px;
+        }
+    }
+
+    &__signout:hover {
+        color: red;
+    }
+}
+
+.staff-sidebar {
+    overflow: hidden;
+    transition: width 280ms cubic-bezier(0.22, 1, 0.36, 1);
+
+    &__header {
+        position: relative;
+        min-height: 32px;
+
+        .aurum-logo {
+            white-space: nowrap;
+            transition: opacity 120ms ease, transform 280ms ease;
+        }
+    }
+
+    &__toggle {
+        position: absolute;
+        right: 4px;
+        width: 32px;
+        height: 32px;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+
+        svg { transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), color 150ms ease; }
+    }
+
+    &__section, &__signout {
+        white-space: nowrap;
+        overflow: hidden;
+        flex-shrink: 0;
+
+        > span:first-child, > svg { flex-shrink: 0; }
+    }
+
+    &__label {
+        opacity: 1;
+        transform: translateX(0);
+        transition: opacity 160ms ease 80ms, transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+}
+
+.collapsed-staff-sidebar {
+    width: 59px;
+
+    .aurum-logo, .staff-sidebar__label {
+        opacity: 0;
+        transform: translateX(-8px);
+        pointer-events: none;
+        transition-delay: 0ms;
+    }
+
+    .staff-sidebar__toggle svg { transform: rotate(180deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .staff-sidebar, .staff-sidebar * { transition: none !important; }
+}
