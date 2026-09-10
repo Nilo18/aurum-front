@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
-
+import { StaffWorkspace } from '../workspace/workspace';
 @Component({
   selector: 'app-suppliers',
-  imports: [],
+  imports: [StaffWorkspace],
   templateUrl: './suppliers.html',
   styleUrl: './suppliers.scss',
 })
-export class Suppliers {
-
-}
+export class Suppliers {}

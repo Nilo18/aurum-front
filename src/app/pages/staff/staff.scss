@@ -1,3 +1,6 @@
+.staff-page-body { min-width: 0; }
+:host { display: flow-root; min-height: 100vh; background: #090907; }
+
 .staff-page-body {
     margin-left: 250px;
     margin-top: 20px;
@@ -6,6 +9,10 @@
     &--collapsed {
         margin-left: 90px;
     }
+}
+
+@media (max-width: 700px) {
+    .staff-page-body, .staff-page-body--collapsed { margin-left: 75px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

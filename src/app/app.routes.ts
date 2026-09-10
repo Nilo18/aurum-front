@@ -13,6 +13,7 @@ import { Vehicles } from './components/staff-page-components/vehicles/vehicles';
 import { Products } from './components/staff-page-components/products/products';
 import { Suppliers } from './components/staff-page-components/suppliers/suppliers';
 import { Feedback } from './components/staff-page-components/feedback/feedback';
+import { Menu } from './components/staff-page-components/menu/menu';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -32,6 +33,7 @@ export const routes: Routes = [
             { path: 'products', component: Products },
             { path: 'suppliers', component: Suppliers },
             { path: 'feedback', component: Feedback },
+            { path: 'menu', component: Menu },
         ]
     },
 ];
