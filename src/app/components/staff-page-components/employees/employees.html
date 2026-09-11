@@ -1,34 +1,38 @@
-<div class="workspace">
-  <div class="topline">
-    <span>AURUM <span class="divider">/</span> WORKSPACE</span
-    ><span class="preview"><i></i> Sample data · session only</span>
+<div class="employees">
+  <div class="employees__topline">
+    <span>AURUM <span class="employees__divider">/</span> WORKSPACE</span
+    ><span class="employees__preview"><i></i> Sample data · session only</span>
   </div>
 
-  <header>
+  <header class="employees__header">
     <div>
-      <p class="eyebrow">THE AURUM COLLECTION</p>
-      <h1>Employees</h1>
+      <p class="employees__eyebrow">THE AURUM COLLECTION</p>
+      <h1 class="employees__title">Employees</h1>
       <p>The people behind every remarkable occasion.</p>
     </div>
-    <button class="primary" (click)="open()">＋ Add employee</button>
+    <button class="employees__button employees__button--primary" (click)="open()">
+      ＋ Add employee
+    </button>
   </header>
-  <div class="section-summary">
-    <span class="summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
+  <div class="employees__summary">
+    <span class="employees__summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
     <div>
       <strong>Employees in your collection</strong>
       <p>Considered details. Confident decisions.</p>
     </div>
   </div>
-  <section class="panel">
-    <div class="toolbar">
-      <label class="search"
+  <section class="employees__panel">
+    <div class="employees__toolbar">
+      <label class="employees__search"
         ><span aria-hidden="true">⌕</span
         ><input
+          class="employees__input"
           aria-label="Search records"
           placeholder="Search this collection…"
           [ngModel]="search()"
           (ngModelChange)="search.set($event)" /></label
       ><select
+        class="employees__select"
         aria-label="Filter records"
         [ngModel]="filter()"
         (ngModelChange)="filter.set($event)"
@@ -37,35 +41,41 @@
         @for (option of filters(); track option) {
           <option [value]="option">{{ human(option) }}</option>
         }</select
-      ><span class="result-count">{{ filtered().length }} results</span>
+      ><span class="employees__result-count">{{ filtered().length }} results</span>
     </div>
-    <div class="table-scroll">
-      <table>
+    <div class="employees__table-scroll">
+      <table class="employees__table">
         <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Specialty</th>
-            <th scope="col">Salary (₾)</th>
-            <th scope="col">Email</th>
-            <th scope="col">Access role</th>
-            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          <tr class="employees__row">
+            <th class="employees__table-heading" scope="col">ID</th>
+            <th class="employees__table-heading" scope="col">Specialty</th>
+            <th class="employees__table-heading" scope="col">Salary (₾)</th>
+            <th class="employees__table-heading" scope="col">Email</th>
+            <th class="employees__table-heading" scope="col">Access role</th>
+            <th class="employees__table-heading" scope="col">
+              <span class="visually-hidden">Actions</span>
+            </th>
           </tr>
         </thead>
         <tbody>
           @for (row of filtered(); track row['id']) {
-            <tr>
-              <td class="record-id">#{{ row['id'] }}</td>
-              <td>
-                <span class="badge" [attr.data-tone]="row['type']">{{ human(row['type']) }}</span>
+            <tr class="employees__row">
+              <td class="employees__cell employees__record-id">#{{ row['id'] }}</td>
+              <td class="employees__cell">
+                <span class="employees__badge" [attr.data-tone]="row['type']">{{
+                  human(row['type'])
+                }}</span>
               </td>
-              <td>{{ currency(row['salary']) }}</td>
-              <td>{{ human(row['email']) }}</td>
-              <td>
-                <span class="badge" [attr.data-tone]="row['role']">{{ human(row['role']) }}</span>
+              <td class="employees__cell">{{ currency(row['salary']) }}</td>
+              <td class="employees__cell">{{ human(row['email']) }}</td>
+              <td class="employees__cell">
+                <span class="employees__badge" [attr.data-tone]="row['role']">{{
+                  human(row['role'])
+                }}</span>
               </td>
-              <td>
+              <td class="employees__cell">
                 <button
-                  class="text-button"
+                  class="employees__button employees__button--text"
                   (click)="open(row)"
                   [attr.aria-label]="'Edit employee ' + row['id']"
                 >
@@ -78,19 +88,24 @@
       </table>
     </div>
     @if (!filtered().length) {
-      <div class="empty">
-        <h2>No records found</h2>
+      <div class="employees__empty">
+        <h2 class="employees__subtitle">No records found</h2>
         <p>Try another search or add your first employee.</p>
-        <button class="text-button" (click)="search.set(''); filter.set('')">Clear filters</button>
+        <button
+          class="employees__button employees__button--text"
+          (click)="search.set(''); filter.set('')"
+        >
+          Clear filters
+        </button>
       </div>
     }
-    <footer>
+    <footer class="employees__footer">
       <span>{{ filtered().length }} of {{ rows().length }} records</span
       ><span>AURUM · Made for memorable moments</span>
     </footer>
   </section>
   @if (notice()) {
-    <p class="notice" role="status">
+    <p class="employees__notice" role="status">
       {{ notice() }} <button (click)="notice.set('')" aria-label="Dismiss message">×</button>
     </p>
   }
@@ -98,23 +113,38 @@
 @if (editor()) {
   <dialog
     #editorDialog
-    class="editor"
+    class="employees__editor"
     aria-modal="true"
     aria-labelledby="editor-title"
-    (cancel)="close()"
+    (cancel)="$event.preventDefault(); close()"
   >
-    <div class="panel-heading">
+    <div class="employees__panel-heading">
       <div>
-        <p class="eyebrow">THE DETAILS</p>
-        <h2 id="editor-title">{{ editing ? 'Edit' : 'New' }} employee</h2>
+        <p class="employees__eyebrow">THE DETAILS</p>
+        <h2 class="employees__subtitle" id="editor-title">
+          {{ editing ? 'Edit' : 'New' }} employee
+        </h2>
       </div>
-      <button class="text-button" (click)="close()" aria-label="Close editor">✕</button>
+      <button
+        class="employees__button employees__button--text"
+        (click)="close()"
+        [disabled]="isSubmitting()"
+        aria-label="Close editor"
+      >
+        ✕
+      </button>
     </div>
-    <p class="editor-note">Sample workspace · changes last for this session.</p>
-    <form #editorForm="ngForm" (ngSubmit)="editorForm.valid && save()">
-      <div class="fields">
-        <label
-          >Specialty<select name="type" [(ngModel)]="draft['type']" required>
+    <p class="employees__editor-note">Sample workspace · changes last for this session.</p>
+    <form
+      (ngSubmit)="onSubmit()"
+      [formGroup]="employeeForm"
+      novalidate
+      [attr.aria-busy]="isSubmitting()"
+    >
+      <fieldset class="employees__fields" [disabled]="isSubmitting()">
+        <label>
+          Specialty
+          <select class="employees__select" name="type" required formControlName="type">
             <option value="SALES_MANAGER">Sales manager</option>
             <option value="CLIENT_MANAGER">Client manager</option>
             <option value="PURCHASING_MANAGER">Purchasing manager</option>
@@ -123,33 +153,79 @@
             <option value="DRIVER">Driver</option>
             <option value="HOST">Host</option>
             <option value="CHEF">Chef</option>
-          </select></label
-        >
+          </select>
+          <p class="employees__field-error">
+            {{ formValidator.getRequiredError('type', employeeForm) }}
+          </p>
+        </label>
         <label
-          >Salary (₾)<input
+          >Salary (₾)
+          <input
+            class="employees__input"
             type="number"
             name="salary"
-            [(ngModel)]="draft['salary']"
             required
             min="0"
             step="any"
-        /></label>
-        <label
-          >Email<input type="email" name="email" [(ngModel)]="draft['email']" required
-        /></label>
-        <label
-          >Access role<select name="role" [(ngModel)]="draft['role']" required>
+            formControlName="salary"
+          />
+          <p class="employees__field-error">
+            {{ formValidator.getRequiredError('salary', employeeForm) }}
+          </p>
+        </label>
+        <label>
+          Email
+          <input
+            class="employees__input"
+            type="email"
+            name="email"
+            required
+            formControlName="email"
+          />
+          <p class="employees__field-error">
+            {{ formValidator.getRequiredEmailError('email', employeeForm) }}
+          </p>
+        </label>
+        <label>
+          Access role
+          <select class="employees__select" name="role" required formControlName="role">
             <option value="ADMIN">Admin</option>
             <option value="STAFF">Staff</option>
-          </select></label
-        >
-      </div>
-      <p class="editor-note">
+          </select>
+          <p class="employees__field-error">
+            {{ formValidator.getRequiredError('role', employeeForm) }}
+          </p>
+        </label>
+      </fieldset>
+      <p class="employees__editor-note">
         Passwords are managed through staff registration and are never displayed here.
       </p>
-      <div class="form-actions">
-        <button type="button" class="secondary" (click)="close()">Cancel</button
-        ><button type="submit" class="primary">Save employee</button>
+      @if (submissionError()) {
+        <p class="employees__submission-error" role="alert">{{ submissionError() }}</p>
+      }
+      <p class="visually-hidden" role="status">
+        {{ isSubmitting() ? 'Sending the invitation. Please wait.' : '' }}
+      </p>
+      <div class="employees__form-actions">
+        <button
+          type="button"
+          class="employees__button employees__button--secondary"
+          (click)="close()"
+          [disabled]="isSubmitting()"
+        >
+          Cancel</button
+        ><button
+          type="submit"
+          class="employees__button employees__button--primary employees__button--submit"
+          [disabled]="isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Sending
+            invitation
+          } @else {
+            Send invitation
+          }
+        </button>
       </div>
     </form>
   </dialog>

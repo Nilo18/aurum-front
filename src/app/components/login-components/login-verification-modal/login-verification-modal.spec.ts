@@ -3,7 +3,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { vi } from 'vitest';
-import { AuthService, EmployeeRole } from '../../../services/auth-service';
+import { AuthService } from '../../../services/auth-service';
+import { EmployeeRole } from '../../../services/employee-service';
 import { LoginVerificationModal } from './login-verification-modal';
 
 describe('LoginVerificationModal', () => {
@@ -26,7 +27,12 @@ describe('LoginVerificationModal', () => {
   function setup() {
     const fixture = TestBed.createComponent(LoginVerificationModal);
     const component = fixture.componentInstance;
-    component.loginInfo = { email: 'staff@example.com', password: 'test-password', role: EmployeeRole.STAFF, transactionKey: 'transaction-123' };
+    component.loginInfo = {
+      email: 'staff@example.com',
+      password: 'test-password',
+      role: EmployeeRole.STAFF,
+      transactionKey: 'transaction-123',
+    };
     fixture.detectChanges();
     return { fixture, component };
   }
@@ -39,7 +45,9 @@ describe('LoginVerificationModal', () => {
     }
     fixture.detectChanges();
     expect(auth.login).not.toHaveBeenCalled();
-    expect(fixture.nativeElement.querySelector('.invalid-feedback').textContent).toContain('six-digit');
+    expect(fixture.nativeElement.querySelector('.invalid-feedback').textContent).toContain(
+      'six-digit',
+    );
     expect(component.maskedEmail).toBe('st•••@example.com');
   });
 
@@ -47,7 +55,11 @@ describe('LoginVerificationModal', () => {
     const { fixture, component } = setup();
     component.verificationForm.setValue({ otp: '012345' });
     let resolve!: (value: { token: string }) => void;
-    auth.login.mockReturnValueOnce(new Promise(r => { resolve = r; }));
+    auth.login.mockReturnValueOnce(
+      new Promise((r) => {
+        resolve = r;
+      }),
+    );
     const pending = component.onSubmit();
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('button[type="submit"]').disabled).toBe(true);
@@ -66,10 +78,17 @@ describe('LoginVerificationModal', () => {
   it('keeps the modal open on backend failure and allows retry', async () => {
     const { fixture, component } = setup();
     component.verificationForm.setValue({ otp: '123456' });
-    auth.login.mockRejectedValueOnce(new HttpErrorResponse({ status: 400, error: { message: 'The verification code has expired.' } }));
+    auth.login.mockRejectedValueOnce(
+      new HttpErrorResponse({
+        status: 400,
+        error: { message: 'The verification code has expired.' },
+      }),
+    );
     await component.onSubmit();
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain('code has expired');
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(
+      'code has expired',
+    );
     expect(component.isSubmitting()).toBe(false);
     expect(modal.close).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();

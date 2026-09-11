@@ -1,0 +1,229 @@
+:host {
+  display: grid;
+  min-width: 0;
+}
+.registration {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  .error {
+    margin: 0;
+    margin-top: 10px;
+  }
+
+  &__story {
+    display: flex;
+    align-items: flex-end;
+    min-width: 0;
+    padding: clamp(32px, 5vw, 80px);
+    border-right: 1px solid #c6921d30;
+    background:
+      linear-gradient(180deg, #05050433, #050504ed),
+      url('/home-hero-image.avif') center / cover;
+  }
+  &__eyebrow {
+    margin: 0 0 24px;
+    color: #d0a441;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.8;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+  h1,
+  h2 {
+    font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
+    font-weight: 400;
+  }
+  h1 {
+    margin: 0 0 24px;
+    font-size: clamp(36px, 3.7vw, 58px);
+    line-height: 1.15;
+    em {
+      color: #d4ad56;
+      font-weight: 400;
+    }
+  }
+  &__description {
+    max-width: 370px;
+    margin: 0;
+    color: #b8ad9c;
+    font-size: 13px;
+    line-height: 1.9;
+  }
+  &__signature {
+    margin: 42px 0 0;
+    padding-left: 20px;
+    border-left: 1px solid #c6921d;
+    color: #d4ad56;
+    font-size: 10px;
+    line-height: 1.8;
+    letter-spacing: 0.08em;
+  }
+  &__panel {
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    padding: 56px 40px;
+  }
+  &__form-wrap {
+    width: 100%;
+    max-width: 430px;
+  }
+  &__panel &__eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 20px;
+  }
+  &__verified {
+    padding: 4px 8px;
+    border: 1px solid #c6921d30;
+    background: #c6921d08;
+    color: #d9c699;
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+  h2 {
+    margin: 0 0 12px;
+    font-size: clamp(34px, 3.4vw, 46px);
+  }
+  &__intro {
+    margin: 0 0 32px;
+    color: #a99e8c;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  &__form {
+    display: grid;
+    gap: 22px;
+  }
+  label {
+    display: block;
+    margin-bottom: 10px;
+    color: #d9d0c0;
+    font-size: 12px;
+  }
+  input {
+    display: block;
+    width: 100%;
+    min-height: 50px;
+    padding: 14px;
+    border: 1px solid #b999614d;
+    border-radius: 0;
+    background: #10100d;
+    color: #f0eadf;
+    color-scheme: dark;
+    font-size: 12px;
+    &::placeholder {
+      color: #928879;
+      opacity: 1;
+    }
+    &:focus {
+      outline: 1px solid #c79625;
+      border-color: #c79625;
+    }
+  }
+  &__submit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 50px;
+    margin-top: 8px;
+    padding: 14px 20px;
+    border: 1px solid #c79625;
+    background: #c79625;
+    color: #171108;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__submit:hover {
+    background: #ddb448;
+  }
+
+  &__availability {
+    margin: -10px 0 0;
+    color: #a99e8c;
+    font-size: 11px;
+    line-height: 1.7;
+  }
+  &__help {
+    margin: 28px 0 0;
+    padding-top: 24px;
+    border-top: 1px solid #c6921d30;
+    color: #a99e8c;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.9;
+    a {
+      margin-left: 6px;
+      color: #d4ad56;
+      text-underline-offset: 4px;
+      &:hover {
+        color: #ddb448;
+      }
+    }
+  }
+}
+@media (max-width: 760px) {
+  .registration {
+    grid-template-columns: 1fr;
+    &__story {
+      min-height: 300px;
+      padding: 40px 24px;
+      border-right: 0;
+      border-bottom: 1px solid #c6921d30;
+    }
+    &__signature {
+      margin-top: 24px;
+    }
+    &__panel {
+      padding: 40px 24px;
+    }
+  }
+}
+
+.registration__fields {
+  display: grid;
+  gap: 22px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  &:disabled {
+    opacity: 0.65;
+  }
+}
+.registration .error {
+  margin: 8px 0 0;
+  color: #e9a48f;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.registration__feedback {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid #c6921d40;
+  background: #c6921d0a;
+  color: #d4ad56;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  a {
+    color: inherit;
+    text-underline-offset: 3px;
+  }
+  &--error {
+    border-color: #e9a48f40;
+    background: #e9a48f08;
+    color: #e9b5a3;
+  }
+}

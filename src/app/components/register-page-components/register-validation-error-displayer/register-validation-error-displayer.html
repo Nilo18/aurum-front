@@ -1,0 +1,24 @@
+<section class="invitation-error" aria-labelledby="invitation-error-title">
+  <div class="invitation-error__card">
+    <div class="invitation-error__icon" aria-hidden="true">!</div>
+    <p class="invitation-error__eyebrow">Staff invitation</p>
+    <h1 id="invitation-error-title">We couldn’t verify<br />your invitation.</h1>
+    <p class="invitation-error__intro">Your registration couldn’t be continued.</p>
+    <div class="invitation-error__detail" role="alert">
+      <span>Invitation verification failed</span>
+      <p>
+        {{
+          message() ||
+            'This invitation could not be verified. Please request a new invitation from your administrator.'
+        }}
+      </p>
+    </div>
+    <p class="invitation-error__help">
+      Please contact your administrator for a new invitation, then open the link in your email.
+    </p>
+    <!-- <a class="invitation-error__action" href="/staff-login"
+      >Back to sign in <span aria-hidden="true">&rarr;</span></a
+    > -->
+    <a class="invitation-error__home" href="/">Return to AURUM</a>
+  </div>
+</section>

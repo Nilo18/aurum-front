@@ -1,1 +1,23 @@
-<p>register works!</p>
+<div class="registration-page">
+  <header class="registration-page__header">
+    <a class="registration-page__logo" href="/" aria-label="AURUM home">AURUM</a>
+    <a class="registration-page__back" href="/">
+      <span aria-hidden="true">&larr;</span> Back to website
+    </a>
+  </header>
+
+  <main class="registration-page__main">
+    @if (validationFailed()) {
+      <app-register-validation-error-displayer [message]="validationErrorMsg()" />
+    } @else if (validating()) {
+      <app-loader-component />
+    } @else {
+      <app-registration-form [token]="token" />
+    }
+  </main>
+
+  <footer class="registration-page__footer">
+    <span>AURUM &middot; Event Management</span>
+    <span>Invitation-only staff access</span>
+  </footer>
+</div>

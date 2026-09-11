@@ -1,34 +1,66 @@
-<aside class="staff-sidebar" [class.collapsed-staff-sidebar]="collapse()">
-    <div class="staff-sidebar__header">
-        <p class="aurum-logo">AURUM</p>
-        <button type="button" class="staff-sidebar__toggle" (click)="collapse.set(!collapse())"
-            [attr.aria-label]="collapse() ? 'Expand sidebar' : 'Collapse sidebar'"
-            [attr.aria-expanded]="!collapse()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m15 18-6-6 6-6"></path>
-            </svg>
-        </button>
-    </div>
-    @for (section of sections; track section.id) {
-        <button class="staff-sidebar__section" [class.active-section]="router.url === section.link"
-        [routerLink]="section.link" [attr.aria-label]="section.heading" [attr.title]="collapse() ? section.heading : null">
-            <span [innerHTML]="section.icon" class="settings-sidebar__section--icon-holder"></span>
-            <span class="staff-sidebar__label">{{ section.heading }}</span>
-        </button>
-    }
-    <!-- <div class="staff-sidebar__footer"> -->
-        <button class="staff-sidebar__signout" aria-label="Sign out" [attr.title]="collapse() ? 'Sign out' : null"
-        (click)="authService.logout()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out shrink-0"
-            data-fg-cdo944="55.34:55.7477:node_modules/lucide-react:124:11:5334:40:e:LogOut::::::B3pg"
-            data-fgid-cdo944=":r36c:">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                <polyline points="16 17 21 12 16 7"></polyline>
-                <line x1="21" x2="9" y1="12" y2="12"></line>
-            </svg>
-            <p class="staff-sidebar__label">SIGN OUT</p>
-        </button>
-    <!-- </div> -->
+<aside class="staff-sidebar" [class.staff-sidebar--collapsed]="collapse()">
+  <div class="staff-sidebar__header">
+    <p class="aurum-logo">AURUM</p>
+    <button
+      type="button"
+      class="staff-sidebar__toggle"
+      (click)="collapse.set(!collapse())"
+      [attr.aria-label]="collapse() ? 'Expand sidebar' : 'Collapse sidebar'"
+      [attr.aria-expanded]="!collapse()"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m15 18-6-6 6-6"></path>
+      </svg>
+    </button>
+  </div>
+  @for (section of sections; track section.id) {
+    <button
+      class="staff-sidebar__section"
+      [class.staff-sidebar__section--active]="router.url === section.link"
+      [routerLink]="section.link"
+      [attr.aria-label]="section.heading"
+      [attr.title]="collapse() ? section.heading : null"
+    >
+      <span [innerHTML]="section.icon" class="staff-sidebar__icon"></span>
+      <span class="staff-sidebar__label">{{ section.heading }}</span>
+    </button>
+  }
+  <!-- <div class="staff-sidebar__footer"> -->
+  <button
+    class="staff-sidebar__signout"
+    aria-label="Sign out"
+    [attr.title]="collapse() ? 'Sign out' : null"
+    (click)="authService.logout()"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="lucide lucide-log-out shrink-0"
+      data-fg-cdo944="55.34:55.7477:node_modules/lucide-react:124:11:5334:40:e:LogOut::::::B3pg"
+      data-fgid-cdo944=":r36c:"
+    >
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+      <polyline points="16 17 21 12 16 7"></polyline>
+      <line x1="21" x2="9" y1="12" y2="12"></line>
+    </svg>
+    <p class="staff-sidebar__label">SIGN OUT</p>
+  </button>
+  <!-- </div> -->
 </aside>

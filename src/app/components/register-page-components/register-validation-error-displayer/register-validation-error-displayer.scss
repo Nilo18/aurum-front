@@ -1,0 +1,120 @@
+:host {
+  display: grid;
+  min-width: 0;
+}
+
+.invitation-error {
+  display: grid;
+  place-items: center;
+  padding: clamp(40px, 7vw, 80px) 24px;
+  background: radial-gradient(ellipse at top, #c6921d0c, transparent 65%);
+
+  &__card {
+    width: 100%;
+    max-width: 520px;
+    text-align: center;
+  }
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 28px;
+    border: 1px solid #d4ad5655;
+    border-radius: 50%;
+    background: #c6921d0a;
+    color: #d4ad56;
+    font:
+      28px Georgia,
+      serif;
+  }
+
+  &__eyebrow {
+    margin: 0 0 18px;
+    color: #d0a441;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0 0 18px;
+    font:
+      400 clamp(32px, 4vw, 46px) / 1.15 'Bodoni 72',
+      Didot,
+      Georgia,
+      serif;
+  }
+
+  &__intro,
+  &__help {
+    color: #b8ad9c;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  &__detail {
+    margin: 28px 0 20px;
+    padding: 20px 24px;
+    border: 1px solid #e9a48f30;
+    border-left: 2px solid #e9a48f;
+    background: #e9a48f08;
+    text-align: left;
+    overflow-wrap: anywhere;
+
+    span {
+      color: #e9b5a3;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    p {
+      margin: 8px 0 0;
+      color: #d9d0c0;
+      font-size: 13px;
+      line-height: 1.8;
+      white-space: pre-line;
+    }
+  }
+
+  &__help {
+    margin: 0 0 28px;
+    font-size: 12px;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  &__action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 50px;
+    padding: 14px 20px;
+    background: #c79625;
+    color: #171108;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+
+    &:hover {
+      background: #ddb448;
+    }
+  }
+
+  &__home {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 10px;
+    color: #b8ad9c;
+    font-size: 12px;
+
+    &:hover {
+      color: #ddb448;
+    }
+  }
+}

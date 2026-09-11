@@ -1,4 +1,7 @@
-:host { display: grid; min-width: 0; }
+:host {
+  display: grid;
+  min-width: 0;
+}
 
 .staff-login {
   &__eyebrow {
@@ -7,7 +10,7 @@
     font-size: 10px;
     font-weight: 500;
     line-height: 1.8;
-    letter-spacing: .24em;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
   }
 
@@ -20,13 +23,37 @@
     font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
     font-weight: 400;
   }
-  &__panel { display: grid; place-items: center; padding: 56px 40px; }
-  &__form-wrap { width: 100%; max-width: 390px; }
-  h2 { margin: 0 0 12px; font-size: clamp(36px, 3.4vw, 48px); }
-  &__intro { margin: 0 0 36px; color: #a99e8c; font-size: 13px; line-height: 1.7; }
-  &__form { display: grid; gap: 24px; }
-  label { display: block; margin-bottom: 10px; color: #d9d0c0; font-size: 12px; }
-  input, select {
+  &__panel {
+    display: grid;
+    place-items: center;
+    padding: 56px 40px;
+  }
+  &__form-wrap {
+    width: 100%;
+    max-width: 390px;
+  }
+  h2 {
+    margin: 0 0 12px;
+    font-size: clamp(36px, 3.4vw, 48px);
+  }
+  &__intro {
+    margin: 0 0 36px;
+    color: #a99e8c;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  &__form {
+    display: grid;
+    gap: 24px;
+  }
+  label {
+    display: block;
+    margin-bottom: 10px;
+    color: #d9d0c0;
+    font-size: 12px;
+  }
+  input,
+  select {
     display: block;
     width: 100%;
     min-height: 50px;
@@ -37,13 +64,31 @@
     color: #f0eadf;
     color-scheme: dark;
     font-size: 12px;
-    &::placeholder { color: #928879; opacity: 1; }
-    &:focus { outline: 1px solid #c79625; border-color: #c79625; }
+    &::placeholder {
+      color: #928879;
+      opacity: 1;
+    }
+    &:focus {
+      outline: 1px solid #c79625;
+      border-color: #c79625;
+    }
   }
-  select:invalid { color: #928879; }
-  &__password { position: relative; input { padding-right: 70px; } }
-  button { cursor: pointer; }
-  button:focus-visible { outline: 2px solid #f0eadf; outline-offset: 4px; }
+  select:invalid {
+    color: #928879;
+  }
+  &__password {
+    position: relative;
+    input {
+      padding-right: 70px;
+    }
+  }
+  button {
+    cursor: pointer;
+  }
+  button:focus-visible {
+    outline: 2px solid #f0eadf;
+    outline-offset: 4px;
+  }
   &__reveal {
     position: absolute;
     right: 4px;
@@ -67,12 +112,22 @@
     color: #171108;
     font-size: 11px;
     font-weight: 600;
-    letter-spacing: .14em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    span { font-size: 20px; line-height: 1; }
-    &:hover { background: #ddb448; }
+    span {
+      font-size: 20px;
+      line-height: 1;
+    }
+    &:hover {
+      background: #ddb448;
+    }
   }
-  &__status { margin: 0; color: #d4ad56; font-size: 12px; line-height: 1.7; }
+  &__status {
+    margin: 0;
+    color: #d4ad56;
+    font-size: 12px;
+    line-height: 1.7;
+  }
   &__help {
     margin: 30px 0 0;
     padding-top: 24px;
@@ -81,17 +136,48 @@
     text-align: center;
     font-size: 11px;
     line-height: 1.9;
-    span { color: #d9d0c0; }
+    span {
+      color: #d9d0c0;
+    }
   }
 }
 
 @media (max-width: 760px) {
-  .staff-login__panel { padding: 44px 24px; }
+  .staff-login__panel {
+    padding: 44px 24px;
+  }
 }
 
 .staff-login {
-  &__fields { display: grid; gap: 24px; min-width: 0; margin: 0; padding: 0; border: 0; }
-  input[aria-invalid='true'], select[aria-invalid='true'] { border-color: #e9a48f; }
-  &__submit:disabled { background: #70581e; border-color: #70581e; cursor: wait; }
-  &__fields:disabled { opacity: .65; }
+  &__fields {
+    display: grid;
+    gap: 24px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  input[aria-invalid='true'],
+  select[aria-invalid='true'] {
+    border-color: #e9a48f;
+  }
+  &__submit:disabled {
+    background: #70581e;
+    border-color: #70581e;
+    cursor: wait;
+  }
+  &__fields:disabled {
+    opacity: 0.65;
+  }
+}
+
+.staff-login__submission-error {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid #e9a48f40;
+  background: #e9a48f08;
+  color: #e9b5a3;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
 }

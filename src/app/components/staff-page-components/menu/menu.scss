@@ -1,1 +1,3 @@
 @use '../shared/staff-section';
+
+@include staff-section.styles('menu');

@@ -1,24 +1,28 @@
 @use '../shared/staff-section';
 
-.feedback-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  padding: 0 20px 20px;
-}
-.feedback-card {
-  padding: 24px;
-  background: #17140f;
-  border: 1px solid #322a1d;
-  border-radius: 4px;
-}
-.feedback-card .panel-heading {
-  padding: 0 0 20px;
-}
-.stars {
-  color: #c9a359;
-  font-size: 12px;
-  letter-spacing: 2px;
+@include staff-section.styles('feedback');
+
+.feedback {
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 0 20px 20px;
+  }
+  &__card {
+    padding: 24px;
+    background: #17140f;
+    border: 1px solid #322a1d;
+    border-radius: 4px;
+  }
+  &__card .feedback__panel-heading {
+    padding: 0 0 20px;
+  }
+  &__stars {
+    color: #c9a359;
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
 }
 blockquote {
   font:
@@ -27,7 +31,9 @@ blockquote {
   color: #d6cbb7;
 }
 @media (max-width: 700px) {
-  .feedback-grid {
-    grid-template-columns: 1fr;
+  .feedback {
+    &__grid {
+      grid-template-columns: 1fr;
+    }
   }
 }

@@ -1,9 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService, EmployeeRole, getAuthErrorMessage } from '../../../services/auth-service';
+import { AuthService, getAuthErrorMessage } from '../../../services/auth-service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LoginVerificationModal } from '../login-verification-modal/login-verification-modal';
 import { FormValidatorService } from '../../../services/form-validator-service';
+import { EmployeeRole } from '../../../services/employee-service';
 
 @Component({
   selector: 'app-login-form',

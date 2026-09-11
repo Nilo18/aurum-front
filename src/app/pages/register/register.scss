@@ -1,0 +1,72 @@
+:host {
+  display: block;
+}
+
+.registration-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  background: #050504;
+  color: #f0eadf;
+
+  &__header,
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 24px clamp(20px, 5vw, 80px);
+  }
+
+  &__header {
+    border-bottom: 1px solid #c6921d30;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  &__logo {
+    color: #c6921d;
+    font:
+      24px 'Bodoni 72',
+      Didot,
+      'Palatino Linotype',
+      Georgia,
+      serif;
+    letter-spacing: 0.42em;
+  }
+
+  &__back {
+    color: #b8ad9c;
+    font-size: 12px;
+
+    span {
+      margin-right: 10px;
+    }
+
+    &:hover {
+      color: #ddb448;
+    }
+  }
+
+  &__main {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__footer {
+    flex-wrap: wrap;
+    border-top: 1px solid #c6921d30;
+    color: #a99e8c;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+}
+
+@media (max-width: 420px) {
+  .registration-page__header {
+    flex-wrap: wrap;
+  }
+}

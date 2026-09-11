@@ -4,17 +4,30 @@
     <h2 id="login-title">Welcome back.</h2>
     <p class="staff-login__intro">Sign in to your AURUM workspace.</p>
 
-    <form class="staff-login__form" (ngSubmit)="onSubmit()" novalidate [attr.aria-busy]="isSubmitting()" [formGroup]="loginForm">
+    <form
+      class="staff-login__form"
+      (ngSubmit)="onSubmit()"
+      novalidate
+      [attr.aria-busy]="isSubmitting()"
+      [formGroup]="loginForm"
+    >
       <fieldset class="staff-login__fields" [disabled]="isSubmitting()">
         <div class="staff-login__field">
           @let emailError = formValidator.getRequiredEmailError('email', loginForm);
           <label for="staff-email">Email address</label>
-          <input id="staff-email" name="email" type="email"
-          autocomplete="username" placeholder="Enter your work email"
-          required
-          formControlName="email" [attr.aria-invalid]="!!emailError" [attr.aria-describedby]="emailError ? 'staff-email-error' : null">
+          <input
+            id="staff-email"
+            name="email"
+            type="email"
+            autocomplete="username"
+            placeholder="Enter your work email"
+            required
+            formControlName="email"
+            [attr.aria-invalid]="!!emailError"
+            [attr.aria-describedby]="emailError ? 'staff-email-error' : null"
+          />
           <!-- @if (emailError) { -->
-            <p class="error" id="staff-email-error">{{ emailError }}</p>
+          <p class="error" id="staff-email-error">{{ emailError }}</p>
           <!-- } -->
         </div>
 
@@ -22,36 +35,56 @@
           @let passwordError = formValidator.getRequiredError('password', loginForm);
           <label for="staff-password">Password</label>
           <div class="staff-login__password">
-            <input id="staff-password" name="password" [type]="passwordVisible() ? 'text' : 'password'"
-            autocomplete="current-password" placeholder="Enter your password" required formControlName="password" [attr.aria-invalid]="!!passwordError" [attr.aria-describedby]="passwordError ? 'staff-password-error' : null">
-            <button class="staff-login__reveal" type="button" (click)="passwordVisible.set(!passwordVisible())"
-            [attr.aria-label]="passwordVisible() ? 'Hide password' : 'Show password'"
-            [attr.aria-pressed]="passwordVisible()" aria-controls="staff-password">
+            <input
+              id="staff-password"
+              name="password"
+              [type]="passwordVisible() ? 'text' : 'password'"
+              autocomplete="current-password"
+              placeholder="Enter your password"
+              required
+              formControlName="password"
+              [attr.aria-invalid]="!!passwordError"
+              [attr.aria-describedby]="passwordError ? 'staff-password-error' : null"
+            />
+            <button
+              class="staff-login__reveal"
+              type="button"
+              (click)="passwordVisible.set(!passwordVisible())"
+              [attr.aria-label]="passwordVisible() ? 'Hide password' : 'Show password'"
+              [attr.aria-pressed]="passwordVisible()"
+              aria-controls="staff-password"
+            >
               {{ passwordVisible() ? 'Hide' : 'Show' }}
             </button>
           </div>
           <!-- @if (passwordError) { -->
-            <p class="error" id="staff-password-error">{{ passwordError }}</p>
+          <p class="error" id="staff-password-error">{{ passwordError }}</p>
           <!-- } -->
         </div>
 
         <div class="staff-login__field">
           @let roleError = formValidator.getRequiredError('role', loginForm);
           <label for="staff-role">Role</label>
-          <select id="staff-role" name="role" required formControlName="role" [attr.aria-invalid]="!!roleError" [attr.aria-describedby]="roleError ? 'staff-role-error' : null">
+          <select
+            id="staff-role"
+            name="role"
+            required
+            formControlName="role"
+            [attr.aria-invalid]="!!roleError"
+            [attr.aria-describedby]="roleError ? 'staff-role-error' : null"
+          >
             <option [ngValue]="null" disabled>Select your role</option>
             <option [ngValue]="roles.OWNER">Owner</option>
             <option [ngValue]="roles.ADMIN">Admin</option>
             <option [ngValue]="roles.STAFF">Staff</option>
           </select>
           <!-- @if (roleError) { -->
-            <p class="error" id="staff-role-error">{{ roleError }}</p>
+          <p class="error" id="staff-role-error">{{ roleError }}</p>
           <!-- } -->
         </div>
-
       </fieldset>
       @if (submissionError()) {
-        <p class="error" role="alert">{{ submissionError() }}</p>
+        <p class="staff-login__submission-error" role="alert">{{ submissionError() }}</p>
       }
       <button class="staff-login__submit" type="submit" [disabled]="isSubmitting()">
         @if (isSubmitting()) {
@@ -60,9 +93,13 @@
           Sign in <span aria-hidden="true">&rarr;</span>
         }
       </button>
-      <p class="visually-hidden" role="status">{{ isSubmitting() ? 'Sending your verification code. Please wait.' : '' }}</p>
+      <p class="visually-hidden" role="status">
+        {{ isSubmitting() ? 'Sending your verification code. Please wait.' : '' }}
+      </p>
     </form>
 
-    <p class="staff-login__help">Need access to your workspace?<br><span>Please contact your administrator.</span></p>
+    <p class="staff-login__help">
+      Need access to your workspace?<br /><span>Please contact your administrator.</span>
+    </p>
   </div>
 </section>

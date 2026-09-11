@@ -1,27 +1,29 @@
-<div class="workspace">
-  <div class="topline">
-    <span>AURUM <span class="divider">/</span> WORKSPACE</span
-    ><span class="preview"><i></i> Sample data · session only</span>
+<div class="feedback">
+  <div class="feedback__topline">
+    <span>AURUM <span class="feedback__divider">/</span> WORKSPACE</span
+    ><span class="feedback__preview"><i></i> Sample data · session only</span>
   </div>
 
   <header>
     <div>
-      <p class="eyebrow">THE AURUM COLLECTION</p>
+      <p class="feedback__eyebrow">THE AURUM COLLECTION</p>
       <h1>Feedback</h1>
       <p>Listen closely. Make the next experience even better.</p>
     </div>
-    <button class="primary" (click)="open()">＋ Add feedback</button>
+    <button class="feedback__button feedback__button--primary" (click)="open()">
+      ＋ Add feedback
+    </button>
   </header>
-  <div class="section-summary">
-    <span class="summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
+  <div class="feedback__summary">
+    <span class="feedback__summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
     <div>
       <strong>Feedback in your collection</strong>
       <p>Every voice helps us improve.</p>
     </div>
   </div>
-  <section class="panel">
-    <div class="toolbar">
-      <label class="search"
+  <section class="feedback__panel">
+    <div class="feedback__toolbar">
+      <label class="feedback__search"
         ><span aria-hidden="true">⌕</span
         ><input
           aria-label="Search records"
@@ -37,15 +39,15 @@
         @for (option of filters(); track option) {
           <option [value]="option">{{ human(option) }}</option>
         }</select
-      ><span class="result-count">{{ filtered().length }} results</span>
+      ><span class="feedback__result-count">{{ filtered().length }} results</span>
     </div>
-    <div class="feedback-grid">
+    <div class="feedback__grid">
       @for (row of filtered(); track row['eventId'] + ':' + row['id']) {
-        <article class="feedback-card">
-          <div class="panel-heading">
-            <span class="stars">{{ ratingLabel(row['rating']) }}</span
+        <article class="feedback__card">
+          <div class="feedback__panel-heading">
+            <span class="feedback__stars">{{ ratingLabel(row['rating']) }}</span
             ><button
-              class="text-button"
+              class="feedback__button feedback__button--text"
               (click)="open(row)"
               [attr.aria-label]="'Edit feedback by ' + row['author']"
             >
@@ -60,10 +62,15 @@
     </div>
 
     @if (!filtered().length) {
-      <div class="empty">
+      <div class="feedback__empty">
         <h2>No records found</h2>
         <p>Try another search or add your first feedback.</p>
-        <button class="text-button" (click)="search.set(''); filter.set('')">Clear filters</button>
+        <button
+          class="feedback__button feedback__button--text"
+          (click)="search.set(''); filter.set('')"
+        >
+          Clear filters
+        </button>
       </div>
     }
     <footer>
@@ -72,7 +79,7 @@
     </footer>
   </section>
   @if (notice()) {
-    <p class="notice" role="status">
+    <p class="feedback__notice" role="status">
       {{ notice() }} <button (click)="notice.set('')" aria-label="Dismiss message">×</button>
     </p>
   }
@@ -80,21 +87,27 @@
 @if (editor()) {
   <dialog
     #editorDialog
-    class="editor"
+    class="feedback__editor"
     aria-modal="true"
     aria-labelledby="editor-title"
     (cancel)="close()"
   >
-    <div class="panel-heading">
+    <div class="feedback__panel-heading">
       <div>
-        <p class="eyebrow">THE DETAILS</p>
+        <p class="feedback__eyebrow">THE DETAILS</p>
         <h2 id="editor-title">{{ editing ? 'Edit' : 'New' }} feedback</h2>
       </div>
-      <button class="text-button" (click)="close()" aria-label="Close editor">✕</button>
+      <button
+        class="feedback__button feedback__button--text"
+        (click)="close()"
+        aria-label="Close editor"
+      >
+        ✕
+      </button>
     </div>
-    <p class="editor-note">Sample workspace · changes last for this session.</p>
+    <p class="feedback__editor-note">Sample workspace · changes last for this session.</p>
     <form #editorForm="ngForm" (ngSubmit)="editorForm.valid && save()">
-      <div class="fields">
+      <div class="feedback__fields">
         <label
           >Event<select name="eventId" [(ngModel)]="draft['eventId']" required>
             <option value="" disabled>Select event</option>
@@ -124,7 +137,7 @@
             <option value="5">5</option>
           </select></label
         >
-        <label class="wide"
+        <label class="feedback__field feedback__field--wide"
           >Description<textarea
             name="description"
             [(ngModel)]="draft['description']"
@@ -134,9 +147,16 @@
         </label>
       </div>
 
-      <div class="form-actions">
-        <button type="button" class="secondary" (click)="close()">Cancel</button
-        ><button type="submit" class="primary">Save feedback</button>
+      <div class="feedback__form-actions">
+        <button
+          type="button"
+          class="feedback__button feedback__button--secondary"
+          (click)="close()"
+        >
+          Cancel</button
+        ><button type="submit" class="feedback__button feedback__button--primary">
+          Save feedback
+        </button>
       </div>
     </form>
   </dialog>

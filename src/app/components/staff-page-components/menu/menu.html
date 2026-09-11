@@ -1,27 +1,27 @@
-<div class="workspace">
-  <div class="topline">
-    <span>AURUM <span class="divider">/</span> WORKSPACE</span
-    ><span class="preview"><i></i> Sample data · session only</span>
+<div class="menu">
+  <div class="menu__topline">
+    <span>AURUM <span class="menu__divider">/</span> WORKSPACE</span
+    ><span class="menu__preview"><i></i> Sample data · session only</span>
   </div>
 
   <header>
     <div>
-      <p class="eyebrow">THE AURUM COLLECTION</p>
+      <p class="menu__eyebrow">THE AURUM COLLECTION</p>
       <h1>Menu</h1>
       <p>A collection of dishes for memorable gatherings.</p>
     </div>
-    <button class="primary" (click)="open()">＋ Add menu item</button>
+    <button class="menu__button menu__button--primary" (click)="open()">＋ Add menu item</button>
   </header>
-  <div class="section-summary">
-    <span class="summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
+  <div class="menu__summary">
+    <span class="menu__summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
     <div>
       <strong>Menu in your collection</strong>
       <p>Considered details. Confident decisions.</p>
     </div>
   </div>
-  <section class="panel">
-    <div class="toolbar">
-      <label class="search"
+  <section class="menu__panel">
+    <div class="menu__toolbar">
+      <label class="menu__search"
         ><span aria-hidden="true">⌕</span
         ><input
           aria-label="Search records"
@@ -37,9 +37,9 @@
         @for (option of filters(); track option) {
           <option [value]="option">{{ human(option) }}</option>
         }</select
-      ><span class="result-count">{{ filtered().length }} results</span>
+      ><span class="menu__result-count">{{ filtered().length }} results</span>
     </div>
-    <div class="table-scroll">
+    <div class="menu__table-scroll">
       <table>
         <thead>
           <tr>
@@ -53,17 +53,17 @@
         <tbody>
           @for (row of filtered(); track row['id']) {
             <tr>
-              <td class="record-id">#{{ row['id'] }}</td>
+              <td class="menu__record-id">#{{ row['id'] }}</td>
               <td>{{ human(row['name']) }}</td>
               <td>
-                <span class="badge" [attr.data-tone]="row['category']">{{
+                <span class="menu__badge" [attr.data-tone]="row['category']">{{
                   human(row['category'])
                 }}</span>
               </td>
               <td>{{ currency(row['pricePerPerson']) }}</td>
               <td>
                 <button
-                  class="text-button"
+                  class="menu__button menu__button--text"
                   (click)="open(row)"
                   [attr.aria-label]="'Edit menu item ' + row['id']"
                 >
@@ -76,10 +76,12 @@
       </table>
     </div>
     @if (!filtered().length) {
-      <div class="empty">
+      <div class="menu__empty">
         <h2>No records found</h2>
         <p>Try another search or add your first menu item.</p>
-        <button class="text-button" (click)="search.set(''); filter.set('')">Clear filters</button>
+        <button class="menu__button menu__button--text" (click)="search.set(''); filter.set('')">
+          Clear filters
+        </button>
       </div>
     }
     <footer>
@@ -88,7 +90,7 @@
     </footer>
   </section>
   @if (notice()) {
-    <p class="notice" role="status">
+    <p class="menu__notice" role="status">
       {{ notice() }} <button (click)="notice.set('')" aria-label="Dismiss message">×</button>
     </p>
   }
@@ -96,21 +98,23 @@
 @if (editor()) {
   <dialog
     #editorDialog
-    class="editor"
+    class="menu__editor"
     aria-modal="true"
     aria-labelledby="editor-title"
     (cancel)="close()"
   >
-    <div class="panel-heading">
+    <div class="menu__panel-heading">
       <div>
-        <p class="eyebrow">THE DETAILS</p>
+        <p class="menu__eyebrow">THE DETAILS</p>
         <h2 id="editor-title">{{ editing ? 'Edit' : 'New' }} menu item</h2>
       </div>
-      <button class="text-button" (click)="close()" aria-label="Close editor">✕</button>
+      <button class="menu__button menu__button--text" (click)="close()" aria-label="Close editor">
+        ✕
+      </button>
     </div>
-    <p class="editor-note">Sample workspace · changes last for this session.</p>
+    <p class="menu__editor-note">Sample workspace · changes last for this session.</p>
     <form #editorForm="ngForm" (ngSubmit)="editorForm.valid && save()">
-      <div class="fields">
+      <div class="menu__fields">
         <label
           >Dish name<input type="text" name="name" [(ngModel)]="draft['name']" required
         /></label>
@@ -133,9 +137,10 @@
         /></label>
       </div>
 
-      <div class="form-actions">
-        <button type="button" class="secondary" (click)="close()">Cancel</button
-        ><button type="submit" class="primary">Save menu item</button>
+      <div class="menu__form-actions">
+        <button type="button" class="menu__button menu__button--secondary" (click)="close()">
+          Cancel</button
+        ><button type="submit" class="menu__button menu__button--primary">Save menu item</button>
       </div>
     </form>
   </dialog>

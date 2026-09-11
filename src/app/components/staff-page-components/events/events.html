@@ -1,27 +1,27 @@
-<div class="workspace">
-  <div class="topline">
-    <span>AURUM <span class="divider">/</span> WORKSPACE</span
-    ><span class="preview"><i></i> Sample data · session only</span>
+<div class="events">
+  <div class="events__topline">
+    <span>AURUM <span class="events__divider">/</span> WORKSPACE</span
+    ><span class="events__preview"><i></i> Sample data · session only</span>
   </div>
 
   <header>
     <div>
-      <p class="eyebrow">THE AURUM COLLECTION</p>
+      <p class="events__eyebrow">THE AURUM COLLECTION</p>
       <h1>Events</h1>
       <p>Every detail, from the first idea to the final toast.</p>
     </div>
-    <button class="primary" (click)="open()">＋ Add event</button>
+    <button class="events__button events__button--primary" (click)="open()">＋ Add event</button>
   </header>
-  <div class="section-summary">
-    <span class="summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
+  <div class="events__summary">
+    <span class="events__summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
     <div>
       <strong>Events in your collection</strong>
       <p>Considered details. Confident decisions.</p>
     </div>
   </div>
-  <section class="panel">
-    <div class="toolbar">
-      <label class="search"
+  <section class="events__panel">
+    <div class="events__toolbar">
+      <label class="events__search"
         ><span aria-hidden="true">⌕</span
         ><input
           aria-label="Search records"
@@ -37,9 +37,9 @@
         @for (option of filters(); track option) {
           <option [value]="option">{{ human(option) }}</option>
         }</select
-      ><span class="result-count">{{ filtered().length }} results</span>
+      ><span class="events__result-count">{{ filtered().length }} results</span>
     </div>
-    <div class="table-scroll">
+    <div class="events__table-scroll">
       <table>
         <thead>
           <tr>
@@ -57,10 +57,10 @@
         <tbody>
           @for (row of filtered(); track row['id']) {
             <tr>
-              <td class="record-id">#{{ row['id'] }}</td>
+              <td class="events__record-id">#{{ row['id'] }}</td>
               <td>{{ clientName(row['clientId']) }}</td>
               <td>
-                <span class="badge" [attr.data-tone]="row['eventType']">{{
+                <span class="events__badge" [attr.data-tone]="row['eventType']">{{
                   human(row['eventType'])
                 }}</span>
               </td>
@@ -68,18 +68,18 @@
               <td>{{ currency(row['totalCost']) }}</td>
               <td>{{ human(row['guestCount']) }}</td>
               <td>
-                <span class="badge" [attr.data-tone]="row['location']">{{
+                <span class="events__badge" [attr.data-tone]="row['location']">{{
                   human(row['location'])
                 }}</span>
               </td>
               <td>
-                <span class="badge" [attr.data-tone]="row['status']">{{
+                <span class="events__badge" [attr.data-tone]="row['status']">{{
                   human(row['status'])
                 }}</span>
               </td>
               <td>
                 <button
-                  class="text-button"
+                  class="events__button events__button--text"
                   (click)="open(row)"
                   [attr.aria-label]="'Edit event ' + row['id']"
                 >
@@ -92,10 +92,15 @@
       </table>
     </div>
     @if (!filtered().length) {
-      <div class="empty">
+      <div class="events__empty">
         <h2>No records found</h2>
         <p>Try another search or add your first event.</p>
-        <button class="text-button" (click)="search.set(''); filter.set('')">Clear filters</button>
+        <button
+          class="events__button events__button--text"
+          (click)="search.set(''); filter.set('')"
+        >
+          Clear filters
+        </button>
       </div>
     }
     <footer>
@@ -104,7 +109,7 @@
     </footer>
   </section>
   @if (notice()) {
-    <p class="notice" role="status">
+    <p class="events__notice" role="status">
       {{ notice() }} <button (click)="notice.set('')" aria-label="Dismiss message">×</button>
     </p>
   }
@@ -112,21 +117,27 @@
 @if (editor()) {
   <dialog
     #editorDialog
-    class="editor"
+    class="events__editor"
     aria-modal="true"
     aria-labelledby="editor-title"
     (cancel)="close()"
   >
-    <div class="panel-heading">
+    <div class="events__panel-heading">
       <div>
-        <p class="eyebrow">THE DETAILS</p>
+        <p class="events__eyebrow">THE DETAILS</p>
         <h2 id="editor-title">{{ editing ? 'Edit' : 'New' }} event</h2>
       </div>
-      <button class="text-button" (click)="close()" aria-label="Close editor">✕</button>
+      <button
+        class="events__button events__button--text"
+        (click)="close()"
+        aria-label="Close editor"
+      >
+        ✕
+      </button>
     </div>
-    <p class="editor-note">Sample workspace · changes last for this session.</p>
+    <p class="events__editor-note">Sample workspace · changes last for this session.</p>
     <form #editorForm="ngForm" (ngSubmit)="editorForm.valid && save()">
-      <div class="fields">
+      <div class="events__fields">
         <label
           >Client<select name="clientId" [(ngModel)]="draft['clientId']" required>
             <option value="" disabled>Select client</option>
@@ -194,15 +205,16 @@
             <option value="CANCELLED">Cancelled</option>
           </select></label
         >
-        <label class="wide"
+        <label class="events__field events__field--wide"
           >Notes<small>optional</small
           ><textarea name="notes" [(ngModel)]="draft['notes']" rows="4"></textarea>
         </label>
       </div>
 
-      <div class="form-actions">
-        <button type="button" class="secondary" (click)="close()">Cancel</button
-        ><button type="submit" class="primary">Save event</button>
+      <div class="events__form-actions">
+        <button type="button" class="events__button events__button--secondary" (click)="close()">
+          Cancel</button
+        ><button type="submit" class="events__button events__button--primary">Save event</button>
       </div>
     </form>
   </dialog>

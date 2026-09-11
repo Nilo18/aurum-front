@@ -1,0 +1,87 @@
+<div class="registration">
+  <section class="registration__story" aria-labelledby="registration-story-title">
+    <div>
+      <p class="registration__eyebrow">The people behind the experience</p>
+      <h1 id="registration-story-title">Your next chapter.<br /><em>Our shared ambition.</em></h1>
+      <p class="registration__description">
+        Join the team bringing exceptional AURUM experiences to life. Every detail begins with you.
+      </p>
+      <p class="registration__signature">Crafted with care. Delivered together.</p>
+    </div>
+  </section>
+  <section class="registration__panel" aria-labelledby="registration-title">
+    <div class="registration__form-wrap">
+      <p class="registration__eyebrow">
+        Staff portal <span class="registration__verified">✓ Invitation verified</span>
+      </p>
+      <h2 id="registration-title">Welcome to AURUM.</h2>
+      <p class="registration__intro">
+        A place for extraordinary people. Set up your staff profile below.
+      </p>
+      <form
+        class="registration__form"
+        (ngSubmit)="onSubmit()"
+        [formGroup]="registerForm"
+        novalidate
+        [attr.aria-busy]="isSubmitting()"
+      >
+        <fieldset class="registration__fields" [disabled]="isSubmitting() || requestSent()">
+          <div>
+            <label for="register-full-name">Full name</label>
+            <input
+              id="register-full-name"
+              name="fullName"
+              type="text"
+              autocomplete="name"
+              placeholder="Enter your full name"
+              required
+              formControlName="name"
+            />
+            <p class="error">{{ formValidator.getRequiredMaxAmountError('name', registerForm) }}</p>
+          </div>
+          <div>
+            <label for="register-password">Password</label
+            ><input
+              id="register-password"
+              name="password"
+              type="password"
+              autocomplete="new-password"
+              placeholder="Create a password"
+              required
+              formControlName="password"
+            />
+            <p class="error">{{ formValidator.getRequiredError('password', registerForm) }}</p>
+          </div>
+        </fieldset>
+        @if (submissionError()) {
+          <p class="registration__feedback registration__feedback--error" role="alert">
+            {{ submissionError() }}
+          </p>
+        }
+        @if (requestSent()) {
+          <p class="registration__feedback" role="status">
+            Your account has been created. <a href="/staff">Continue to your workspace</a>.
+          </p>
+        }
+        <button
+          class="registration__submit"
+          type="submit"
+          [disabled]="isSubmitting() || requestSent()"
+        >
+          @if (isSubmitting()) {
+            Creating account
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          } @else if (requestSent()) {
+            Account created <span aria-hidden="true">✓</span>
+          } @else {
+            Create account <span aria-hidden="true">&rarr;</span>
+          }
+        </button>
+        <p class="visually-hidden" role="status">
+          {{ isSubmitting() ? 'Creating your account. Please wait.' : '' }}
+        </p>
+      </form>
+      <p class="registration__help">Already part of the team? <a href="/staff-login">Sign in</a></p>
+    </div>
+  </section>
+</div>

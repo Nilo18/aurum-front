@@ -2,8 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { vi } from 'vitest';
-import { AuthService, EmployeeRole } from '../../../services/auth-service';
+import { AuthService } from '../../../services/auth-service';
 import { LoginForm } from './login-form';
+import { EmployeeRole } from '../../../services/employee-service';
 
 describe('LoginForm', () => {
   const auth = { verifyLoginRequest: vi.fn() };
