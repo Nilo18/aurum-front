@@ -8,9 +8,8 @@ describe('EventRequests', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EventRequests]
-    })
-    .compileComponents();
+      imports: [EventRequests],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(EventRequests);
     component = fixture.componentInstance;

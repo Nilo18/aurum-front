@@ -1,1 +1,76 @@
-<app-staff-workspace section="dashboard"></app-staff-workspace>
+<div class="workspace">
+  <div class="topline">
+    <span>AURUM <span class="divider">/</span> WORKSPACE</span
+    ><span class="preview"><i></i> Sample data · session only</span>
+  </div>
+  <header>
+    <div>
+      <p class="eyebrow">THE BIG PICTURE</p>
+      <h1>A little perspective.<br /><em>A remarkable day ahead.</em></h1>
+      <p>Your events, people and preparations, all in one place.</p>
+    </div>
+    <a class="primary" routerLink="/staff/events">Explore events ↗</a>
+  </header>
+  <div class="stats">
+    <article>
+      <span>Event portfolio</span><strong>{{ events().length | number }}</strong
+      ><small>Across every stage</small>
+    </article>
+    <article>
+      <span>Awaiting review</span><strong>{{ requested() | number }}<b class="dot"></b></strong
+      ><small>New event requests</small>
+    </article>
+    <article>
+      <span>Portfolio value</span><strong>₾ {{ total() | number: '1.0-0' }}</strong
+      ><small>Excludes cancelled & rejected</small>
+    </article>
+    <article>
+      <span>Our people</span><strong>{{ store.data()['employees'].length }}</strong
+      ><small>Members of the Aurum team</small>
+    </article>
+  </div>
+  <div class="dashboard-grid">
+    <section class="panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">ON THE HORIZON</p>
+          <h2>In preparation</h2>
+        </div>
+        <a routerLink="/staff/events">All events ↗</a>
+      </div>
+      @for (event of upcoming(); track event['id']) {
+        <a class="event-row" routerLink="/staff/events"
+          ><div class="date-tile">
+            <strong>{{ event['date'].toString().slice(8) }}</strong
+            ><span>{{ event['date'].toString().slice(0, 7) }}</span>
+          </div>
+          <div>
+            <h3>{{ human(event['eventType']) }}</h3>
+            <p>{{ clientName(event['clientId']) }} · {{ event['guestCount'] }} guests</p>
+          </div>
+          <span class="badge" [attr.data-tone]="event['status']">{{
+            human(event['status'])
+          }}</span></a
+        >
+      }
+    </section>
+    <section class="concierge">
+      <p class="eyebrow">ATTENTION TO DETAIL</p>
+      <h2>Great experiences<br />begin with a conversation.</h2>
+      <p>You have {{ requested() }} requests waiting for a thoughtful first response.</p>
+      <a class="primary" routerLink="/staff/event-requests">Review requests ↗</a>
+    </section>
+  </div>
+  <div class="panel-heading lower">
+    <h2>Behind the occasion</h2>
+    <span>Everything you need, beautifully organised.</span>
+  </div>
+  <div class="quick-links">
+    @for (link of links; track link) {
+      <a [routerLink]="'/staff/' + link"
+        ><span>{{ human(link) }}</span
+        ><strong>{{ store.data()[link].length }} <small>↗</small></strong></a
+      >
+    }
+  </div>
+</div>

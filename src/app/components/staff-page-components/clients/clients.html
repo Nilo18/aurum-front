@@ -1,1 +1,133 @@
-<app-staff-workspace section="clients"></app-staff-workspace>
+<div class="workspace">
+  <div class="topline">
+    <span>AURUM <span class="divider">/</span> WORKSPACE</span
+    ><span class="preview"><i></i> Sample data · session only</span>
+  </div>
+
+  <header>
+    <div>
+      <p class="eyebrow">THE AURUM COLLECTION</p>
+      <h1>Clients</h1>
+      <p>Personal connections. Exceptional experiences.</p>
+    </div>
+    <button class="primary" (click)="open()">＋ Add client</button>
+  </header>
+  <div class="section-summary">
+    <span class="summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
+    <div>
+      <strong>Clients in your collection</strong>
+      <p>Considered details. Confident decisions.</p>
+    </div>
+  </div>
+  <section class="panel">
+    <div class="toolbar">
+      <label class="search"
+        ><span aria-hidden="true">⌕</span
+        ><input
+          aria-label="Search records"
+          placeholder="Search this collection…"
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)" /></label
+      ><select
+        aria-label="Filter records"
+        [ngModel]="filter()"
+        (ngModelChange)="filter.set($event)"
+      >
+        <option value="">All types</option>
+        @for (option of filters(); track option) {
+          <option [value]="option">{{ human(option) }}</option>
+        }</select
+      ><span class="result-count">{{ filtered().length }} results</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Client type</th>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of filtered(); track row['id']) {
+            <tr>
+              <td class="record-id">#{{ row['id'] }}</td>
+              <td>{{ human(row['name']) }}</td>
+              <td>{{ human(row['email']) }}</td>
+              <td>{{ human(row['phone']) }}</td>
+              <td>
+                <span class="badge" [attr.data-tone]="row['type']">{{ human(row['type']) }}</span>
+              </td>
+              <td>
+                <button
+                  class="text-button"
+                  (click)="open(row)"
+                  [attr.aria-label]="'Edit client ' + row['id']"
+                >
+                  Edit ↗
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    @if (!filtered().length) {
+      <div class="empty">
+        <h2>No records found</h2>
+        <p>Try another search or add your first client.</p>
+        <button class="text-button" (click)="search.set(''); filter.set('')">Clear filters</button>
+      </div>
+    }
+    <footer>
+      <span>{{ filtered().length }} of {{ rows().length }} records</span
+      ><span>AURUM · Made for memorable moments</span>
+    </footer>
+  </section>
+  @if (notice()) {
+    <p class="notice" role="status">
+      {{ notice() }} <button (click)="notice.set('')" aria-label="Dismiss message">×</button>
+    </p>
+  }
+</div>
+@if (editor()) {
+  <dialog
+    #editorDialog
+    class="editor"
+    aria-modal="true"
+    aria-labelledby="editor-title"
+    (cancel)="close()"
+  >
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">THE DETAILS</p>
+        <h2 id="editor-title">{{ editing ? 'Edit' : 'New' }} client</h2>
+      </div>
+      <button class="text-button" (click)="close()" aria-label="Close editor">✕</button>
+    </div>
+    <p class="editor-note">Sample workspace · changes last for this session.</p>
+    <form #editorForm="ngForm" (ngSubmit)="editorForm.valid && save()">
+      <div class="fields">
+        <label>Name<input type="text" name="name" [(ngModel)]="draft['name']" required /></label>
+        <label
+          >Email<input type="email" name="email" [(ngModel)]="draft['email']" required
+        /></label>
+        <label>Phone<input type="tel" name="phone" [(ngModel)]="draft['phone']" required /></label>
+        <label
+          >Client type<select name="type" [(ngModel)]="draft['type']" required>
+            <option value="PERSON">Person</option>
+            <option value="ORGANIZATION">Organization</option>
+          </select></label
+        >
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="secondary" (click)="close()">Cancel</button
+        ><button type="submit" class="primary">Save client</button>
+      </div>
+    </form>
+  </dialog>
+}

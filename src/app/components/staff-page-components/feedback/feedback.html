@@ -1,1 +1,143 @@
-<app-staff-workspace section="feedback"></app-staff-workspace>
+<div class="workspace">
+  <div class="topline">
+    <span>AURUM <span class="divider">/</span> WORKSPACE</span
+    ><span class="preview"><i></i> Sample data · session only</span>
+  </div>
+
+  <header>
+    <div>
+      <p class="eyebrow">THE AURUM COLLECTION</p>
+      <h1>Feedback</h1>
+      <p>Listen closely. Make the next experience even better.</p>
+    </div>
+    <button class="primary" (click)="open()">＋ Add feedback</button>
+  </header>
+  <div class="section-summary">
+    <span class="summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
+    <div>
+      <strong>Feedback in your collection</strong>
+      <p>Every voice helps us improve.</p>
+    </div>
+  </div>
+  <section class="panel">
+    <div class="toolbar">
+      <label class="search"
+        ><span aria-hidden="true">⌕</span
+        ><input
+          aria-label="Search records"
+          placeholder="Search this collection…"
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)" /></label
+      ><select
+        aria-label="Filter records"
+        [ngModel]="filter()"
+        (ngModelChange)="filter.set($event)"
+      >
+        <option value="">All ratings</option>
+        @for (option of filters(); track option) {
+          <option [value]="option">{{ human(option) }}</option>
+        }</select
+      ><span class="result-count">{{ filtered().length }} results</span>
+    </div>
+    <div class="feedback-grid">
+      @for (row of filtered(); track row['eventId'] + ':' + row['id']) {
+        <article class="feedback-card">
+          <div class="panel-heading">
+            <span class="stars">{{ ratingLabel(row['rating']) }}</span
+            ><button
+              class="text-button"
+              (click)="open(row)"
+              [attr.aria-label]="'Edit feedback by ' + row['author']"
+            >
+              Edit ↗
+            </button>
+          </div>
+          <blockquote>“{{ row['description'] }}”</blockquote>
+          <strong>{{ row['author'] }}</strong>
+          <p>Event #{{ row['eventId'] }} · Feedback #{{ row['id'] }} · {{ row['commentDate'] }}</p>
+        </article>
+      }
+    </div>
+
+    @if (!filtered().length) {
+      <div class="empty">
+        <h2>No records found</h2>
+        <p>Try another search or add your first feedback.</p>
+        <button class="text-button" (click)="search.set(''); filter.set('')">Clear filters</button>
+      </div>
+    }
+    <footer>
+      <span>{{ filtered().length }} of {{ rows().length }} records</span
+      ><span>AURUM · Made for memorable moments</span>
+    </footer>
+  </section>
+  @if (notice()) {
+    <p class="notice" role="status">
+      {{ notice() }} <button (click)="notice.set('')" aria-label="Dismiss message">×</button>
+    </p>
+  }
+</div>
+@if (editor()) {
+  <dialog
+    #editorDialog
+    class="editor"
+    aria-modal="true"
+    aria-labelledby="editor-title"
+    (cancel)="close()"
+  >
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">THE DETAILS</p>
+        <h2 id="editor-title">{{ editing ? 'Edit' : 'New' }} feedback</h2>
+      </div>
+      <button class="text-button" (click)="close()" aria-label="Close editor">✕</button>
+    </div>
+    <p class="editor-note">Sample workspace · changes last for this session.</p>
+    <form #editorForm="ngForm" (ngSubmit)="editorForm.valid && save()">
+      <div class="fields">
+        <label
+          >Event<select name="eventId" [(ngModel)]="draft['eventId']" required>
+            <option value="" disabled>Select event</option>
+            @for (row of store.data()['events']; track row['id']) {
+              <option [ngValue]="row['id']">
+                {{ '#' + row['id'] + ' · ' + human(row['eventType']) }}
+              </option>
+            }
+          </select></label
+        >
+        <label
+          >Author<input type="text" name="author" [(ngModel)]="draft['author']" required
+        /></label>
+        <label
+          >Comment date<input
+            type="date"
+            name="commentDate"
+            [(ngModel)]="draft['commentDate']"
+            required
+        /></label>
+        <label
+          >Rating<select name="rating" [(ngModel)]="draft['rating']" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select></label
+        >
+        <label class="wide"
+          >Description<textarea
+            name="description"
+            [(ngModel)]="draft['description']"
+            required
+            rows="4"
+          ></textarea>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="secondary" (click)="close()">Cancel</button
+        ><button type="submit" class="primary">Save feedback</button>
+      </div>
+    </form>
+  </dialog>
+}
