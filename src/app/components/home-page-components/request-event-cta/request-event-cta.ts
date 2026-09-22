@@ -8,5 +8,5 @@ import { RouterLink } from '@angular/router';
   styleUrl: './request-event-cta.scss',
 })
 export class RequestEventCta {
-
+  
 }

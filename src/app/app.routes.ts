@@ -4,12 +4,14 @@ import { RequestEvent } from './pages/request-event/request-event';
 import { Login } from './pages/login/login';
 import { Register } from './pages/register/register';
 import { Staff } from './pages/staff/staff';
+import { DemoLoginLoadingPage } from './pages/demo-login-loading-page/demo-login-loading-page';
 
 export const routes: Routes = [
   { path: '', component: Home },
   { path: 'request-event', component: RequestEvent },
   { path: 'staff-login', component: Login },
   { path: 'staff-register', component: Register },
+  { path: 'demo', component: DemoLoginLoadingPage },
   {
     path: 'staff',
     component: Staff,
