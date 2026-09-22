@@ -1,39 +1,52 @@
-import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { TokenService } from '../../services/token-service';
-import { Router } from '@angular/router';
+import { getRequestErrorMessage } from '../../services/request-error';
 
 @Component({
   selector: 'app-demo-login-loading-page',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './demo-login-loading-page.html',
   styleUrl: './demo-login-loading-page.scss',
 })
-export class DemoLoginLoadingPage {
-  private authService = inject(AuthService)
-  private tokenService = inject(TokenService)
-  private router = inject(Router)
-  errorMessage: WritableSignal<string> = signal('')
+export class DemoLoginLoadingPage implements OnInit {
+  private readonly authService = inject(AuthService);
+  private readonly tokenService = inject(TokenService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
-  async ngOnInit() {
+  readonly isLoading = signal(false);
+  readonly errorMessage = signal('');
+  readonly loadingMessage = signal('Preparing your demo session');
+
+  ngOnInit(): void {
+    void this.login();
+  }
+
+  async login(): Promise<void> {
+    if (this.isLoading()) return;
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+    this.loadingMessage.set('Preparing your demo session');
+
     try {
-      const res = await this.authService.loginAsDemo()
+      const res = await this.authService.loginAsDemo();
 
-    if (res.status === 200) {
-      
-      try {
-        this.tokenService.saveToken(res.token);
-        
-        this.router.navigate(['/staff']);
-
-      } catch (storageError) {
-        console.error('Security/Storage Error: Token could not be safely stored.', storageError);
-        
-        this.errorMessage.set("Login failed: Your browser settings or full storage are preventing a secure session. Please disable Private Browsing or free up disk space.")
+      if (res?.status !== 200 || !res.token) {
+        this.errorMessage.set('We could not start your demo session. Please try again.');
+        return;
       }
-    }
+
+      this.tokenService.saveToken(res.token); 
+
+      this.loadingMessage.set('Opening your workspace');
+      this.router.navigate(['/staff']);
     } catch (error) {
-      console.log(error)
+      this.errorMessage.set(getRequestErrorMessage(error, 'We could not start your demo session. Please try again.'));
+    } finally {
+      this.isLoading.set(false);
     }
   }
 }

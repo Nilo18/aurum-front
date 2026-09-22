@@ -5,7 +5,13 @@ import { Injectable } from '@angular/core';
 })
 export class TokenService {
   saveToken(token: string) {
-    localStorage.setItem('aurum_token', token)
+    try {
+      if (!token?.trim()) return false;
+      localStorage.setItem('auth_token', token);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   getToken() {
