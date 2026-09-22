@@ -1,56 +1,12 @@
 :host {
   display: block;
 }
-
 .demo-page {
   display: flex;
   flex-direction: column;
   min-height: 100svh;
   background: #050504;
   color: #f0eadf;
-
-  a {
-    text-decoration: none;
-  }
-
-  &__header,
-  &__footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 24px clamp(20px, 5vw, 80px);
-  }
-
-  &__header {
-    border-bottom: 1px solid #c6921d30;
-  }
-
-  &__logo {
-    color: #c6921d;
-    font:
-      24px 'Bodoni 72',
-      Didot,
-      'Palatino Linotype',
-      Georgia,
-      serif;
-    letter-spacing: 0.42em;
-  }
-
-  &__back {
-    color: #b8ad9c;
-    font-size: 12px;
-
-    span {
-      margin-right: 10px;
-    }
-
-    &:hover {
-      color: #ddb448;
-    }
-  }
-
   &__main {
     display: flex;
     flex: 1;
@@ -60,7 +16,6 @@
     padding: clamp(40px, 7vw, 88px) 20px;
     background: radial-gradient(ellipse at 50% 35%, #c6921d10, transparent 65%);
   }
-
   &__signature {
     margin: 28px 0 0;
     color: #a99e8c;
@@ -68,187 +23,5 @@
     letter-spacing: 0.12em;
     text-align: center;
     line-height: 1.8;
-  }
-
-  &__footer {
-    border-top: 1px solid #c6921d30;
-    color: #a99e8c;
-    font-size: 10px;
-    letter-spacing: 0.06em;
-  }
-}
-
-.demo-card {
-  width: 100%;
-  max-width: 600px;
-  padding: clamp(28px, 5vw, 56px);
-  border: 1px solid #c6921d40;
-  border-top: 2px solid #c6921d;
-  background: linear-gradient(145deg, #17150f, #0b0b08 65%);
-  box-shadow: 0 24px 80px #00000040;
-  text-align: center;
-
-  &__eyebrow {
-    margin: 0 0 30px;
-    color: #d0a441;
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    line-height: 1.8;
-  }
-
-  &__emblem {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: 64px;
-    height: 64px;
-    margin: 0 auto 28px;
-    color: #d4ad56;
-    font:
-      30px Georgia,
-      serif;
-
-    &--error {
-      border: 1px solid #d68e7550;
-      border-radius: 50%;
-      color: #edb49d;
-    }
-  }
-
-  &__spinner {
-    position: absolute;
-    inset: 0;
-    border: 1px solid #c6921d30;
-    border-top-color: #d4ad56;
-    border-radius: 50%;
-    animation: demo-spin 1.4s linear infinite;
-  }
-
-  h1 {
-    margin: 0 0 20px;
-    font:
-      400 clamp(30px, 4vw, 42px) / 1.18 'Bodoni 72',
-      Didot,
-      'Palatino Linotype',
-      Georgia,
-      serif;
-
-    em {
-      color: #d4ad56;
-    }
-  }
-
-  &__intro {
-    margin: 0 auto;
-    max-width: 390px;
-    color: #b8ad9c;
-    font-size: 13px;
-    line-height: 1.9;
-  }
-
-  &__status {
-    margin-top: 30px;
-    padding-top: 26px;
-    border-top: 1px solid #c6921d26;
-  }
-
-  &__loading {
-    margin: 0 0 10px;
-    color: #e1c88c;
-    font-size: 12px;
-    line-height: 1.7;
-  }
-
-  &__hint {
-    margin: 0;
-    color: #a99e8c;
-    font-size: 11px;
-    line-height: 1.8;
-  }
-
-  &__error {
-    padding: 18px;
-    border: 1px solid #d68e7540;
-    background: #d68e7509;
-    color: #edb49d;
-
-    h2 {
-      margin: 0 0 8px;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    p {
-      margin: 0;
-      font-size: 12px;
-      line-height: 1.8;
-      overflow-wrap: anywhere;
-    }
-  }
-
-  &__retry {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    min-height: 48px;
-    margin-top: 18px;
-    padding: 12px 20px;
-    border: 1px solid #c6921d;
-    background: #c6921d;
-    color: #100e08;
-    font-size: 12px;
-    font-weight: 600;
-    transition: background 160ms ease;
-
-    &:hover:not(:disabled) {
-      background: #ddb448;
-    }
-
-    &:focus-visible {
-      outline: 2px solid #f0eadf;
-      outline-offset: 4px;
-    }
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
-  }
-
-  &__bottom {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px 24px;
-    margin-top: 28px;
-    font-size: 10px;
-    line-height: 1.8;
-    color: #a99e8c;
-
-    a {
-      color: #d4ad56;
-
-      &:hover {
-        color: #f0eadf;
-      }
-    }
-  }
-}
-
-@keyframes demo-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .demo-card__spinner {
-    animation: none;
-  }
-
-  .demo-card__retry {
-    transition: none;
   }
 }

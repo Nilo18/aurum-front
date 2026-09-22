@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.demo-page__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 24px clamp(20px, 5vw, 80px);
+  border-top: 1px solid #c6921d30;
+  color: #a99e8c;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}

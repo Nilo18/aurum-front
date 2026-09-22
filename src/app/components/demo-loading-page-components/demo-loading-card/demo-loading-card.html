@@ -1,0 +1,46 @@
+<section class="demo-card" aria-labelledby="demo-title">
+  <p class="demo-card__eyebrow">AURUM &middot; Demo experience</p>
+  <div
+    class="demo-card__emblem"
+    [class.demo-card__emblem--error]="errorMessage()"
+    aria-hidden="true"
+  >
+    @if (errorMessage()) {
+      <span>!</span>
+    } @else {
+      <span class="demo-card__spinner"></span>
+      <span class="demo-card__monogram">A</span>
+    }
+  </div>
+  <h1 id="demo-title">Exceptional events.<br /><em>Effortlessly managed.</em></h1>
+  <p class="demo-card__intro">
+    Step inside the AURUM workspace and explore a more considered approach to event management.
+  </p>
+
+  <div class="demo-card__status" [attr.aria-busy]="isLoading()">
+    @if (errorMessage()) {
+      <div class="demo-card__error" role="alert">
+        <h2>Let’s try that again</h2>
+        <p>{{ errorMessage() }}</p>
+      </div>
+    }
+    <div role="status" aria-live="polite" aria-atomic="true">
+      @if (isLoading()) {
+        <p class="demo-card__loading">
+          {{ loadingMessage() }}<span aria-hidden="true">&hellip;</span>
+        </p>
+        <p class="demo-card__hint">You’ll be taken to the dashboard automatically.</p>
+      }
+    </div>
+    @if (errorMessage()) {
+      <button
+        class="demo-card__retry"
+        type="button"
+        (click)="retry.emit()"
+        [disabled]="isLoading()"
+      >
+        Try again <span aria-hidden="true">&rarr;</span>
+      </button>
+    }
+  </div>
+</section>

@@ -1,12 +1,15 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { DemoLoadingHeader } from '../../components/demo-loading-page-components/demo-loading-header/demo-loading-header';
+import { DemoLoadingCard } from '../../components/demo-loading-page-components/demo-loading-card/demo-loading-card';
+import { DemoLoadingFooter } from '../../components/demo-loading-page-components/demo-loading-footer/demo-loading-footer';
 import { AuthService } from '../../services/auth-service';
 import { TokenService } from '../../services/token-service';
 import { getRequestErrorMessage } from '../../services/request-error';
 
 @Component({
   selector: 'app-demo-login-loading-page',
-  imports: [RouterLink],
+  imports: [DemoLoadingHeader, DemoLoadingCard, DemoLoadingFooter],
   templateUrl: './demo-login-loading-page.html',
   styleUrl: './demo-login-loading-page.scss',
 })
@@ -39,12 +42,14 @@ export class DemoLoginLoadingPage implements OnInit {
         return;
       }
 
-      this.tokenService.saveToken(res.token); 
+      this.tokenService.saveToken(res.token);
 
       this.loadingMessage.set('Opening your workspace');
       this.router.navigate(['/staff']);
     } catch (error) {
-      this.errorMessage.set(getRequestErrorMessage(error, 'We could not start your demo session. Please try again.'));
+      this.errorMessage.set(
+        getRequestErrorMessage(error, 'We could not start your demo session. Please try again.'),
+      );
     } finally {
       this.isLoading.set(false);
     }
