@@ -1,7 +1,6 @@
-<div class="dashboard">
+<div class="dashboard" [attr.aria-busy]="loading()">
   <div class="dashboard__topline">
-    <span>AURUM <span class="dashboard__divider">/</span> WORKSPACE</span
-    ><span class="dashboard__preview"><i></i> Sample data · session only</span>
+    <span>AURUM <span class="dashboard__divider">/</span> WORKSPACE</span>
   </div>
   <header>
     <div>
@@ -13,69 +12,132 @@
       >Explore events ↗</a
     >
   </header>
-  <div class="dashboard__stats">
-    <article>
-      <span>Event portfolio</span><strong>{{ events().length | number }}</strong
-      ><small>Across every stage</small>
-    </article>
-    <article>
-      <span>Awaiting review</span
-      ><strong>{{ requested() | number }}<b class="dashboard__dot"></b></strong
-      ><small>New event requests</small>
-    </article>
-    <article>
-      <span>Portfolio value</span><strong>₾ {{ total() | number: '1.0-0' }}</strong
-      ><small>Excludes cancelled & rejected</small>
-    </article>
-    <article>
-      <span>Our people</span><strong>{{ store.data()['employees'].length }}</strong
-      ><small>Members of the Aurum team</small>
-    </article>
-  </div>
-  <div class="dashboard__grid">
-    <section class="dashboard__panel">
-      <div class="dashboard__panel-heading">
-        <div>
-          <p class="dashboard__eyebrow">ON THE HORIZON</p>
-          <h2>In preparation</h2>
-        </div>
-        <a routerLink="/staff/events">All events ↗</a>
+  @if (loading()) {
+    <span class="visually-hidden" role="status">Loading dashboard…</span>
+    <div aria-hidden="true">
+      <div class="dashboard__stats">
+        @for (item of [1, 2, 3, 4]; track item) {
+          <article>
+            <div class="skeleton skeleton--text skeleton--short"></div>
+            <div class="skeleton skeleton--heading"></div>
+            <div class="skeleton"></div>
+          </article>
+        }
       </div>
-      @for (event of upcoming(); track event['id']) {
-        <a class="dashboard__event-row" routerLink="/staff/events"
-          ><div class="dashboard__date-tile">
-            <strong>{{ event['date'].toString().slice(8) }}</strong
-            ><span>{{ event['date'].toString().slice(0, 7) }}</span>
+      <div class="dashboard__grid">
+        <section class="dashboard__panel">
+          <div class="dashboard__panel-heading">
+            <div class="skeleton skeleton--heading"></div>
           </div>
+          @for (item of [1, 2, 3]; track item) {
+            <div class="dashboard__event-row">
+              <div class="skeleton skeleton--button flex-shrink-0 mt-0"></div>
+              <div class="flex-grow-1">
+                <div class="skeleton skeleton--text skeleton--short"></div>
+                <div class="skeleton"></div>
+              </div>
+            </div>
+          }
+        </section>
+        <section class="dashboard__concierge">
+          <div class="skeleton skeleton--text skeleton--short"></div>
+          <div class="skeleton skeleton--heading"></div>
+          <div class="skeleton skeleton--text"></div>
+          <div class="skeleton skeleton--text skeleton--short"></div>
+          <div class="skeleton skeleton--button"></div>
+        </section>
+      </div>
+      <div class="dashboard__panel-heading dashboard__lower">
+        <div class="skeleton skeleton--heading"></div>
+      </div>
+      <div class="dashboard__quick-links">
+        @for (link of links; track link.path) {
+          <div class="dashboard__panel p-3">
+            <div class="skeleton skeleton--text skeleton--short"></div>
+            <div class="skeleton skeleton--heading mb-0"></div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else if (error()) {
+    <div class="dashboard__state dashboard__state--error" role="alert">
+      <p>{{ error() }}</p>
+      <button
+        type="button"
+        class="dashboard__button dashboard__button--primary"
+        (click)="loadDashboard()"
+      >
+        Try again
+      </button>
+    </div>
+  } @else if (data(); as dashboard) {
+    <div class="dashboard__stats">
+      <article>
+        <span>Event portfolio</span><strong>{{ dashboard.eventCount | number }}</strong
+        ><small>Across every stage</small>
+      </article>
+      <article>
+        <span>Awaiting review</span
+        ><strong>{{ dashboard.awaitingReviewCount | number }}<b class="dashboard__dot"></b></strong
+        ><small>New event requests</small>
+      </article>
+      <article>
+        <span>Portfolio value</span
+        ><strong>₾ {{ dashboard.portfolioValue | number: '1.0-0' }}</strong
+        ><small>Excludes cancelled & rejected</small>
+      </article>
+      <article>
+        <span>Our people</span><strong>{{ dashboard.employeeCount | number }}</strong
+        ><small>Members of the Aurum team</small>
+      </article>
+    </div>
+    <div class="dashboard__grid">
+      <section class="dashboard__panel">
+        <div class="dashboard__panel-heading">
           <div>
-            <h3>{{ human(event['eventType']) }}</h3>
-            <p>{{ clientName(event['clientId']) }} · {{ event['guestCount'] }} guests</p>
+            <p class="dashboard__eyebrow">ON THE HORIZON</p>
+            <h2>In preparation</h2>
           </div>
-          <span class="dashboard__badge" [attr.data-tone]="event['status']">{{
-            human(event['status'])
-          }}</span></a
+          <a routerLink="/staff/events">All events ↗</a>
+        </div>
+        @for (event of dashboard.eventsInPreparation; track $index) {
+          <a class="dashboard__event-row" routerLink="/staff/events"
+            ><div class="dashboard__date-tile">
+              <strong>{{ event.date.slice(8, 10) }}</strong
+              ><span>{{ event.date.slice(0, 7) }}</span>
+            </div>
+            <div>
+              <h3>{{ human(event.eventType) }}</h3>
+              <p>{{ event.clientName }} · {{ event.guestCount | number }} guests</p>
+            </div>
+          </a>
+        } @empty {
+          <p class="dashboard__state">No events are currently in preparation.</p>
+        }
+      </section>
+      <section class="dashboard__concierge">
+        <p class="dashboard__eyebrow">ATTENTION TO DETAIL</p>
+        <h2>Great experiences<br />begin with a conversation.</h2>
+        <p>
+          You have {{ dashboard.awaitingReviewCount }} requests waiting for a thoughtful first
+          response.
+        </p>
+        <a class="dashboard__button dashboard__button--primary" routerLink="/staff/event-requests"
+          >Review requests ↗</a
+        >
+      </section>
+    </div>
+    <div class="dashboard__panel-heading dashboard__lower">
+      <h2>Behind the occasion</h2>
+      <span>Everything you need, beautifully organised.</span>
+    </div>
+    <div class="dashboard__quick-links">
+      @for (link of links; track link.path) {
+        <a [routerLink]="'/staff/' + link.path"
+          ><span>{{ human(link.path) }}</span
+          ><strong>{{ dashboard[link.count] | number }} <small>↗</small></strong></a
         >
       }
-    </section>
-    <section class="dashboard__concierge">
-      <p class="dashboard__eyebrow">ATTENTION TO DETAIL</p>
-      <h2>Great experiences<br />begin with a conversation.</h2>
-      <p>You have {{ requested() }} requests waiting for a thoughtful first response.</p>
-      <a class="dashboard__button dashboard__button--primary" routerLink="/staff/event-requests"
-        >Review requests ↗</a
-      >
-    </section>
-  </div>
-  <div class="dashboard__panel-heading dashboard__lower">
-    <h2>Behind the occasion</h2>
-    <span>Everything you need, beautifully organised.</span>
-  </div>
-  <div class="dashboard__quick-links">
-    @for (link of links; track link) {
-      <a [routerLink]="'/staff/' + link"
-        ><span>{{ human(link) }}</span
-        ><strong>{{ store.data()[link].length }} <small>↗</small></strong></a
-      >
-    }
-  </div>
+    </div>
+  }
 </div>

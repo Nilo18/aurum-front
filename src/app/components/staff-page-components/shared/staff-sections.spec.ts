@@ -2,7 +2,6 @@ import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Clients } from '../clients/clients';
-import { Dashboard } from '../dashboard/dashboard';
 import { Employees } from '../employees/employees';
 import { EventRequests } from '../event-requests/event-requests';
 import { Events } from '../events/events';
@@ -137,22 +136,16 @@ describe('Staff section ownership', () => {
     expect(component.editor()).toBe(false);
   });
 
-  it('updates requests and dashboard totals when an event changes across sections', () => {
+  it('updates requests when an event changes across sections', () => {
     const events = TestBed.createComponent(Events).componentInstance;
     const requests = TestBed.createComponent(EventRequests).componentInstance;
-    const dashboard = TestBed.createComponent(Dashboard).componentInstance;
     const requested = requests.rows()[0];
-    const requestCount = dashboard.requested();
-    const total = dashboard.total();
     requests.open(requested);
     requests.draft['status'] = 'CONFIRMED';
     requests.draft['totalCost'] = String(Number(requested['totalCost']) + 100);
     requests.save();
 
     expect(requests.rows().some((row) => row['id'] === requested['id'])).toBe(false);
-    expect(dashboard.requested()).toBe(requestCount - 1);
-    expect(dashboard.total()).toBe(total + 100);
-    expect(dashboard.upcoming().some((row) => row['id'] === requested['id'])).toBe(true);
     expect(events.rows().find((row) => row['id'] === requested['id'])?.['status']).toBe(
       'CONFIRMED',
     );

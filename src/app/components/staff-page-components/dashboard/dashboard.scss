@@ -171,3 +171,16 @@ h3 {
     }
   }
 }
+
+.dashboard__state {
+  padding: 28px;
+  color: #b6ab98;
+  border: 1px solid #2b271f;
+  border-radius: 6px;
+  background: #100f0c;
+}
+
+.dashboard__state--error {
+  color: #e5b2a5;
+  border-color: #70483c;
+}
