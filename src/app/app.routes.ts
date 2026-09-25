@@ -24,13 +24,6 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'event-requests',
-        loadComponent: () =>
-          import('./components/staff-page-components/event-requests/event-requests').then(
-            (module) => module.EventRequests,
-          ),
-      },
-      {
         path: 'events',
         loadComponent: () =>
           import('./components/staff-page-components/events/events').then(
