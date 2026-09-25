@@ -10,7 +10,7 @@
       <h1>Events</h1>
       <p>Every detail, from the first idea to the final toast.</p>
     </div>
-    <button class="events__button events__button--primary" (click)="open()">＋ Add event</button>
+    <!-- <button class="events__button events__button--primary" (click)="open()">＋ Add event</button> -->
   </header>
   <div class="events__summary">
     <span class="events__summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
@@ -43,7 +43,7 @@
       <table>
         <thead>
           <tr>
-            <th scope="col">ID</th>
+            <!-- <th scope="col">ID</th> -->
             <th scope="col">Client</th>
             <th scope="col">Event type</th>
             <th scope="col">Event date</th>
@@ -57,7 +57,7 @@
         <tbody>
           @for (row of filtered(); track row['id']) {
             <tr>
-              <td class="events__record-id">#{{ row['id'] }}</td>
+              <!-- <td class="events__record-id">#{{ row['id'] }}</td> -->
               <td>{{ clientName(row['clientId']) }}</td>
               <td>
                 <span class="events__badge" [attr.data-tone]="row['eventType']">{{
