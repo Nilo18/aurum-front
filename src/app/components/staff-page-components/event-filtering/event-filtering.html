@@ -1,0 +1,117 @@
+<fieldset [disabled]="disabled()" class="border-0 p-0 m-0">
+  <legend class="fs-6 mb-3">Filter collection</legend>
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <label for="filter-eventType" class="form-label">Event type</label
+      ><select
+        id="filter-eventType"
+        class="form-select"
+        [ngModel]="draft().eventType"
+        (ngModelChange)="filter('eventType', $event)"
+      >
+        <option [ngValue]="undefined">Any event type</option>
+        @for (option of types; track option) {
+          <option [ngValue]="option">{{ human(option) }}</option>
+        }
+      </select>
+    </div>
+    <div class="col-12 col-md-4">
+      <label for="filter-location" class="form-label">Location</label
+      ><select
+        id="filter-location"
+        class="form-select"
+        [ngModel]="draft().location"
+        (ngModelChange)="filter('location', $event)"
+      >
+        <option [ngValue]="undefined">Any location</option>
+        @for (option of locations; track option) {
+          <option [ngValue]="option">{{ human(option) }}</option>
+        }
+      </select>
+    </div>
+    <div class="col-12 col-md-4">
+      <label for="filter-status" class="form-label">Status</label
+      ><select
+        id="filter-status"
+        class="form-select"
+        [ngModel]="draft().status"
+        (ngModelChange)="filter('status', $event)"
+      >
+        <option [ngValue]="undefined">Any status</option>
+        @for (option of statuses; track option) {
+          <option [ngValue]="option">{{ human(option) }}</option>
+        }
+      </select>
+    </div>
+    <div class="col-6 col-lg-2">
+      <label for="filter-costFrom" class="form-label">Minimum cost (GEL)</label
+      ><input
+        id="filter-costFrom"
+        class="form-control"
+        type="number"
+        min="0"
+        [ngModel]="draft().costFrom"
+        [ngModelOptions]="{ updateOn: 'blur' }"
+        (ngModelChange)="filter('costFrom', $event)"
+      />
+    </div>
+    <div class="col-6 col-lg-2">
+      <label for="filter-costTo" class="form-label">Maximum cost (GEL)</label
+      ><input
+        id="filter-costTo"
+        class="form-control"
+        type="number"
+        min="0"
+        [ngModel]="draft().costTo"
+        [ngModelOptions]="{ updateOn: 'blur' }"
+        (ngModelChange)="filter('costTo', $event)"
+      />
+    </div>
+    <div class="col-6 col-lg-2">
+      <label for="filter-guestFrom" class="form-label">Minimum guests</label
+      ><input
+        id="filter-guestFrom"
+        class="form-control"
+        type="number"
+        min="0"
+        [ngModel]="draft().guestFrom"
+        [ngModelOptions]="{ updateOn: 'blur' }"
+        (ngModelChange)="filter('guestFrom', $event)"
+      />
+    </div>
+    <div class="col-6 col-lg-2">
+      <label for="filter-guestTo" class="form-label">Maximum guests</label
+      ><input
+        id="filter-guestTo"
+        class="form-control"
+        type="number"
+        min="0"
+        [ngModel]="draft().guestTo"
+        [ngModelOptions]="{ updateOn: 'blur' }"
+        (ngModelChange)="filter('guestTo', $event)"
+      />
+    </div>
+    <div class="col-6 col-lg-2">
+      <label for="filter-eventFrom" class="form-label">From date</label
+      ><input
+        id="filter-eventFrom"
+        class="form-control"
+        type="date"
+        [ngModel]="draft().eventFrom"
+        [ngModelOptions]="{ updateOn: 'blur' }"
+        (ngModelChange)="filter('eventFrom', $event)"
+      />
+    </div>
+    <div class="col-6 col-lg-2">
+      <label for="filter-eventTo" class="form-label">To date</label
+      ><input
+        id="filter-eventTo"
+        class="form-control"
+        type="date"
+        [ngModel]="draft().eventTo"
+        [ngModelOptions]="{ updateOn: 'blur' }"
+        (ngModelChange)="filter('eventTo', $event)"
+      />
+    </div>
+  </div>
+</fieldset>

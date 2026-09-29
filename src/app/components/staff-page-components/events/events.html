@@ -1,221 +1,121 @@
 <div class="events">
   <div class="events__topline">
-    <span>AURUM <span class="events__divider">/</span> WORKSPACE</span
-    ><span class="events__preview"><i></i> Sample data · session only</span>
+    <span>AURUM <span class="events__divider">/</span> WORKSPACE</span><span>EVENT COLLECTION</span>
   </div>
-
   <header>
     <div>
       <p class="events__eyebrow">THE AURUM COLLECTION</p>
       <h1>Events</h1>
       <p>Every detail, from the first idea to the final toast.</p>
     </div>
-    <!-- <button class="events__button events__button--primary" (click)="open()">＋ Add event</button> -->
   </header>
   <div class="events__summary">
-    <span class="events__summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
+    <span class="events__summary-number">{{ page()?.totalElements ?? 0 }}</span>
     <div>
-      <strong>Events in your collection</strong>
+      <strong>Matching events</strong>
       <p>Considered details. Confident decisions.</p>
     </div>
   </div>
-  <section class="events__panel">
-    <div class="events__toolbar">
-      <label class="events__search"
-        ><span aria-hidden="true">⌕</span
-        ><input
-          aria-label="Search records"
-          placeholder="Search this collection…"
-          [ngModel]="search()"
-          (ngModelChange)="search.set($event)" /></label
-      ><select
-        aria-label="Filter records"
-        [ngModel]="filter()"
-        (ngModelChange)="filter.set($event)"
-      >
-        <option value="">All statuss</option>
-        @for (option of filters(); track option) {
-          <option [value]="option">{{ human(option) }}</option>
-        }</select
-      ><span class="events__result-count">{{ filtered().length }} results</span>
+  <section class="events__panel" [attr.aria-busy]="busy()">
+    <div class="p-4">
+      <div class="row g-3 align-items-end mb-4">
+        <div class="col-12 col-lg-6">
+          <form (ngSubmit)="searchEvents()">
+            <label for="event-search" class="form-label">Search collection</label>
+            <div class="input-group">
+              <input
+                id="event-search"
+                name="search"
+                class="form-control"
+                placeholder="Search events..."
+                [disabled]="busy()"
+                [ngModel]="search()"
+                (ngModelChange)="search.set($event)"
+              /><button class="btn btn-outline-warning" type="submit" [disabled]="busy()">
+                Search
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="col-12 col-lg-6">
+          <app-event-sorting
+            [query]="query()"
+            [disabled]="busy()"
+            (started)="start()"
+            (changed)="receive($event)"
+            (failed)="fail()"
+          />
+        </div>
+      </div>
+      <app-event-filtering
+        [query]="query()"
+        [disabled]="busy()"
+        (started)="start()"
+        (changed)="receive($event)"
+        (failed)="fail()"
+      />
     </div>
+    @if (error() || events.error()) {
+      <div class="alert alert-danger m-4" role="alert">
+        {{ error() || 'Unable to load events. Please try again.' }}
+        <button class="btn btn-sm btn-outline-danger ms-2" [disabled]="busy()" (click)="retry()">
+          Retry
+        </button>
+      </div>
+    }
+    @if (busy()) {
+      <div class="px-4 py-3" role="status">
+        <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
+        events...
+      </div>
+    }
     <div class="events__table-scroll">
       <table>
         <thead>
           <tr>
-            <!-- <th scope="col">ID</th> -->
             <th scope="col">Client</th>
             <th scope="col">Event type</th>
             <th scope="col">Event date</th>
-            <th scope="col">Total cost (₾)</th>
+            <th scope="col">Total cost (GEL)</th>
             <th scope="col">Guests</th>
             <th scope="col">Location</th>
             <th scope="col">Status</th>
-            <th scope="col"><span class="visually-hidden">Actions</span></th>
           </tr>
         </thead>
         <tbody>
-          @for (row of filtered(); track row['id']) {
+          @for (row of rows(); track $index) {
             <tr>
-              <!-- <td class="events__record-id">#{{ row['id'] }}</td> -->
-              <td>{{ clientName(row['clientId']) }}</td>
+              <td>{{ row.clientName }}</td>
+              <td>{{ human(row.eventType) }}</td>
+              <td>{{ row.date }}</td>
+              <td>{{ currency(row.totalCost) }}</td>
+              <td>{{ row.guestCount }}</td>
+              <td>{{ human(row.location) }}</td>
               <td>
-                <span class="events__badge" [attr.data-tone]="row['eventType']">{{
-                  human(row['eventType'])
+                <span class="events__badge" [attr.data-tone]="row.status">{{
+                  human(row.status)
                 }}</span>
-              </td>
-              <td>{{ human(row['date']) }}</td>
-              <td>{{ currency(row['totalCost']) }}</td>
-              <td>{{ human(row['guestCount']) }}</td>
-              <td>
-                <span class="events__badge" [attr.data-tone]="row['location']">{{
-                  human(row['location'])
-                }}</span>
-              </td>
-              <td>
-                <span class="events__badge" [attr.data-tone]="row['status']">{{
-                  human(row['status'])
-                }}</span>
-              </td>
-              <td>
-                <button
-                  class="events__button events__button--text"
-                  (click)="open(row)"
-                  [attr.aria-label]="'Edit event ' + row['id']"
-                >
-                  Edit ↗
-                </button>
               </td>
             </tr>
           }
         </tbody>
       </table>
     </div>
-    @if (!filtered().length) {
+    @if (!busy() && !error() && !events.error() && !rows().length) {
       <div class="events__empty">
-        <h2>No records found</h2>
-        <p>Try another search or add your first event.</p>
-        <button
-          class="events__button events__button--text"
-          (click)="search.set(''); filter.set('')"
-        >
-          Clear filters
-        </button>
+        <h2>No events found</h2>
+        <p>Try another search or adjust your filters.</p>
       </div>
     }
-    <footer>
-      <span>{{ filtered().length }} of {{ rows().length }} records</span
-      ><span>AURUM · Made for memorable moments</span>
-    </footer>
-  </section>
-  @if (notice()) {
-    <p class="events__notice" role="status">
-      {{ notice() }} <button (click)="notice.set('')" aria-label="Dismiss message">×</button>
-    </p>
-  }
-</div>
-@if (editor()) {
-  <dialog
-    #editorDialog
-    class="events__editor"
-    aria-modal="true"
-    aria-labelledby="editor-title"
-    (cancel)="close()"
-  >
-    <div class="events__panel-heading">
-      <div>
-        <p class="events__eyebrow">THE DETAILS</p>
-        <h2 id="editor-title">{{ editing ? 'Edit' : 'New' }} event</h2>
-      </div>
-      <button
-        class="events__button events__button--text"
-        (click)="close()"
-        aria-label="Close editor"
-      >
-        ✕
-      </button>
+    <div class="p-4">
+      <app-event-pagination
+        [query]="query()"
+        [page]="page()"
+        [disabled]="busy()"
+        (started)="start()"
+        (changed)="receive($event)"
+        (failed)="fail()"
+      />
     </div>
-    <p class="events__editor-note">Sample workspace · changes last for this session.</p>
-    <form #editorForm="ngForm" (ngSubmit)="editorForm.valid && save()">
-      <div class="events__fields">
-        <label
-          >Client<select name="clientId" [(ngModel)]="draft['clientId']" required>
-            <option value="" disabled>Select client</option>
-            @for (row of store.data()['clients']; track row['id']) {
-              <option [ngValue]="row['id']">{{ row['name'] }}</option>
-            }
-          </select></label
-        >
-        <label
-          >Event type<select name="eventType" [(ngModel)]="draft['eventType']" required>
-            <option value="WEDDING">Wedding</option>
-            <option value="CORPORATE_EVENT">Corporate event</option>
-            <option value="CONFERENCE">Conference</option>
-            <option value="OFFICIAL_RECEPTION">Official reception</option>
-            <option value="ANNIVERSARY">Anniversary</option>
-            <option value="BIRTHDAY">Birthday</option>
-            <option value="GALA_DINNER">Gala dinner</option>
-            <option value="PRODUCT_LAUNCH">Product launch</option>
-            <option value="PRIVATE_PARTY">Private party</option>
-            <option value="OTHER">Other</option>
-          </select></label
-        >
-        <label
-          >Event date<input type="date" name="date" [(ngModel)]="draft['date']" required
-        /></label>
-        <label
-          >Total cost (₾)<input
-            type="number"
-            name="totalCost"
-            [(ngModel)]="draft['totalCost']"
-            required
-            min="0"
-            step="any"
-        /></label>
-        <label
-          >Guests<input
-            type="number"
-            name="guestCount"
-            [(ngModel)]="draft['guestCount']"
-            required
-            min="0"
-            step="1"
-        /></label>
-        <label
-          >Location<select name="location" [(ngModel)]="draft['location']" required>
-            <option value="AURUM_BANQUET_HALL">Aurum banquet hall</option>
-            <option value="AURUM_CONFERENCE_HALL">Aurum conference hall</option>
-            <option value="PRIVATE_RESIDENCE">Private residence</option>
-            <option value="PARTNER_VENUE">Partner venue</option>
-            <option value="HOTEL">Hotel</option>
-            <option value="RESTAURANT">Restaurant</option>
-            <option value="OUTDOOR_VENUE">Outdoor venue</option>
-            <option value="HISTORICAL_VENUE">Historical venue</option>
-            <option value="CORPORATE_OFFICE">Corporate office</option>
-            <option value="OTHER">Other</option>
-          </select></label
-        >
-        <label
-          >Status<select name="status" [(ngModel)]="draft['status']" required>
-            <option value="REQUESTED">Requested</option>
-            <option value="PLANNING">Planning</option>
-            <option value="CONFIRMED">Confirmed</option>
-            <option value="COMPLETED">Completed</option>
-            <option value="REJECTED">Rejected</option>
-            <option value="CANCELLED">Cancelled</option>
-          </select></label
-        >
-        <label class="events__field events__field--wide"
-          >Notes<small>optional</small
-          ><textarea name="notes" [(ngModel)]="draft['notes']" rows="4"></textarea>
-        </label>
-      </div>
-
-      <div class="events__form-actions">
-        <button type="button" class="events__button events__button--secondary" (click)="close()">
-          Cancel</button
-        ><button type="submit" class="events__button events__button--primary">Save event</button>
-      </div>
-    </form>
-  </dialog>
-}
+  </section>
+</div>

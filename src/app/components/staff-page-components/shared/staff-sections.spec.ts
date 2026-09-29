@@ -3,8 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Clients } from '../clients/clients';
 import { Employees } from '../employees/employees';
-import { EventRequests } from '../event-requests/event-requests';
-import { Events } from '../events/events';
 import { Feedback } from '../feedback/feedback';
 import { Menu } from '../menu/menu';
 import { Products } from '../products/products';
@@ -24,8 +22,6 @@ interface EditableSection {
 const sections: [string, Type<EditableSection>, StaffCollection][] = [
   ['Clients', Clients, 'clients'],
   ['Employees', Employees, 'employees'],
-  ['Event requests', EventRequests, 'events'],
-  ['Events', Events, 'events'],
   ['Feedback', Feedback, 'feedback'],
   ['Menu', Menu, 'menu'],
   ['Products', Products, 'products'],
@@ -136,32 +132,12 @@ describe('Staff section ownership', () => {
     expect(component.editor()).toBe(false);
   });
 
-  it('updates requests when an event changes across sections', () => {
-    const events = TestBed.createComponent(Events).componentInstance;
-    const requests = TestBed.createComponent(EventRequests).componentInstance;
-    const requested = requests.rows()[0];
-    requests.open(requested);
-    requests.draft['status'] = 'CONFIRMED';
-    requests.draft['totalCost'] = String(Number(requested['totalCost']) + 100);
-    requests.save();
-
-    expect(requests.rows().some((row) => row['id'] === requested['id'])).toBe(false);
-    expect(events.rows().find((row) => row['id'] === requested['id'])?.['status']).toBe(
-      'CONFIRMED',
-    );
-  });
-
   it('keeps section filters independent and searches related names', () => {
     const employees = TestBed.createComponent(Employees).componentInstance;
-    const events = TestBed.createComponent(Events).componentInstance;
     const products = TestBed.createComponent(Products).componentInstance;
     employees.filter.set('CHEF');
     expect(employees.filtered().map((row) => row['type'])).toEqual(['CHEF']);
-    expect(events.filter()).toBe('');
-    events.search.set('Atelier');
-    expect(events.filtered()).toHaveLength(2);
-    events.filter.set('REQUESTED');
-    expect(events.filtered()).toHaveLength(1);
+    expect(products.filter()).toBe('');
     products.search.set('SUP-002');
     expect(products.filtered().map((row) => row['supplierId'])).toEqual([2]);
     employees.search.set('no matching employee');

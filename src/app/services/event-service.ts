@@ -14,11 +14,11 @@ export interface ClientDTO {
 
 export interface EventCreationRequest {
   eventType: string;
-  date: string;         // ISO-8601 Date string format: "YYYY-MM-DD"
-  totalCost?: number;   // BigDecimal maps to number (optional since it can be null)
+  date: string; // ISO-8601 Date string format: "YYYY-MM-DD"
+  totalCost?: number; // BigDecimal maps to number (optional since it can be null)
   guestCount: number;
   location: string;
-  notes?: string;       // Optional field matching nullable Java String
+  notes?: string; // Optional field matching nullable Java String
 }
 
 export interface EventOrderRequest {
@@ -37,38 +37,38 @@ export interface PageResponse<T> {
 }
 
 export enum EventStatus {
-  REQUESTED = "REQUESTED",
-  PLANNING = "PLANNING",
-  CONFIRMED = "CONFIRMED",
-  COMPLETED = "COMPLETED",
-  REJECTED = "REJECTED",
-  CANCELLED = "CANCELLED"
+  REQUESTED = 'REQUESTED',
+  PLANNING = 'PLANNING',
+  CONFIRMED = 'CONFIRMED',
+  COMPLETED = 'COMPLETED',
+  REJECTED = 'REJECTED',
+  CANCELLED = 'CANCELLED',
 }
 
 export enum EventType {
-  WEDDING = "WEDDING",
-  CORPORATE_EVENT = "CORPORATE_EVENT",
-  CONFERENCE = "CONFERENCE",
-  OFFICIAL_RECEPTION = "OFFICIAL_RECEPTION",
-  ANNIVERSARY = "ANNIVERSARY",
-  BIRTHDAY = "BIRTHDAY",
-  GALA_DINNER = "GALA_DINNER",
-  PRODUCT_LAUNCH = "PRODUCT_LAUNCH",
-  PRIVATE_PARTY = "PRIVATE_PARTY",
-  OTHER = "OTHER"
+  WEDDING = 'WEDDING',
+  CORPORATE_EVENT = 'CORPORATE_EVENT',
+  CONFERENCE = 'CONFERENCE',
+  OFFICIAL_RECEPTION = 'OFFICIAL_RECEPTION',
+  ANNIVERSARY = 'ANNIVERSARY',
+  BIRTHDAY = 'BIRTHDAY',
+  GALA_DINNER = 'GALA_DINNER',
+  PRODUCT_LAUNCH = 'PRODUCT_LAUNCH',
+  PRIVATE_PARTY = 'PRIVATE_PARTY',
+  OTHER = 'OTHER',
 }
 
 export enum EventLocation {
-  AURUM_BANQUET_HALL = "AURUM_BANQUET_HALL",
-  AURUM_CONFERENCE_HALL = "AURUM_CONFERENCE_HALL",
-  PRIVATE_RESIDENCE = "PRIVATE_RESIDENCE",
-  PARTNER_VENUE = "PARTNER_VENUE",
-  HOTEL = "HOTEL",
-  RESTAURANT = "RESTAURANT",
-  OUTDOOR_VENUE = "OUTDOOR_VENUE",
-  HISTORICAL_VENUE = "HISTORICAL_VENUE",
-  CORPORATE_OFFICE = "CORPORATE_OFFICE",
-  OTHER = "OTHER"
+  AURUM_BANQUET_HALL = 'AURUM_BANQUET_HALL',
+  AURUM_CONFERENCE_HALL = 'AURUM_CONFERENCE_HALL',
+  PRIVATE_RESIDENCE = 'PRIVATE_RESIDENCE',
+  PARTNER_VENUE = 'PARTNER_VENUE',
+  HOTEL = 'HOTEL',
+  RESTAURANT = 'RESTAURANT',
+  OUTDOOR_VENUE = 'OUTDOOR_VENUE',
+  HISTORICAL_VENUE = 'HISTORICAL_VENUE',
+  CORPORATE_OFFICE = 'CORPORATE_OFFICE',
+  OTHER = 'OTHER',
 }
 
 export interface EventDTO {
@@ -90,7 +90,7 @@ export interface EventQuery {
   guestFrom?: number;
   guestTo?: number;
   eventFrom?: string; // ISO თარიღის ფორმატი "YYYY-MM-DD"
-  eventTo?: string;   // ISO თარიღის ფორმატი "YYYY-MM-DD"
+  eventTo?: string; // ISO თარიღის ფორმატი "YYYY-MM-DD"
   location?: EventLocation;
   status?: EventStatus;
   sortBy?: string;
@@ -98,58 +98,105 @@ export interface EventQuery {
   search?: string;
 }
 
+export type EventFilterKey = Exclude<
+  keyof EventQuery,
+  'page' | 'size' | 'sortBy' | 'sortDirection' | 'search'
+>;
+
 @Injectable({
   providedIn: 'root',
 })
 export class EventService {
-  private backendUrlHolder = inject(BackendUrlHolderService)
-  private baseUrl = this.backendUrlHolder.getBaseUrl()
-  private http = inject(HttpClient)
-  private eventQuery = signal<EventQuery>(
-    {
-      page: 0,
-      size: 10,
-      sortBy: "",
-      sortDirection: "",
-      search: ""
-    }
-  )
+  private backendUrlHolder = inject(BackendUrlHolderService);
+  private baseUrl = this.backendUrlHolder.getBaseUrl();
+  private http = inject(HttpClient);
+  private eventQuery = signal<EventQuery>({
+    page: 0,
+    size: 10,
+    sortBy: '',
+    sortDirection: '',
+    search: '',
+  });
 
   async verifyCreateEventRequest(email: string) {
     try {
-      const res = await firstValueFrom(this.http.post<OtpResponse>(`${this.baseUrl}/api/event/verify`, { email }))
-      console.log(res)
+      const res = await firstValueFrom(
+        this.http.post<OtpResponse>(`${this.baseUrl}/api/event/verify`, { email }),
+      );
+      console.log(res);
       return res;
     } catch (error) {
-      console.log("Couldn't verify event creation: ", error)
+      console.log("Couldn't verify event creation: ", error);
       throw error;
     }
   }
 
   async createEvent(request: EventOrderRequest) {
     try {
-      const res = await firstValueFrom(this.http.post<GenericResponse>(`${this.baseUrl}/api/event`, request))
-      console.log(res)
+      const res = await firstValueFrom(
+        this.http.post<GenericResponse>(`${this.baseUrl}/api/event`, request),
+      );
+      console.log(res);
       return res;
     } catch (error) {
-      console.log("Couldn't create event: ", error)
+      console.log("Couldn't create event: ", error);
       throw error;
     }
   }
 
-  async getEvents(query: EventQuery) {
+  searchEvents(search: string) {
+    this.eventQuery.update((query) => ({
+      ...query,
+      search: search,
+      page: 0,
+    }));
+
+    return this.getEvents();
+  }
+
+  filterEvents<K extends EventFilterKey>(field: K, value: EventQuery[K]) {
+    this.eventQuery.update((query) => ({
+      ...query,
+      [field]: value,
+      page: 0,
+    }));
+
+    return this.getEvents();
+  }
+
+  sortEvents(sortBy: string, sortDirection: string) {
+    this.eventQuery.update((query) => ({
+      ...query,
+      sortBy: sortBy,
+      sortDirection: sortDirection,
+    }));
+
+    return this.getEvents();
+  }
+
+  paginateEvents(pageNumber: number, size?: number) {
+    this.eventQuery.update((query) => ({
+      ...query,
+      page: pageNumber,
+      size: size ?? query.size,
+    }));
+
+    return this.getEvents();
+  }
+
+  async getEvents() {
     try {
-      const cleanedQuery = this.removeEmptyProperties(query);
+      const cleanedQuery = this.removeEmptyProperties(this.eventQuery());
       const httpParams = new HttpParams({ fromObject: cleanedQuery });
-      const res = await firstValueFrom(this.http.get<PageResponse<EventDTO>>(`${this.baseUrl}/api/event/verify`, 
-        {
-          params: httpParams
-        }
-      ))
-      console.log(res)
+      const res = await firstValueFrom(
+        this.http.get<PageResponse<EventDTO>>(`${this.baseUrl}/api/event`, {
+          params: httpParams,
+        }),
+      );
+      console.log(res);
       return res;
     } catch (error) {
-      console.log("Couldn't verify event creation: ", error)
+      console.log("Couldn't get events: ", error);
       throw error;
     }
   }
@@ -162,5 +209,9 @@ export class EventService {
       }
     });
     return result;
+  }
+
+  getEventQuery() {
+    return this.eventQuery;
   }
 }

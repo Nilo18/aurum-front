@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  color: #e9e3d8;
+}
+.form-label,
+.form-text {
+  color: #b5aa98;
+  font-size: 0.75rem;
+}
+.form-control,
+.form-select {
+  background-color: #191814;
+  border-color: #494132;
+  color: #e9e3d8;
+  color-scheme: dark;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: #c7af7e;
+  box-shadow: 0 0 0 0.2rem #c7af7e25;
+}
+.form-control::placeholder {
+  color: #a39782;
+}
+.page-link {
+  background: #191814;
+  color: #c7af7e;
+  border-color: #494132;
+  min-width: 2.5rem;
+  text-align: center;
+}
+.page-item.active .page-link {
+  background: #c7af7e;
+  border-color: #c7af7e;
+  color: #191814;
+}
+.page-item.disabled .page-link {
+  background: #222019;
+  border-color: #494132;
+  color: #857c6c;
+}
+.page-link:focus-visible {
+  box-shadow: 0 0 0 0.2rem #c7af7e55;
+}
+fieldset {
+  min-width: 0;
+}

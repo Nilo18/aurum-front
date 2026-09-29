@@ -1,88 +1,57 @@
-import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, resource, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { StaffPreviewStore } from '../shared/staff-preview-store';
-import { Row } from '../shared/staff-row';
 import { human, currency } from '../shared/staff-format';
-
+import { EventService, EventDTO, PageResponse } from '../../../services/event-service';
+import { EventFiltering } from '../event-filtering/event-filtering';
+import { EventSorting } from '../event-sorting/event-sorting';
+import { EventPagination } from '../event-pagination/event-pagination';
 @Component({
   selector: 'app-events',
-  imports: [FormsModule],
+  imports: [FormsModule, EventFiltering, EventSorting, EventPagination],
   templateUrl: './events.html',
   styleUrl: './events.scss',
 })
 export class Events {
-  readonly store = inject(StaffPreviewStore);
+  private readonly service = inject(EventService);
   readonly human = human;
   readonly currency = currency;
-  readonly search = signal('');
-  readonly filter = signal('');
-  readonly editor = signal(false);
-  readonly notice = signal('');
-  readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('editorDialog');
-  readonly rows = computed(() => this.store.data().events);
-  readonly filters = computed(() =>
-    Array.from(new Set(this.rows().map((row) => String(row['status'])))),
-  );
-  readonly filtered = computed(() =>
-    this.rows().filter(
-      (row) =>
-        (!this.filter() || String(row['status']) === this.filter()) &&
-        Object.entries(row).some(([key, value]) =>
-          this.searchValue(key, value).toLowerCase().includes(this.search().toLowerCase()),
-        ),
-    ),
-  );
-  editing?: Row;
-  draft: Row = {};
-
-  constructor() {
-    effect(() => {
-      const dialog = this.dialog()?.nativeElement;
-      if (dialog && !dialog.open) dialog.showModal();
-    });
+  readonly query = this.service.getEventQuery().asReadonly();
+  readonly search = signal(this.query().search ?? '');
+  readonly pending = signal(false);
+  readonly error = signal('');
+  readonly events = resource({ loader: () => this.service.getEvents() });
+  readonly busy = computed(() => this.pending() || this.events.isLoading());
+  readonly page = computed(() => (this.events.hasValue() ? this.events.value() : undefined));
+  readonly rows = computed(() => this.page()?.content ?? []);
+  start() {
+    this.pending.set(true);
+    this.error.set('');
   }
-
-  clientName(value: unknown): string {
-    return String(
-      this.store.data().clients.find((row) => row['id'] === Number(value))?.['name'] ??
-        `Client #${value}`,
-    );
+  receive(page: PageResponse<EventDTO>) {
+    this.events.set(page);
+    this.pending.set(false);
   }
-
-  private searchValue(key: string, value: unknown): string {
-    if (key === 'clientId') return this.clientName(value);
-    if (key === 'totalCost') return this.currency(value);
-    return human(value);
+  fail() {
+    this.pending.set(false);
+    this.error.set('Unable to load events. Please try again.');
   }
-
-  open(row?: Row): void {
-    this.editing = row;
-    this.draft = row
-      ? { ...row }
-      : {
-          clientId: '',
-          eventType: 'WEDDING',
-          date: '',
-          totalCost: '',
-          guestCount: '',
-          location: 'AURUM_BANQUET_HALL',
-          status: 'REQUESTED',
-          notes: '',
-        };
-    this.editor.set(true);
+  async searchEvents() {
+    if (this.busy()) return;
+    this.search.set(this.search().trim());
+    this.start();
+    try {
+      this.receive(await this.service.searchEvents(this.search()));
+    } catch {
+      this.fail();
+    }
   }
-
-  close(): void {
-    this.editor.set(false);
-  }
-
-  save(): void {
-    const row = { ...this.draft };
-    row['clientId'] = Number(row['clientId']);
-    row['totalCost'] = Number(row['totalCost']);
-    row['guestCount'] = Number(row['guestCount']);
-    this.store.save('events', row, this.editing);
-    this.close();
-    this.notice.set('Event saved in this preview session.');
+  async retry() {
+    if (this.busy()) return;
+    this.start();
+    try {
+      this.receive(await this.service.getEvents());
+    } catch {
+      this.fail();
+    }
   }
 }
