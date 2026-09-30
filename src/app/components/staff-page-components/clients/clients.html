@@ -1,49 +1,82 @@
 <div class="clients">
   <div class="clients__topline">
     <span>AURUM <span class="clients__divider">/</span> WORKSPACE</span
-    ><span class="clients__preview"><i></i> Sample data · session only</span>
+    ><span>CLIENT COLLECTION</span>
   </div>
-
   <header>
     <div>
       <p class="clients__eyebrow">THE AURUM COLLECTION</p>
       <h1>Clients</h1>
       <p>Personal connections. Exceptional experiences.</p>
     </div>
-    <button class="clients__button clients__button--primary" (click)="open()">＋ Add client</button>
+    <button class="clients__button clients__button--primary" (click)="open()">
+      Preview new client
+    </button>
   </header>
   <div class="clients__summary">
-    <span class="clients__summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
+    <span class="clients__summary-number">{{ page()?.totalElements ?? 0 }}</span>
     <div>
-      <strong>Clients in your collection</strong>
+      <strong>Matching clients</strong>
       <p>Considered details. Confident decisions.</p>
     </div>
   </div>
-  <section class="clients__panel">
-    <div class="clients__toolbar">
-      <label class="clients__search"
-        ><span aria-hidden="true">⌕</span
-        ><input
-          aria-label="Search records"
-          placeholder="Search this collection…"
-          [ngModel]="search()"
-          (ngModelChange)="search.set($event)" /></label
-      ><select
-        aria-label="Filter records"
-        [ngModel]="filter()"
-        (ngModelChange)="filter.set($event)"
-      >
-        <option value="">All types</option>
-        @for (option of filters(); track option) {
-          <option [value]="option">{{ human(option) }}</option>
-        }</select
-      ><span class="clients__result-count">{{ filtered().length }} results</span>
+  <section class="clients__panel" [attr.aria-busy]="busy()">
+    <div class="p-4">
+      <div class="row g-3 align-items-end mb-4">
+        <div class="col-12 col-lg-6">
+          <form (ngSubmit)="searchClients()">
+            <label for="clients-search" class="form-label">Search collection</label>
+            <div class="input-group">
+              <input
+                id="clients-search"
+                name="search"
+                class="form-control"
+                placeholder="Search clients..."
+                [disabled]="busy()"
+                [ngModel]="search()"
+                (ngModelChange)="search.set($event)"
+              /><button class="btn btn-outline-warning" type="submit" [disabled]="busy()">
+                Search
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="col-12 col-lg-6">
+          <app-clients-sorting
+            [query]="query()"
+            [disabled]="busy()"
+            (started)="start()"
+            (changed)="receive($event)"
+            (failed)="fail()"
+          />
+        </div>
+      </div>
+      <app-clients-filtering
+        [query]="query()"
+        [disabled]="busy()"
+        (started)="start()"
+        (changed)="receive($event)"
+        (failed)="fail()"
+      />
     </div>
+    @if (error() || clients.error()) {
+      <div class="alert alert-danger m-4" role="alert">
+        {{ error() || 'Unable to load clients. Please try again.' }}
+        <button class="btn btn-sm btn-outline-danger ms-2" [disabled]="busy()" (click)="retry()">
+          Retry
+        </button>
+      </div>
+    }
+    @if (busy()) {
+      <div class="px-4 py-3" role="status">
+        <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
+        clients...
+      </div>
+    }
     <div class="clients__table-scroll">
       <table>
         <thead>
           <tr>
-            <th scope="col">ID</th>
             <th scope="col">Name</th>
             <th scope="col">Email</th>
             <th scope="col">Phone</th>
@@ -52,9 +85,8 @@
           </tr>
         </thead>
         <tbody>
-          @for (row of filtered(); track row['id']) {
+          @for (row of rows(); track $index) {
             <tr>
-              <td class="clients__record-id">#{{ row['id'] }}</td>
               <td>{{ human(row['name']) }}</td>
               <td>{{ human(row['email']) }}</td>
               <td>{{ human(row['phone']) }}</td>
@@ -67,9 +99,9 @@
                 <button
                   class="clients__button clients__button--text"
                   (click)="open(row)"
-                  [attr.aria-label]="'Edit client ' + row['id']"
+                  [attr.aria-label]="'Preview edits for ' + row['name']"
                 >
-                  Edit ↗
+                  Preview ↗
                 </button>
               </td>
             </tr>
@@ -77,22 +109,22 @@
         </tbody>
       </table>
     </div>
-    @if (!filtered().length) {
+    @if (!busy() && !error() && !clients.error() && !rows().length) {
       <div class="clients__empty">
-        <h2>No records found</h2>
-        <p>Try another search or add your first client.</p>
-        <button
-          class="clients__button clients__button--text"
-          (click)="search.set(''); filter.set('')"
-        >
-          Clear filters
-        </button>
+        <h2>No clients found</h2>
+        <p>Try another search or adjust your filters.</p>
       </div>
     }
-    <footer>
-      <span>{{ filtered().length }} of {{ rows().length }} records</span
-      ><span>AURUM · Made for memorable moments</span>
-    </footer>
+    <div class="p-4">
+      <app-clients-pagination
+        [query]="query()"
+        [page]="page()"
+        [disabled]="busy()"
+        (started)="start()"
+        (changed)="receive($event)"
+        (failed)="fail()"
+      />
+    </div>
   </section>
   @if (notice()) {
     <p class="clients__notice" role="status">

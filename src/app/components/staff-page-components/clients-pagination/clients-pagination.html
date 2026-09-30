@@ -1,0 +1,74 @@
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+  <div class="form-text m-0" aria-live="polite">
+    {{ first() }}–{{ last() }} of {{ total() }} clients
+  </div>
+  <nav aria-label="Client pages">
+    <ul class="pagination pagination-sm flex-wrap mb-0">
+      <li class="page-item" [class.disabled]="disabled() || pageNumber() === 0">
+        <button
+          class="page-link"
+          [disabled]="disabled() || pageNumber() === 0"
+          (click)="paginate(0)"
+          aria-label="First page"
+        >
+          &laquo;
+        </button>
+      </li>
+      <li class="page-item" [class.disabled]="disabled() || pageNumber() === 0">
+        <button
+          class="page-link"
+          [disabled]="disabled() || pageNumber() === 0"
+          (click)="paginate(pageNumber() - 1)"
+        >
+          Prev
+        </button>
+      </li>
+      @for (number of pages(); track number) {
+        <li class="page-item" [class.active]="number === pageNumber()">
+          <button
+            class="page-link"
+            [disabled]="disabled()"
+            [attr.aria-current]="number === pageNumber() ? 'page' : null"
+            [attr.aria-label]="'Page ' + (number + 1)"
+            (click)="paginate(number)"
+          >
+            {{ number + 1 }}
+          </button>
+        </li>
+      }
+      <li class="page-item" [class.disabled]="disabled() || pageNumber() >= pageCount() - 1">
+        <button
+          class="page-link"
+          [disabled]="disabled() || pageNumber() >= pageCount() - 1"
+          (click)="paginate(pageNumber() + 1)"
+        >
+          Next
+        </button>
+      </li>
+      <li class="page-item" [class.disabled]="disabled() || pageNumber() >= pageCount() - 1">
+        <button
+          class="page-link"
+          [disabled]="disabled() || pageNumber() >= pageCount() - 1"
+          (click)="paginate(pageCount() - 1)"
+          aria-label="Last page"
+        >
+          &raquo;
+        </button>
+      </li>
+    </ul>
+  </nav>
+  <div class="d-flex align-items-center gap-2">
+    <label for="clients-size" class="form-label text-nowrap mb-0">Per page</label
+    ><select
+      id="clients-size"
+      class="form-select form-select-sm"
+      [disabled]="disabled()"
+      [ngModel]="size()"
+      (ngModelChange)="paginate(0, $event)"
+    >
+      @for (count of [10, 25, 50]; track count) {
+        <option [ngValue]="count">{{ count }}</option>
+      }
+    </select>
+  </div>
+</div>

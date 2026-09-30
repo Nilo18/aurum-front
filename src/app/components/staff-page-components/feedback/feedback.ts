@@ -11,7 +11,7 @@ import { human } from '../shared/staff-format';
   styleUrl: './feedback.scss',
 })
 export class Feedback {
-  readonly store = inject(StaffPreviewStore);
+  // readonly store = inject(StaffPreviewStore);
   readonly human = human;
 
   readonly search = signal('');
@@ -19,19 +19,19 @@ export class Feedback {
   readonly editor = signal(false);
   readonly notice = signal('');
   readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('editorDialog');
-  readonly rows = computed(() => this.store.data().feedback);
-  readonly filters = computed(() =>
-    Array.from(new Set(this.rows().map((row) => String(row['rating'])))),
-  );
-  readonly filtered = computed(() =>
-    this.rows().filter(
-      (row) =>
-        (!this.filter() || String(row['rating']) === this.filter()) &&
-        Object.entries(row).some(([key, value]) =>
-          this.searchValue(key, value).toLowerCase().includes(this.search().toLowerCase()),
-        ),
-    ),
-  );
+  // readonly rows = computed(() => this.store.data().feedback);
+  // readonly filters = computed(() =>
+  //   Array.from(new Set(this.rows().map((row) => String(row['rating'])))),
+  // );
+  // readonly filtered = computed(() =>
+  //   this.rows().filter(
+  //     (row) =>
+  //       (!this.filter() || String(row['rating']) === this.filter()) &&
+  //       Object.entries(row).some(([key, value]) =>
+  //         this.searchValue(key, value).toLowerCase().includes(this.search().toLowerCase()),
+  //       ),
+  //   ),
+  // );
   editing?: Row;
   draft: Row = {};
 
@@ -73,7 +73,7 @@ export class Feedback {
     const row = { ...this.draft };
     row['eventId'] = Number(row['eventId']);
     row['rating'] = Number(row['rating']);
-    this.store.save('feedback', row, this.editing);
+    // this.store.save('feedback', row, this.editing);
     this.close();
     this.notice.set('Feedback saved in this preview session.');
   }

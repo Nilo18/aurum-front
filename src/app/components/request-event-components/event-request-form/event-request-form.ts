@@ -8,7 +8,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventService, EventOrderRequest } from '../../../services/event-service';
 import { VerifyEventRequestModal } from '../verify-event-request-modal/verify-event-request-modal';
 import { SuccessModal } from '../../general-components/success-modal/success-modal';
-import { ClientType, EventRequestDraft } from './event-request.models';
+import { EventRequestDraft } from './event-request.models';
+import { ClientType } from '../../../services/client-service';
 
 function localToday(): string {
   const date = new Date();
@@ -24,7 +25,7 @@ function createEventRequestForm(fb: FormBuilder) {
   const requiredText = [Validators.required, Validators.pattern(/\S/)];
   return fb.group({
     client: fb.nonNullable.group({
-      type: fb.nonNullable.control<ClientType>('PERSON', Validators.required),
+      type: fb.nonNullable.control<ClientType>(ClientType.PERSON, Validators.required),
       name: ['', [...requiredText, Validators.maxLength(255)]],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, phone]],

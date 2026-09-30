@@ -1,4 +1,6 @@
-export type ClientType = 'PERSON' | 'ORGANIZATION';
+import { ClientType } from "../../../services/client-service";
+
+// export type ClientType = 'PERSON' | 'ORGANIZATION';
 export type EventStatus =
   | 'REQUESTED'
   | 'PLANNING'

@@ -1,0 +1,39 @@
+@use 'event-controls';
+
+.form-select,
+.form-control {
+  min-height: 44px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+.form-select {
+  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23c7af7e' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+.form-select:disabled,
+.form-control:disabled {
+  background-color: #222019;
+  color: #857c6c;
+}
+.btn-outline-warning {
+  --bs-btn-color: #c7af7e;
+  --bs-btn-border-color: #685333;
+  --bs-btn-hover-bg: #c7af7e;
+  --bs-btn-hover-color: #191814;
+  --bs-btn-hover-border-color: #c7af7e;
+  --bs-btn-disabled-color: #857c6c;
+  --bs-btn-disabled-border-color: #494132;
+  font-size: 0.8rem;
+}
+.page-link {
+  min-height: 40px;
+  display: grid;
+  place-items: center;
+}
+.page-link:hover {
+  background: #30291c;
+  color: #edcf91;
+  border-color: #685333;
+}
+.page-link:disabled {
+  cursor: default;
+}

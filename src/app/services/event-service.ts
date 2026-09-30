@@ -1,16 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { BackendUrlHolderService } from './backend-url-holder-service';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ClientType } from '../components/request-event-components/event-request-form/event-request.models';
+// import { ClientType } from '../components/request-event-components/event-request-form/event-request.models';
 import { firstValueFrom } from 'rxjs';
 import { GenericResponse, OtpResponse } from './home-service';
-
-export interface ClientDTO {
-  clientType: ClientType;
-  name: string;
-  email: string;
-  phone: string;
-}
+import { ClientDTO } from './client-service';
+import { QueryFormatterService } from './query-formatter-service';
 
 export interface EventCreationRequest {
   eventType: string;
@@ -110,6 +105,7 @@ export class EventService {
   private backendUrlHolder = inject(BackendUrlHolderService);
   private baseUrl = this.backendUrlHolder.getBaseUrl();
   private http = inject(HttpClient);
+  private queryFormatter = inject(QueryFormatterService)
   private eventQuery = signal<EventQuery>({
     page: 0,
     size: 10,
@@ -186,7 +182,7 @@ export class EventService {
 
   async getEvents() {
     try {
-      const cleanedQuery = this.removeEmptyProperties(this.eventQuery());
+      const cleanedQuery = this.queryFormatter.removeEmptyProperties(this.eventQuery());
       const httpParams = new HttpParams({ fromObject: cleanedQuery });
       const res = await firstValueFrom(
         this.http.get<PageResponse<EventDTO>>(`${this.baseUrl}/api/event`, {
@@ -199,16 +195,6 @@ export class EventService {
       console.log("Couldn't get events: ", error);
       throw error;
     }
-  }
-
-  private removeEmptyProperties(obj: any): any {
-    const result: any = {};
-    Object.keys(obj).forEach((key) => {
-      if (obj[key] !== null && obj[key] !== undefined && obj[key] !== '') {
-        result[key] = String(obj[key]);
-      }
-    });
-    return result;
   }
 
   getEventQuery() {

@@ -1,0 +1,14 @@
+<fieldset [disabled]="disabled()" class="border-0 p-0 m-0">
+  <label for="clients-type" class="form-label">Client type</label>
+  <select
+    id="clients-type"
+    class="form-select"
+    [ngModel]="query().type"
+    (ngModelChange)="filter($event)"
+  >
+    <option [ngValue]="undefined">All client types</option>
+    @for (type of types; track type) {
+      <option [ngValue]="type">{{ human(type) }}</option>
+    }
+  </select>
+</fieldset>
