@@ -1,0 +1,29 @@
+<fieldset [disabled]="disabled()" class="row g-2 align-items-end border-0 p-0 m-0">
+  <div class="col-7">
+    <label for="employees-sort" class="form-label">Sort by</label
+    ><select
+      id="employees-sort"
+      class="form-select"
+      [ngModel]="draft().sortBy || ''"
+      (ngModelChange)="sort($event, draft().sortDirection || 'asc')"
+    >
+      <option value="">Default order</option>
+      @for (field of fields; track field) {
+        <option [value]="field">{{ label(field) }}</option>
+      }
+    </select>
+  </div>
+  <div class="col-5">
+    <label for="employees-direction" class="form-label">Direction</label
+    ><select
+      id="employees-direction"
+      class="form-select"
+      [disabled]="!draft().sortBy"
+      [ngModel]="draft().sortDirection || 'asc'"
+      (ngModelChange)="sort(draft().sortBy || '', $event)"
+    >
+      <option value="asc">Ascending</option>
+      <option value="desc">Descending</option>
+    </select>
+  </div>
+</fieldset>

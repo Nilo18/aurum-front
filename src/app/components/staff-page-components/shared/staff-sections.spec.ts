@@ -1,7 +1,6 @@
 import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { Employees } from '../employees/employees';
 import { Feedback } from '../feedback/feedback';
 import { Menu } from '../menu/menu';
 import { Products } from '../products/products';
@@ -19,7 +18,6 @@ interface EditableSection {
 }
 
 const sections: [string, Type<EditableSection>, StaffCollection][] = [
-  ['Employees', Employees, 'employees'],
   ['Feedback', Feedback, 'feedback'],
   ['Menu', Menu, 'menu'],
   ['Products', Products, 'products'],
@@ -104,41 +102,10 @@ describe('Staff section ownership', () => {
     });
   }
 
-  it('keeps the employee form omission and role choices and submits numeric salary', async () => {
-    const fixture = TestBed.createComponent(Employees);
-    const component = fixture.componentInstance;
-    component.open();
-    await fixture.whenStable();
-    const element: HTMLElement = fixture.nativeElement;
-    expect(element.querySelector('form [name="name"]')).toBeNull();
-    expect(
-      Array.from(element.querySelectorAll<HTMLOptionElement>('[name="role"] option')).map(
-        (option) => option.value,
-      ),
-    ).toEqual(['ADMIN', 'STAFF']);
-
-    const salary = element.querySelector<HTMLInputElement>('[name="salary"]')!;
-    salary.value = '2750';
-    salary.dispatchEvent(new Event('input'));
-    const email = element.querySelector<HTMLInputElement>('[name="email"]')!;
-    email.value = 'new@example.com';
-    email.dispatchEvent(new Event('input'));
-    await fixture.whenStable();
-    element.querySelector('form')!.dispatchEvent(new Event('submit', { cancelable: true }));
-    await fixture.whenStable();
-    expect(component.rows().at(-1)).toMatchObject({ salary: 2750, email: 'new@example.com' });
-    expect(component.editor()).toBe(false);
-  });
-
   it('keeps section filters independent and searches related names', () => {
-    const employees = TestBed.createComponent(Employees).componentInstance;
     const products = TestBed.createComponent(Products).componentInstance;
-    employees.filter.set('CHEF');
-    expect(employees.filtered().map((row) => row['type'])).toEqual(['CHEF']);
     expect(products.filter()).toBe('');
     products.search.set('SUP-002');
     expect(products.filtered().map((row) => row['supplierId'])).toEqual([2]);
-    employees.search.set('no matching employee');
-    expect(employees.filtered()).toEqual([]);
   });
 });

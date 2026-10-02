@@ -1,3 +1,5 @@
+@use '../shared/client-controls';
+
 :host {
   display: block;
   color: #e9e3d8;
@@ -156,37 +158,6 @@ textarea:focus-visible {
   &__summary p {
     font-size: 10px;
     margin-top: 5px;
-  }
-  &__toolbar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 20px;
-  }
-  &__search {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #090907;
-    border: 1px solid #322c22;
-    border-radius: 4px;
-    max-width: 360px;
-    flex: 1;
-    padding-left: 12px;
-    color: #b39a6c;
-  }
-  &__search .employees__input {
-    border: 0;
-    background: transparent;
-    width: 100%;
-  }
-  &__toolbar .employees__select {
-    width: 190px;
-  }
-  &__result-count {
-    margin-left: auto;
-    font-size: 10px;
-    color: #9a8c76;
   }
 }
 
@@ -386,16 +357,6 @@ textarea {
     &__topline {
       flex-direction: column;
       gap: 10px;
-    }
-    &__toolbar {
-      flex-wrap: wrap;
-    }
-    &__search {
-      flex-basis: 100%;
-      max-width: none;
-    }
-    &__toolbar .employees__select {
-      width: 150px;
     }
     &__footer > span:last-child {
       display: none;

@@ -1,108 +1,130 @@
 <div class="employees">
   <div class="employees__topline">
     <span>AURUM <span class="employees__divider">/</span> WORKSPACE</span
-    ><span class="employees__preview"><i></i> Sample data · session only</span>
+    ><span>EMPLOYEE COLLECTION</span>
   </div>
-
   <header class="employees__header">
     <div>
       <p class="employees__eyebrow">THE AURUM COLLECTION</p>
       <h1 class="employees__title">Employees</h1>
       <p>The people behind every remarkable occasion.</p>
     </div>
-    <button class="employees__button employees__button--primary" (click)="open()">
+    <button
+      class="employees__button employees__button--primary"
+      (click)="open()"
+      [disabled]="busy()"
+    >
       ＋ Add employee
     </button>
   </header>
   <div class="employees__summary">
-    <span class="employees__summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
+    <span class="employees__summary-number">{{ page()?.totalElements ?? 0 }}</span>
     <div>
-      <strong>Employees in your collection</strong>
+      <strong>Matching employees</strong>
       <p>Considered details. Confident decisions.</p>
     </div>
   </div>
-  <section class="employees__panel">
-    <div class="employees__toolbar">
-      <label class="employees__search"
-        ><span aria-hidden="true">⌕</span
-        ><input
-          class="employees__input"
-          aria-label="Search records"
-          placeholder="Search this collection…"
-          [ngModel]="search()"
-          (ngModelChange)="search.set($event)" /></label
-      ><select
-        class="employees__select"
-        aria-label="Filter records"
-        [ngModel]="filter()"
-        (ngModelChange)="filter.set($event)"
-      >
-        <option value="">All types</option>
-        @for (option of filters(); track option) {
-          <option [value]="option">{{ human(option) }}</option>
-        }</select
-      ><span class="employees__result-count">{{ filtered().length }} results</span>
+  <section class="employees__panel" [attr.aria-busy]="busy()">
+    <div class="p-4">
+      <div class="row g-3 align-items-end mb-4">
+        <div class="col-12 col-lg-6">
+          <form (ngSubmit)="searchEmployees()">
+            <label for="employees-search" class="form-label">Search collection</label>
+            <div class="input-group">
+              <input
+                id="employees-search"
+                name="search"
+                class="form-control"
+                placeholder="Search employees..."
+                [disabled]="busy()"
+                [ngModel]="search()"
+                (ngModelChange)="search.set($event)"
+              /><button class="btn btn-outline-warning" type="submit" [disabled]="busy()">
+                Search
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="col-12 col-lg-6">
+          <app-employees-sorting
+            [query]="query()"
+            [disabled]="busy()"
+            (started)="start()"
+            (changed)="receive($event)"
+            (failed)="fail()"
+          />
+        </div>
+      </div>
+      <app-employees-filtering
+        [query]="query()"
+        [disabled]="busy()"
+        (started)="start()"
+        (changed)="receive($event)"
+        (failed)="fail()"
+      />
     </div>
+    @if (error() || employees.error()) {
+      <div class="alert alert-danger m-4" role="alert">
+        {{ error() || 'Unable to load employees. Please try again.' }}
+        <button class="btn btn-sm btn-outline-danger ms-2" [disabled]="busy()" (click)="retry()">
+          Retry
+        </button>
+      </div>
+    }
+    @if (pending() || employees.isLoading()) {
+      <div class="px-4 py-3" role="status">
+        <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
+        employees...
+      </div>
+    }
     <div class="employees__table-scroll">
       <table class="employees__table">
         <thead>
           <tr class="employees__row">
-            <th class="employees__table-heading" scope="col">ID</th>
+            <th class="employees__table-heading" scope="col">Name</th>
+            <th class="employees__table-heading" scope="col">Email</th>
             <th class="employees__table-heading" scope="col">Specialty</th>
             <th class="employees__table-heading" scope="col">Salary (₾)</th>
-            <th class="employees__table-heading" scope="col">Email</th>
             <th class="employees__table-heading" scope="col">Access role</th>
-            <th class="employees__table-heading" scope="col">
-              <span class="visually-hidden">Actions</span>
-            </th>
+            <th class="employees__table-heading" scope="col">Invitation status</th>
           </tr>
         </thead>
         <tbody>
-          @for (row of filtered(); track row['id']) {
+          @for (row of rows(); track row.email) {
             <tr class="employees__row">
-              <td class="employees__cell employees__record-id">#{{ row['id'] }}</td>
-              <td class="employees__cell">
-                <span class="employees__badge" [attr.data-tone]="row['type']">{{
-                  human(row['type'])
-                }}</span>
-              </td>
-              <td class="employees__cell">{{ currency(row['salary']) }}</td>
+              <td class="employees__cell">{{ human(row['name']) }}</td>
               <td class="employees__cell">{{ human(row['email']) }}</td>
               <td class="employees__cell">
-                <span class="employees__badge" [attr.data-tone]="row['role']">{{
-                  human(row['role'])
-                }}</span>
+                <span class="employees__badge">{{ human(row.specialty) }}</span>
+              </td>
+              <td class="employees__cell">{{ currency(row.salary) }}</td>
+              <td class="employees__cell">
+                <span class="employees__badge">{{ human(row.role) }}</span>
               </td>
               <td class="employees__cell">
-                <button
-                  class="employees__button employees__button--text"
-                  (click)="open(row)"
-                  [attr.aria-label]="'Edit employee ' + row['id']"
-                >
-                  Edit ↗
-                </button>
+                <span class="employees__badge">{{ human(row.status) }}</span>
               </td>
             </tr>
           }
         </tbody>
       </table>
     </div>
-    @if (!filtered().length) {
+    @if (!busy() && !error() && !employees.error() && !rows().length) {
       <div class="employees__empty">
-        <h2 class="employees__subtitle">No records found</h2>
-        <p>Try another search or add your first employee.</p>
-        <button
-          class="employees__button employees__button--text"
-          (click)="search.set(''); filter.set('')"
-        >
-          Clear filters
-        </button>
+        <h2 class="employees__subtitle">No employees found</h2>
+        <p>Try another search or adjust your filters.</p>
       </div>
     }
-    <footer class="employees__footer">
-      <span>{{ filtered().length }} of {{ rows().length }} records</span
-      ><span>AURUM · Made for memorable moments</span>
-    </footer>
+    <div class="p-4">
+      <app-employees-pagination
+        [query]="query()"
+        [page]="page()"
+        [disabled]="busy()"
+        (started)="start()"
+        (changed)="receive($event)"
+        (failed)="fail()"
+      />
+    </div>
   </section>
   @if (notice()) {
     <p class="employees__notice" role="status">
@@ -110,6 +132,7 @@
     </p>
   }
 </div>
+
 @if (editor()) {
   <dialog
     #editorDialog
@@ -121,9 +144,7 @@
     <div class="employees__panel-heading">
       <div>
         <p class="employees__eyebrow">THE DETAILS</p>
-        <h2 class="employees__subtitle" id="editor-title">
-          {{ editing ? 'Edit' : 'New' }} employee
-        </h2>
+        <h2 class="employees__subtitle" id="editor-title">Invite employee</h2>
       </div>
       <button
         class="employees__button employees__button--text"
@@ -134,7 +155,6 @@
         ✕
       </button>
     </div>
-    <p class="employees__editor-note">Sample workspace · changes last for this session.</p>
     <form
       (ngSubmit)="onSubmit()"
       [formGroup]="employeeForm"

@@ -1,0 +1,44 @@
+<fieldset [disabled]="disabled()" class="row g-3 border-0 p-0 m-0">
+  <div class="col-12 col-md-4">
+    <label for="employees-type" class="form-label">Specialty</label>
+    <select
+      id="employees-type"
+      class="form-select"
+      [ngModel]="query().type"
+      (ngModelChange)="filter('type', $event)"
+    >
+      <option [ngValue]="undefined">All specialties</option>
+      @for (value of types; track value) {
+        <option [ngValue]="value">{{ human(value) }}</option>
+      }
+    </select>
+  </div>
+  <div class="col-12 col-md-4">
+    <label for="employees-role" class="form-label">Access role</label>
+    <select
+      id="employees-role"
+      class="form-select"
+      [ngModel]="query().role"
+      (ngModelChange)="filter('role', $event)"
+    >
+      <option [ngValue]="undefined">All roles</option>
+      @for (value of roles; track value) {
+        <option [ngValue]="value">{{ human(value) }}</option>
+      }
+    </select>
+  </div>
+  <div class="col-12 col-md-4">
+    <label for="employees-status" class="form-label">Invitation status</label>
+    <select
+      id="employees-status"
+      class="form-select"
+      [ngModel]="query().status"
+      (ngModelChange)="filter('status', $event)"
+    >
+      <option [ngValue]="undefined">All statuses</option>
+      @for (value of statuses; track value) {
+        <option [ngValue]="value">{{ human(value) }}</option>
+      }
+    </select>
+  </div>
+</fieldset>

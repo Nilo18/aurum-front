@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Employees } from './employees';
@@ -11,7 +12,18 @@ describe('Employees invitation request states', () => {
     inviteEmployee.mockReset();
     TestBed.configureTestingModule({
       imports: [Employees],
-      providers: [{ provide: EmployeeService, useValue: { inviteEmployee } }],
+      providers: [
+        {
+          provide: EmployeeService,
+          useValue: {
+            inviteEmployee,
+            getEmployeeQuery: () => signal({}),
+            getEmployees: vi
+              .fn()
+              .mockResolvedValue({ content: [], pageNumber: 0, pageSize: 10, totalElements: 0 }),
+          },
+        },
+      ],
     });
     component = TestBed.createComponent(Employees).componentInstance;
     component.ngOnInit();

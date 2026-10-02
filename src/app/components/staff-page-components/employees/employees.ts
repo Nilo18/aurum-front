@@ -1,4 +1,13 @@
-import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  computed,
+  effect,
+  inject,
+  resource,
+  signal,
+  viewChild,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -6,16 +15,25 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { StaffPreviewStore } from '../shared/staff-preview-store';
-import { Row } from '../shared/staff-row';
 import { human, currency } from '../shared/staff-format';
 import { EmployeeService } from '../../../services/employee-service';
 import { getRequestErrorMessage } from '../../../services/request-error';
 import { FormValidatorService } from '../../../services/form-validator-service';
+import { EmployeeDTO } from '../../../services/employee-service';
+import { PageResponse } from '../../../services/event-service';
+import { EmployeesFiltering } from '../employees-filtering/employees-filtering';
+import { EmployeesSorting } from '../employees-sorting/employees-sorting';
+import { EmployeesPagination } from '../employees-pagination/employees-pagination';
 
 @Component({
   selector: 'app-employees',
-  imports: [FormsModule, ReactiveFormsModule],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    EmployeesFiltering,
+    EmployeesSorting,
+    EmployeesPagination,
+  ],
   templateUrl: './employees.html',
   styleUrl: './employees.scss',
 })
@@ -24,31 +42,59 @@ export class Employees {
   public formValidator = inject(FormValidatorService);
   private fb = inject(FormBuilder);
   employeeForm!: FormGroup;
-  readonly store = inject(StaffPreviewStore);
   readonly human = human;
   readonly currency = currency;
-  readonly search = signal('');
-  readonly filter = signal('');
+  readonly query = this.employeeService.getEmployeeQuery();
+  readonly search = signal(this.query().search ?? '');
+  readonly pending = signal(false);
+  readonly error = signal('');
   readonly editor = signal(false);
   readonly notice = signal('');
   readonly isSubmitting = signal(false);
   readonly submissionError = signal('');
   readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('editorDialog');
-  readonly rows = computed(() => this.store.data().employees);
-  readonly filters = computed(() =>
-    Array.from(new Set(this.rows().map((row) => String(row['type'])))),
+  readonly employees = resource({ loader: () => this.employeeService.getEmployees() });
+  readonly page = computed(() => (this.employees.hasValue() ? this.employees.value() : undefined));
+  readonly rows = computed(() => this.page()?.content ?? []);
+  readonly busy = computed(
+    () => this.pending() || this.employees.isLoading() || this.isSubmitting(),
   );
-  readonly filtered = computed(() =>
-    this.rows().filter(
-      (row) =>
-        (!this.filter() || String(row['type']) === this.filter()) &&
-        Object.entries(row).some(([key, value]) =>
-          this.searchValue(key, value).toLowerCase().includes(this.search().toLowerCase()),
-        ),
-    ),
-  );
-  editing?: Row;
-  draft: Row = {};
+
+  start() {
+    this.pending.set(true);
+    this.error.set('');
+  }
+
+  receive(page: PageResponse<EmployeeDTO>) {
+    this.employees.set(page);
+    this.pending.set(false);
+  }
+
+  fail() {
+    this.pending.set(false);
+    this.error.set('Unable to load employees. Please try again.');
+  }
+
+  async searchEmployees() {
+    if (this.busy()) return;
+    this.search.set(this.search().trim());
+    this.start();
+    try {
+      this.receive(await this.employeeService.searchEmployees(this.search()));
+    } catch {
+      this.fail();
+    }
+  }
+
+  async retry() {
+    if (this.busy()) return;
+    this.start();
+    try {
+      this.receive(await this.employeeService.getEmployees());
+    } catch {
+      this.fail();
+    }
+  }
 
   ngOnInit() {
     this.employeeForm = this.fb.group({
@@ -66,38 +112,21 @@ export class Employees {
     });
   }
 
-  private searchValue(key: string, value: unknown): string {
-    if (key === 'salary') return this.currency(value);
-    return human(value);
-  }
-
-  open(row?: Row): void {
+  open(): void {
     this.submissionError.set('');
     this.notice.set('');
-    this.editing = row;
-    this.draft = row
-      ? { ...row }
-      : {
-          type: 'SALES_MANAGER',
-          salary: '',
-          email: '',
-          role: 'ADMIN',
-        };
-    this.employeeForm.reset(this.draft);
+    this.employeeForm.reset({
+      type: 'SALES_MANAGER',
+      salary: '',
+      email: '',
+      role: 'ADMIN',
+    });
     this.editor.set(true);
   }
 
   close(): void {
     if (this.isSubmitting()) return;
     this.editor.set(false);
-  }
-
-  save(): void {
-    const row = { ...this.draft };
-    row['salary'] = Number(row['salary']);
-    this.store.save('employees', row, this.editing);
-    this.close();
-    this.notice.set('Employee saved in this preview session.');
   }
 
   async onSubmit(): Promise<void> {
@@ -123,9 +152,14 @@ export class Employees {
         `Invitation sent to ${request.email}. They can use the email link to register.`,
       );
       this.employeeForm.reset();
-    } catch (error: any) {
+      try {
+        this.receive(await this.employeeService.getEmployees());
+      } catch {
+        this.fail();
+      }
+    } catch (error) {
       this.submissionError.set(
-        error.error.error
+        getRequestErrorMessage(error, 'We could not send the invitation. Please try again.'),
       );
     } finally {
       this.isSubmitting.set(false);
