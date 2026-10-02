@@ -25,4 +25,13 @@ describe('request error messages', () => {
     ).toContain('temporarily unavailable');
     expect(getRequestErrorMessage(new Error('Internal details'), 'Fallback')).toBe('Fallback');
   });
+
+  it('supports the backend error field', () => {
+    expect(
+      getRequestErrorMessage(
+        new HttpErrorResponse({ status: 409, error: { error: 'Client has active events.' } }),
+        'Fallback',
+      ),
+    ).toBe('Client has active events.');
+  });
 });

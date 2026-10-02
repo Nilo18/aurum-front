@@ -9,9 +9,6 @@
       <h1>Clients</h1>
       <p>Personal connections. Exceptional experiences.</p>
     </div>
-    <button class="clients__button clients__button--primary" (click)="open()">
-      Preview new client
-    </button>
   </header>
   <div class="clients__summary">
     <span class="clients__summary-number">{{ page()?.totalElements ?? 0 }}</span>
@@ -67,7 +64,16 @@
         </button>
       </div>
     }
-    @if (busy()) {
+    @if (deleteError()) {
+      <div class="alert alert-danger m-4" role="alert">{{ deleteError() }}</div>
+    }
+    @if (deleting()) {
+      <div class="px-4 py-3" role="status">
+        <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+        Deleting client...
+      </div>
+    }
+    @if (pending() || clients.isLoading()) {
       <div class="px-4 py-3" role="status">
         <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
         clients...
@@ -98,10 +104,11 @@
               <td>
                 <button
                   class="clients__button clients__button--text"
-                  (click)="open(row)"
-                  [attr.aria-label]="'Preview edits for ' + row['name']"
+                  (click)="deleteClient(row['email'])"
+                  [disabled]="busy()"
+                  [attr.aria-label]="'Delete ' + row['name']"
                 >
-                  Preview ↗
+                  {{ deleting() === row['email'] ? 'Deleting...' : 'Delete' }}
                 </button>
               </td>
             </tr>
@@ -132,48 +139,3 @@
     </p>
   }
 </div>
-@if (editor()) {
-  <dialog
-    #editorDialog
-    class="clients__editor"
-    aria-modal="true"
-    aria-labelledby="editor-title"
-    (cancel)="close()"
-  >
-    <div class="clients__panel-heading">
-      <div>
-        <p class="clients__eyebrow">THE DETAILS</p>
-        <h2 id="editor-title">{{ editing ? 'Edit' : 'New' }} client</h2>
-      </div>
-      <button
-        class="clients__button clients__button--text"
-        (click)="close()"
-        aria-label="Close editor"
-      >
-        ✕
-      </button>
-    </div>
-    <p class="clients__editor-note">Sample workspace · changes last for this session.</p>
-    <form #editorForm="ngForm" (ngSubmit)="editorForm.valid && save()">
-      <div class="clients__fields">
-        <label>Name<input type="text" name="name" [(ngModel)]="draft['name']" required /></label>
-        <label
-          >Email<input type="email" name="email" [(ngModel)]="draft['email']" required
-        /></label>
-        <label>Phone<input type="tel" name="phone" [(ngModel)]="draft['phone']" required /></label>
-        <label
-          >Client type<select name="type" [(ngModel)]="draft['type']" required>
-            <option value="PERSON">Person</option>
-            <option value="ORGANIZATION">Organization</option>
-          </select></label
-        >
-      </div>
-
-      <div class="clients__form-actions">
-        <button type="button" class="clients__button clients__button--secondary" (click)="close()">
-          Cancel</button
-        ><button type="submit" class="clients__button clients__button--primary">Save client</button>
-      </div>
-    </form>
-  </dialog>
-}

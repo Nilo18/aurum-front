@@ -30,7 +30,6 @@ a:focus-visible {
   outline-offset: 4px;
 }
 
-
 .error {
   margin: 0;
   margin-top: 5px;
@@ -43,7 +42,8 @@ a:focus-visible {
 @import 'bootstrap/scss/bootstrap';
 
 .aurum-verification-modal,
-.aurum-success-modal {
+.aurum-success-modal,
+.aurum-confirm-action-modal {
   .modal-content {
     overflow: hidden;
     border: 0;
@@ -98,8 +98,12 @@ a:focus-visible {
 }
 
 @keyframes skeleton-shimmer {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

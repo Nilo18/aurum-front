@@ -1,0 +1,13 @@
+<section class="confirm-action">
+  <p class="confirm-action__eyebrow">AURUM WORKSPACE</p>
+  <h2 id="confirm-action-title">{{ title }}</h2>
+  <p id="confirm-action-message" class="confirm-action__message">{{ msg }}</p>
+  <div class="confirm-action__actions">
+    <button type="button" class="confirm-action__cancel" ngbAutofocus (click)="modal.dismiss()">
+      Cancel
+    </button>
+    <button type="button" class="confirm-action__confirm" (click)="modal.close(true)">
+      Confirm
+    </button>
+  </div>
+</section>

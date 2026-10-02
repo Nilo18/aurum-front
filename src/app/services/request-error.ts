@@ -5,6 +5,7 @@ export function getRequestErrorMessage(error: unknown, fallback: string): string
   if (error.status === 0) return 'Unable to connect. Check your connection and try again.';
   if (error.status === 429) return 'Too many attempts. Please wait a moment and try again.';
   if (error.status >= 500) return 'The service is temporarily unavailable. Please try again later.';
-  const message = typeof error.error === 'string' ? error.error : error.error?.message;
+  const message =
+    typeof error.error === 'string' ? error.error : error.error?.message || error.error?.error;
   return typeof message === 'string' && message.trim() ? message.trim() : fallback;
 }

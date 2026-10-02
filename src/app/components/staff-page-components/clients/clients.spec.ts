@@ -1,3 +1,4 @@
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -11,6 +12,7 @@ import { ClientType, ClientDTO } from '../../../services/client-service';
 
 describe('Clients API controls', () => {
   let http: HttpTestingController;
+  const open = vi.fn();
   const page: PageResponse<ClientDTO> = {
     content: [],
     pageNumber: 0,
@@ -18,9 +20,14 @@ describe('Clients API controls', () => {
     totalElements: 35,
   };
   beforeEach(() => {
+    open.mockReset();
     TestBed.configureTestingModule({
       imports: [Clients],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: NgbModal, useValue: { open } },
+      ],
     });
     http = TestBed.inject(HttpTestingController);
   });
@@ -139,5 +146,92 @@ describe('Clients API controls', () => {
     await retry;
     await fixture.whenStable();
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+  });
+  async function loadedClients() {
+    const fixture = TestBed.createComponent(Clients);
+    fixture.detectChanges();
+    await Promise.resolve();
+    http
+      .expectOne((request) => request.url.endsWith('/api/client'))
+      .flush({
+        ...page,
+        content: [
+          { name: 'Nino', email: 'nino@example.com', phone: '123', clientType: ClientType.PERSON },
+        ],
+      });
+    await fixture.whenStable();
+    return fixture;
+  }
+
+  it('waits for confirmation, prevents duplicate deletes, and refreshes after success', async () => {
+    const fixture = await loadedClients();
+    let confirm!: (value: boolean) => void;
+    open.mockReturnValue({
+      componentInstance: {},
+      result: new Promise((resolve) => {
+        confirm = resolve;
+      }),
+    });
+    const component = fixture.componentInstance;
+    const deleting = component.deleteClient('nino@example.com');
+    http.expectNone((request) => request.method === 'DELETE');
+    expect(component.busy()).toBe(true);
+    await component.deleteClient('nino@example.com');
+    expect(open).toHaveBeenCalledTimes(1);
+    confirm(true);
+    await Promise.resolve();
+    expect(component.deleting()).toBe('nino@example.com');
+    const request = http.expectOne((request) => request.method === 'DELETE');
+    expect(request.request.body).toEqual({ email: 'nino@example.com' });
+    request.flush({ status: 200, message: 'Deleted' });
+    await Promise.resolve();
+    http.expectOne((request) => request.method === 'GET').flush({ ...page, totalElements: 34 });
+    await deleting;
+    await fixture.whenStable();
+    expect(component.busy()).toBe(false);
+    expect(component.rows()).toEqual([]);
+    expect(component.notice()).toBe('Client deleted.');
+  });
+
+  it('does not delete when the modal is dismissed', async () => {
+    const fixture = await loadedClients();
+    open.mockReturnValue({ componentInstance: {}, result: Promise.reject('cancel') });
+    await fixture.componentInstance.deleteClient('nino@example.com');
+    http.expectNone((request) => request.method === 'DELETE');
+    expect(fixture.componentInstance.busy()).toBe(false);
+    expect(fixture.componentInstance.rows()).toHaveLength(1);
+  });
+
+  it('shows backend errors and releases loading state without removing the client', async () => {
+    const fixture = await loadedClients();
+    open.mockReturnValue({ componentInstance: {}, result: Promise.resolve(true) });
+    const deleting = fixture.componentInstance.deleteClient('nino@example.com');
+    await Promise.resolve();
+    http
+      .expectOne((request) => request.method === 'DELETE')
+      .flush({ message: 'Client has active events.' }, { status: 409, statusText: 'Conflict' });
+    await deleting;
+    await fixture.whenStable();
+    expect(fixture.componentInstance.busy()).toBe(false);
+    expect(fixture.componentInstance.rows()).toHaveLength(1);
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(
+      'Client has active events.',
+    );
+  });
+
+  it('reports refresh failure separately after a successful deletion', async () => {
+    const fixture = await loadedClients();
+    open.mockReturnValue({ componentInstance: {}, result: Promise.resolve(true) });
+    const deleting = fixture.componentInstance.deleteClient('nino@example.com');
+    await Promise.resolve();
+    http.expectOne((request) => request.method === 'DELETE').flush({ status: 200 });
+    await Promise.resolve();
+    http
+      .expectOne((request) => request.method === 'GET')
+      .flush('Unavailable', { status: 500, statusText: 'Server error' });
+    await deleting;
+    expect(fixture.componentInstance.rows()).toEqual([]);
+    expect(fixture.componentInstance.error()).toContain('Client deleted');
+    expect(fixture.componentInstance.busy()).toBe(false);
   });
 });

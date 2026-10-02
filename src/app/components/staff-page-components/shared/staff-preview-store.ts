@@ -1,7 +1,5 @@
 import { Injectable, signal } from '@angular/core';
 import { Row } from './staff-row';
-// import { eventsSeed } from '../events/events.data';
-import { clientsSeed } from '../clients/clients.data';
 import { employeesSeed } from '../employees/employees.data';
 import { vehiclesSeed } from '../vehicles/vehicles.data';
 import { productsSeed } from '../products/products.data';
@@ -10,14 +8,12 @@ import { menuSeed } from '../menu/menu.data';
 import { feedbackSeed } from '../feedback/feedback.data';
 
 export type StaffCollection =
-  'clients' | 'employees' | 'vehicles' | 'products' | 'suppliers' | 'menu' | 'feedback';
+  'employees' | 'vehicles' | 'products' | 'suppliers' | 'menu' | 'feedback';
 
 /** In-memory preview records shared by staff routes for the current session. */
 @Injectable({ providedIn: 'root' })
 export class StaffPreviewStore {
   private readonly records = signal<Record<StaffCollection, Row[]>>({
-    // events: eventsSeed.map((row) => ({ ...row })),
-    clients: clientsSeed.map((row) => ({ ...row })),
     employees: employeesSeed.map((row) => ({ ...row })),
     vehicles: vehiclesSeed.map((row) => ({ ...row })),
     products: productsSeed.map((row) => ({ ...row })),

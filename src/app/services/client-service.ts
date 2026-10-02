@@ -4,6 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { PageResponse } from './event-service';
 import { QueryFormatterService } from './query-formatter-service';
+import { GenericResponse } from './home-service';
 
 export enum ClientType {
   PERSON = 'PERSON',
@@ -101,5 +102,11 @@ export class ClientService {
       console.log("Couldn't get clients: ", error);
       throw error;
     }
+  }
+
+  deleteClient(email: string) {
+    return firstValueFrom(
+      this.http.delete<GenericResponse>(`${this.baseUrl}/api/client`, { body: { email } }),
+    );
   }
 }

@@ -1,15 +1,7 @@
-import { StaffPreviewStore } from '../shared/staff-preview-store';
-import { Row } from '../shared/staff-row';
-import {
-  Component,
-  computed,
-  inject,
-  resource,
-  signal,
-  effect,
-  ElementRef,
-  viewChild,
-} from '@angular/core';
+import { Component, computed, inject, resource, signal } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmActionModal } from '../../general-components/confirm-action-modal/confirm-action-modal';
+import { getRequestErrorMessage } from '../../../services/request-error';
 import { FormsModule } from '@angular/forms';
 import { human } from '../shared/staff-format';
 import { ClientService, ClientDTO } from '../../../services/client-service';
@@ -25,23 +17,25 @@ import { ClientsPagination } from '../clients-pagination/clients-pagination';
 })
 export class Clients {
   private readonly service = inject(ClientService);
+  private readonly modal = inject(NgbModal);
+  readonly confirming = signal(false);
+  readonly deleting = signal<string | undefined>(undefined);
+  readonly deleteError = signal('');
   readonly human = human;
   readonly query = this.service.getClientQuery();
   readonly search = signal(this.query().search ?? '');
   readonly pending = signal(false);
   readonly error = signal('');
   readonly clients = resource({ loader: () => this.service.getClients() });
-  readonly busy = computed(() => this.pending() || this.clients.isLoading());
+  readonly busy = computed(
+    () => this.pending() || this.clients.isLoading() || this.confirming() || !!this.deleting(),
+  );
   readonly page = computed(() => (this.clients.hasValue() ? this.clients.value() : undefined));
-  readonly rows = computed<Row[]>(() =>
+  readonly rows = computed(() =>
     (this.page()?.content ?? []).map((row) => ({ ...row, type: row.clientType })),
   );
-  readonly store = inject(StaffPreviewStore);
-  readonly editor = signal(false);
   readonly notice = signal('');
-  readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('editorDialog');
-  editing?: Row;
-  draft: Row = {};
+
   start() {
     this.pending.set(true);
     this.error.set('');
@@ -73,35 +67,62 @@ export class Clients {
       this.fail();
     }
   }
-  constructor() {
-    effect(() => {
-      const dialog = this.dialog()?.nativeElement;
-      if (dialog && !dialog.open) dialog.showModal();
+
+  async deleteClient(email: string): Promise<void> {
+    if (this.busy()) return;
+    this.confirming.set(true);
+    const confirmation = this.modal.open(ConfirmActionModal, {
+      centered: true,
+      windowClass: 'aurum-confirm-action-modal',
+      ariaLabelledBy: 'confirm-action-title',
+      ariaDescribedBy: 'confirm-action-message',
     });
-  }
+    confirmation.componentInstance.title = 'Delete client?';
+    confirmation.componentInstance.msg = `Delete ${email} from the client collection? This action cannot be undone.`;
+    try {
+      if ((await confirmation.result) !== true) return;
+    } catch {
+      return;
+    } finally {
+      this.confirming.set(false);
+    }
 
-  open(row?: Row): void {
-    this.editing = row;
-    this.draft = row
-      ? { ...row }
-      : {
-          name: '',
-          email: '',
-          phone: '',
-          type: 'PERSON',
-        };
-    this.editor.set(true);
-  }
-
-  close(): void {
-    this.editor.set(false);
-  }
-
-  save(): void {
-    const row = { ...this.draft };
-
-    this.store.save('clients', row, this.editing);
-    this.close();
-    this.notice.set('Client saved in the preview store only. The live collection is unchanged.');
+    this.deleting.set(email);
+    this.deleteError.set('');
+    this.notice.set('');
+    try {
+      const response = await this.service.deleteClient(email);
+      if (response.status < 200 || response.status >= 300) {
+        this.deleteError.set(response.message || 'Unable to delete client. Please try again.');
+        return;
+      }
+      this.notice.set('Client deleted.');
+      // Remove the deleted record immediately, even if the following refresh fails.
+      const current = this.page();
+      if (current) {
+        this.clients.set({
+          ...current,
+          content: current.content.filter((client) => client.email !== email),
+          totalElements: Math.max(0, current.totalElements - 1),
+        });
+      }
+      try {
+        const currentPage = this.page();
+        const page =
+          currentPage && !currentPage.content.length && currentPage.pageNumber > 0
+            ? await this.service.paginateClients(currentPage.pageNumber - 1)
+            : await this.service.getClients();
+        this.receive(page);
+        this.error.set('');
+      } catch {
+        this.error.set('Client deleted, but the list could not be refreshed. Please retry.');
+      }
+    } catch (error) {
+      this.deleteError.set(
+        getRequestErrorMessage(error, 'Unable to delete client. Please try again.'),
+      );
+    } finally {
+      this.deleting.set(undefined);
+    }
   }
 }
