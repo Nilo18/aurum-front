@@ -243,6 +243,17 @@ textarea {
       color: #edcf91;
     }
   }
+
+  &__delete-btn {
+    background-color: transparent;
+    color: #bbad93;
+    border: none;
+    &:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+  }
+
   &__footer {
     display: flex;
     justify-content: space-between;

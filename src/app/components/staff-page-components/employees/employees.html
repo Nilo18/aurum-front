@@ -71,6 +71,9 @@
         </button>
       </div>
     }
+    @if (deleteError()) {
+      <div class="alert alert-danger m-4" role="alert">{{ deleteError() }}</div>
+    }
     @if (pending() || employees.isLoading()) {
       <div class="px-4 py-3" role="status">
         <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
@@ -87,6 +90,7 @@
             <th class="employees__table-heading" scope="col">Salary (₾)</th>
             <th class="employees__table-heading" scope="col">Access role</th>
             <th class="employees__table-heading" scope="col">Invitation status</th>
+            <th class="employees__table-heading" scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -103,6 +107,22 @@
               </td>
               <td class="employees__cell">
                 <span class="employees__badge">{{ human(row.status) }}</span>
+              </td>
+              <td class="employees__cell">
+                <button
+                  type="button"
+                  class="employees__delete-btn"
+                  [disabled]="busy()"
+                  [attr.aria-label]="'Delete ' + row.email"
+                  (click)="deleteEmployee(row.email)"
+                >
+                  @if (deleting() === row.email) {
+                    <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                    <span role="status">Deleting...</span>
+                  } @else {
+                    Delete
+                  }
+                </button>
               </td>
             </tr>
           }

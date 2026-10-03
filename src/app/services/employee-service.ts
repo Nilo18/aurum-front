@@ -150,4 +150,19 @@ export class EmployeeService {
       }),
     );
   }
+
+  async deleteEmployee(email: string) {
+    try {
+      const res = await firstValueFrom(
+        this.http.delete<GenericResponse>(`${this.baseUrl}/api/employee`, {
+          body: { email },
+        }),
+      );
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.log("Coudln't delete employee: ", error);
+      throw error;
+    }
+  }
 }

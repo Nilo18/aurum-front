@@ -24,6 +24,8 @@ import { PageResponse } from '../../../services/event-service';
 import { EmployeesFiltering } from '../employees-filtering/employees-filtering';
 import { EmployeesSorting } from '../employees-sorting/employees-sorting';
 import { EmployeesPagination } from '../employees-pagination/employees-pagination';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmActionModal } from '../../general-components/confirm-action-modal/confirm-action-modal';
 
 @Component({
   selector: 'app-employees',
@@ -40,6 +42,7 @@ import { EmployeesPagination } from '../employees-pagination/employees-paginatio
 export class Employees {
   private employeeService = inject(EmployeeService);
   public formValidator = inject(FormValidatorService);
+  private modalService = inject(NgbModal);
   private fb = inject(FormBuilder);
   employeeForm!: FormGroup;
   readonly human = human;
@@ -52,12 +55,26 @@ export class Employees {
   readonly notice = signal('');
   readonly isSubmitting = signal(false);
   readonly submissionError = signal('');
+  readonly confirming = signal(false);
+  readonly deleting = signal<string | undefined>(undefined);
+  readonly deleteError = signal('');
   readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('editorDialog');
-  readonly employees = resource({ loader: () => this.employeeService.getEmployees() });
+  readonly employees = resource({
+    loader: async () => {
+      const res = await this.employeeService.getEmployees();
+      console.log(res);
+      return res;
+    },
+  });
   readonly page = computed(() => (this.employees.hasValue() ? this.employees.value() : undefined));
   readonly rows = computed(() => this.page()?.content ?? []);
   readonly busy = computed(
-    () => this.pending() || this.employees.isLoading() || this.isSubmitting(),
+    () =>
+      this.pending() ||
+      this.employees.isLoading() ||
+      this.isSubmitting() ||
+      this.confirming() ||
+      !!this.deleting(),
   );
 
   start() {
@@ -127,6 +144,65 @@ export class Employees {
   close(): void {
     if (this.isSubmitting()) return;
     this.editor.set(false);
+  }
+
+  async deleteEmployee(email: string) {
+    if (this.busy()) return;
+    this.confirming.set(true);
+    const modalRef = this.modalService.open(ConfirmActionModal, {
+      centered: true,
+      windowClass: 'aurum-confirm-action-modal',
+      ariaLabelledBy: 'confirm-action-title',
+      ariaDescribedBy: 'confirm-action-message',
+    });
+
+    modalRef.componentInstance.title = 'Delete employee?';
+    modalRef.componentInstance.msg = `Delete ${email} from the employee collection? This action cannot be undone.`;
+
+    try {
+      if ((await modalRef.result) !== true) return;
+    } catch {
+      return;
+    } finally {
+      this.confirming.set(false);
+    }
+
+    this.deleting.set(email);
+    this.deleteError.set('');
+    this.notice.set('');
+    try {
+      const res = await this.employeeService.deleteEmployee(email);
+      if (res.status < 200 || res.status >= 300) {
+        this.deleteError.set(res.message || 'Unable to delete employee. Please try again.');
+        return;
+      }
+      this.notice.set('Employee deleted.');
+      const current = this.page();
+      if (current) {
+        this.employees.set({
+          ...current,
+          content: current.content.filter((employee) => employee.email !== email),
+          totalElements: Math.max(0, current.totalElements - 1),
+        });
+      }
+      try {
+        const currentPage = this.page();
+        const page =
+          currentPage && !currentPage.content.length && currentPage.pageNumber > 0
+            ? await this.employeeService.paginateEmployees(currentPage.pageNumber - 1)
+            : await this.employeeService.getEmployees();
+        this.receive(page);
+        this.error.set('');
+      } catch {
+        this.error.set('Employee deleted, but the list could not be refreshed. Please retry.');
+      }
+    } catch (error) {
+      this.deleteError.set(
+        getRequestErrorMessage(error, 'Unable to delete employee. Please try again.'),
+      );
+    } finally {
+      this.deleting.set(undefined);
+    }
   }
 
   async onSubmit(): Promise<void> {
