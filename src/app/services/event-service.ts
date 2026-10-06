@@ -67,6 +67,7 @@ export enum EventLocation {
 }
 
 export interface EventDTO {
+  id: number;
   clientName: string;
   eventType: EventType;
   date: string;
@@ -105,7 +106,7 @@ export class EventService {
   private backendUrlHolder = inject(BackendUrlHolderService);
   private baseUrl = this.backendUrlHolder.getBaseUrl();
   private http = inject(HttpClient);
-  private queryFormatter = inject(QueryFormatterService)
+  private queryFormatter = inject(QueryFormatterService);
   private eventQuery = signal<EventQuery>({
     page: 0,
     size: 10,
@@ -199,5 +200,18 @@ export class EventService {
 
   getEventQuery() {
     return this.eventQuery;
+  }
+
+  async deleteEvent(id: number) {
+    try {
+      const res = await firstValueFrom(
+        this.http.delete<GenericResponse>(`${this.baseUrl}/api/event/${id}`),
+      );
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.log("Couldn't delete event: ", error);
+      throw error;
+    }
   }
 }

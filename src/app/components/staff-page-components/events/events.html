@@ -63,7 +63,10 @@
         </button>
       </div>
     }
-    @if (busy()) {
+    @if (deleteError()) {
+      <div class="alert alert-danger m-4" role="alert">{{ deleteError() }}</div>
+    }
+    @if (pending() || events.isLoading()) {
       <div class="px-4 py-3" role="status">
         <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
         events...
@@ -80,6 +83,7 @@
             <th scope="col">Guests</th>
             <th scope="col">Location</th>
             <th scope="col">Status</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -95,6 +99,17 @@
                 <span class="events__badge" [attr.data-tone]="row.status">{{
                   human(row.status)
                 }}</span>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="events__button events__button--text"
+                  (click)="delete(row.id)"
+                  [disabled]="busy()"
+                  [attr.aria-label]="'Delete event for ' + row.clientName"
+                >
+                  {{ deleting() === row.id ? 'Deleting...' : 'Delete' }}
+                </button>
               </td>
             </tr>
           }
@@ -118,4 +133,9 @@
       />
     </div>
   </section>
+  @if (notice()) {
+    <p class="events__notice" role="status">
+      {{ notice() }} <button (click)="notice.set('')" aria-label="Dismiss message">×</button>
+    </p>
+  }
 </div>

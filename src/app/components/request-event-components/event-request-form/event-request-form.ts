@@ -75,8 +75,8 @@ export class EventRequestForm {
   readonly event = this.form.controls.event.controls;
   readonly minDate = localToday();
   readonly eventTypes = [
-    'WEDDING', 'CORPORATE EVENT', 'CONFERENCE', 'OFFICIAL RECEPTION', 'ANNIVERSARY',
-    'BIRTHDAY', 'GALA DINNER', 'PRODUCT LAUNCH', 'PRIVATE PARTY', 'OTHER',
+    'WEDDING', 'CORPORATE_EVENT', 'CONFERENCE', 'OFFICIAL_RECEPTION', 'ANNIVERSARY',
+    'BIRTHDAY', 'GALA_DINNER', 'PRODUCT_LAUNCH', 'PRIVATE_PARTY', 'OTHER',
   ];
   readonly locations = [
     'AURUM_BANQUET_HALL', 'AURUM_CONFERENCE_HALL', 'PRIVATE_RESIDENCE', 'PARTNER_VENUE',
