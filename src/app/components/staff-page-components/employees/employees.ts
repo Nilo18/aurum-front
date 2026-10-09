@@ -1,13 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  computed,
-  effect,
-  inject,
-  resource,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -19,13 +10,13 @@ import { human, currency } from '../shared/staff-format';
 import { EmployeeService } from '../../../services/employee-service';
 import { getRequestErrorMessage } from '../../../services/request-error';
 import { FormValidatorService } from '../../../services/form-validator-service';
-import { EmployeeDTO } from '../../../services/employee-service';
-import { PageResponse } from '../../../services/event-service';
+import { EmployeeQuery } from '../../../services/employee-service';
 import { EmployeesFiltering } from '../employees-filtering/employees-filtering';
 import { EmployeesSorting } from '../employees-sorting/employees-sorting';
 import { EmployeesPagination } from '../employees-pagination/employees-pagination';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmActionModal } from '../../general-components/confirm-action-modal/confirm-action-modal';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-employees',
@@ -47,10 +38,18 @@ export class Employees {
   employeeForm!: FormGroup;
   readonly human = human;
   readonly currency = currency;
-  readonly query = this.employeeService.getEmployeeQuery();
+  readonly employeeQuery = signal<EmployeeQuery>({
+    page: 0,
+    size: 10,
+    search: '',
+    sortBy: '',
+    sortDirection: '',
+  });
+  readonly query = this.employeeQuery.asReadonly();
   readonly search = signal(this.query().search ?? '');
-  readonly pending = signal(false);
-  readonly error = signal('');
+  readonly error = computed(() =>
+    this.employees.error() ? 'Unable to load employees. Please try again.' : '',
+  );
   readonly editor = signal(false);
   readonly notice = signal('');
   readonly isSubmitting = signal(false);
@@ -59,58 +58,36 @@ export class Employees {
   readonly deleting = signal<string | undefined>(undefined);
   readonly deleteError = signal('');
   readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('editorDialog');
-  readonly employees = resource({
-    loader: async () => {
-      const res = await this.employeeService.getEmployees();
-      console.log(res);
-      return res;
-    },
+  readonly employees = rxResource({
+    params: () => this.employeeQuery(),
+    stream: ({ params }) => this.employeeService.getEmployees(params),
   });
+
   readonly page = computed(() => (this.employees.hasValue() ? this.employees.value() : undefined));
   readonly rows = computed(() => this.page()?.content ?? []);
   readonly busy = computed(
     () =>
-      this.pending() ||
-      this.employees.isLoading() ||
-      this.isSubmitting() ||
-      this.confirming() ||
-      !!this.deleting(),
+      this.employees.isLoading() || this.isSubmitting() || this.confirming() || !!this.deleting(),
   );
 
-  start() {
-    this.pending.set(true);
-    this.error.set('');
+  updateQuery(changes: Partial<EmployeeQuery>, resetPage = true) {
+    this.employeeQuery.update((query) => ({
+      ...query,
+      ...changes,
+      ...(resetPage ? { page: 0 } : {}),
+    }));
   }
 
-  receive(page: PageResponse<EmployeeDTO>) {
-    this.employees.set(page);
-    this.pending.set(false);
-  }
-
-  fail() {
-    this.pending.set(false);
-    this.error.set('Unable to load employees. Please try again.');
-  }
-
-  async searchEmployees() {
+  searchEmployees() {
     if (this.busy()) return;
-    this.search.set(this.search().trim());
-    this.start();
-    try {
-      this.receive(await this.employeeService.searchEmployees(this.search()));
-    } catch {
-      this.fail();
-    }
+    const search = this.search().trim();
+    this.search.set(search);
+    this.updateQuery({ search });
   }
 
-  async retry() {
+  retry() {
     if (this.busy()) return;
-    this.start();
-    try {
-      this.receive(await this.employeeService.getEmployees());
-    } catch {
-      this.fail();
-    }
+    this.employees.reload();
   }
 
   ngOnInit() {
@@ -185,16 +162,11 @@ export class Employees {
           totalElements: Math.max(0, current.totalElements - 1),
         });
       }
-      try {
-        const currentPage = this.page();
-        const page =
-          currentPage && !currentPage.content.length && currentPage.pageNumber > 0
-            ? await this.employeeService.paginateEmployees(currentPage.pageNumber - 1)
-            : await this.employeeService.getEmployees();
-        this.receive(page);
-        this.error.set('');
-      } catch {
-        this.error.set('Employee deleted, but the list could not be refreshed. Please retry.');
+      const currentPage = this.page();
+      if (currentPage && !currentPage.content.length && currentPage.pageNumber > 0) {
+        this.updateQuery({ page: currentPage.pageNumber - 1 }, false);
+      } else {
+        this.employees.reload();
       }
     } catch (error) {
       this.deleteError.set(
@@ -228,11 +200,7 @@ export class Employees {
         `Invitation sent to ${request.email}. They can use the email link to register.`,
       );
       this.employeeForm.reset();
-      try {
-        this.receive(await this.employeeService.getEmployees());
-      } catch {
-        this.fail();
-      }
+      this.employees.reload();
     } catch (error) {
       this.submissionError.set(
         getRequestErrorMessage(error, 'We could not send the invitation. Please try again.'),

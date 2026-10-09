@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { firstValueFrom } from 'rxjs';
 import { EmployeeService, EmployeeType, EmployeeRole, EmployeeStatus } from './employee-service';
 
 describe('EmployeeService list queries', () => {
@@ -18,58 +19,34 @@ describe('EmployeeService list queries', () => {
 
   afterEach(() => http.verify());
 
-  it('preserves search, filters and sorting when changing pages and resets pages for new criteria', async () => {
-    const search = service.searchEmployees('alex');
-    http
-      .expectOne(
-        (request) =>
-          request.url.endsWith('/api/employee') && request.params.get('search') === 'alex',
-      )
-      .flush(page);
-    await search;
-    const filter = service.filterEmployees({
-      type: EmployeeType.CHEF,
-      role: EmployeeRole.STAFF,
-      status: EmployeeStatus.PENDING,
-    });
-    http
-      .expectOne(
-        (request) =>
-          request.params.get('search') === 'alex' &&
-          request.params.get('type') === String(EmployeeType.CHEF),
-      )
-      .flush(page);
-    await filter;
-    const sort = service.sortEmployees('salary', 'desc');
-    http
-      .expectOne(
-        (request) =>
-          request.params.get('sortBy') === 'salary' &&
-          request.params.get('role') === String(EmployeeRole.STAFF),
-      )
-      .flush(page);
-    await sort;
-    const paginate = service.paginateEmployees(2, 25);
-    http
-      .expectOne(
-        (request) =>
-          request.params.get('page') === '2' &&
-          request.params.get('size') === '25' &&
-          request.params.get('status') === String(EmployeeStatus.PENDING) &&
-          request.params.get('sortDirection') === 'desc',
-      )
-      .flush(page);
-    await paginate;
-    const clear = service.filterEmployees({ type: undefined });
-    http
-      .expectOne(
-        (request) =>
-          request.params.get('page') === '0' &&
-          !request.params.has('type') &&
-          request.params.get('role') === String(EmployeeRole.STAFF),
-      )
-      .flush(page);
-    await clear;
-    expect(service.getEmployeeQuery()().size).toBe(25);
+  it('serializes the supplied query and omits empty criteria without retaining previous state', async () => {
+    const result = firstValueFrom(
+      service.getEmployees({
+        page: 2,
+        size: 25,
+        search: 'alex',
+        type: EmployeeType.CHEF,
+        role: EmployeeRole.OWNER,
+        status: EmployeeStatus.PENDING,
+        sortBy: 'salary',
+        sortDirection: 'desc',
+      }),
+    );
+    const request = http.expectOne((request) => request.url.endsWith('/api/employee'));
+    expect(request.request.params.get('page')).toBe('2');
+    expect(request.request.params.get('size')).toBe('25');
+    expect(request.request.params.get('search')).toBe('alex');
+    expect(request.request.params.get('type')).toBe(String(EmployeeType.CHEF));
+    expect(request.request.params.get('role')).toBe('0');
+    expect(request.request.params.get('status')).toBe(String(EmployeeStatus.PENDING));
+    expect(request.request.params.get('sortBy')).toBe('salary');
+    expect(request.request.params.get('sortDirection')).toBe('desc');
+    request.flush(page);
+    expect(await result).toEqual(page);
+    const cleared = firstValueFrom(service.getEmployees({ page: 0, search: '', type: undefined }));
+    const next = http.expectOne((request) => request.url.endsWith('/api/employee'));
+    expect(next.request.params.keys()).toEqual(['page']);
+    next.flush(page);
+    await cleared;
   });
 });

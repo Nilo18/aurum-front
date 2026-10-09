@@ -49,18 +49,14 @@
           <app-employees-sorting
             [query]="query()"
             [disabled]="busy()"
-            (started)="start()"
-            (changed)="receive($event)"
-            (failed)="fail()"
+            (changed)="updateQuery($event)"
           />
         </div>
       </div>
       <app-employees-filtering
         [query]="query()"
         [disabled]="busy()"
-        (started)="start()"
-        (changed)="receive($event)"
-        (failed)="fail()"
+        (changed)="updateQuery($event)"
       />
     </div>
     @if (error() || employees.error()) {
@@ -74,7 +70,7 @@
     @if (deleteError()) {
       <div class="alert alert-danger m-4" role="alert">{{ deleteError() }}</div>
     }
-    @if (pending() || employees.isLoading()) {
+    @if (employees.isLoading()) {
       <div class="px-4 py-3" role="status">
         <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
         employees...
@@ -140,9 +136,7 @@
         [query]="query()"
         [page]="page()"
         [disabled]="busy()"
-        (started)="start()"
-        (changed)="receive($event)"
-        (failed)="fail()"
+        (changed)="updateQuery($event, false)"
       />
     </div>
   </section>

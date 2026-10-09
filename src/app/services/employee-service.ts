@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BackendUrlHolderService } from './backend-url-holder-service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -70,13 +70,6 @@ export class EmployeeService {
   private queryFormatter = inject(QueryFormatterService);
   private baseUrl = this.backendUrlHolder.getBaseUrl();
   private http = inject(HttpClient);
-  private employeeQuery = signal<EmployeeQuery>({
-    page: 0,
-    size: 10,
-    search: '',
-    sortBy: '',
-    sortDirection: '',
-  });
 
   async inviteEmployee(request: InviteEmployeeRequest) {
     try {
@@ -117,38 +110,12 @@ export class EmployeeService {
     }
   }
 
-  getEmployeeQuery() {
-    return this.employeeQuery.asReadonly();
-  }
-
-  searchEmployees(search: string) {
-    this.employeeQuery.update((query) => ({ ...query, search, page: 0 }));
-    return this.getEmployees();
-  }
-
-  filterEmployees(filters: Pick<EmployeeQuery, 'type' | 'role' | 'status'>) {
-    this.employeeQuery.update((query) => ({ ...query, ...filters, page: 0 }));
-    return this.getEmployees();
-  }
-
-  sortEmployees(sortBy: string, sortDirection: string) {
-    this.employeeQuery.update((query) => ({ ...query, sortBy, sortDirection, page: 0 }));
-    return this.getEmployees();
-  }
-
-  paginateEmployees(page: number, size?: number) {
-    this.employeeQuery.update((query) => ({ ...query, page, size: size ?? query.size }));
-    return this.getEmployees();
-  }
-
-  getEmployees() {
-    const cleanedQuery = this.queryFormatter.removeEmptyProperties(this.employeeQuery());
+  getEmployees(query: EmployeeQuery) {
+    const cleanedQuery = this.queryFormatter.removeEmptyProperties(query);
     const httpParams = new HttpParams({ fromObject: cleanedQuery });
-    return firstValueFrom(
-      this.http.get<PageResponse<EmployeeDTO>>(`${this.baseUrl}/api/employee`, {
-        params: httpParams,
-      }),
-    );
+    return this.http.get<PageResponse<EmployeeDTO>>(`${this.baseUrl}/api/employee`, {
+      params: httpParams,
+    });
   }
 
   async deleteEmployee(email: string) {

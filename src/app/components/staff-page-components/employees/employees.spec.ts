@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { of } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Employees } from './employees';
@@ -17,10 +17,9 @@ describe('Employees invitation request states', () => {
           provide: EmployeeService,
           useValue: {
             inviteEmployee,
-            getEmployeeQuery: () => signal({}),
             getEmployees: vi
               .fn()
-              .mockResolvedValue({ content: [], pageNumber: 0, pageSize: 10, totalElements: 0 }),
+              .mockReturnValue(of({ content: [], pageNumber: 0, pageSize: 10, totalElements: 0 })),
           },
         },
       ],
@@ -65,5 +64,46 @@ describe('Employees invitation request states', () => {
     expect(component.editor()).toBe(true);
     expect(component.isSubmitting()).toBe(false);
     expect(component.notice()).toBe('');
+  });
+});
+
+describe('Employees reactive list query', () => {
+  it('automatically fetches merged query changes and resets the page for new criteria', async () => {
+    const getEmployees = vi
+      .fn()
+      .mockImplementation(() => of({ content: [], pageNumber: 0, pageSize: 10, totalElements: 0 }));
+    TestBed.configureTestingModule({
+      imports: [Employees],
+      providers: [{ provide: EmployeeService, useValue: { getEmployees } }],
+    });
+    const fixture = TestBed.createComponent(Employees);
+    const component = fixture.componentInstance;
+    await fixture.whenStable();
+    expect(getEmployees).toHaveBeenCalledTimes(1);
+    component.updateQuery({ page: 2, size: 25 }, false);
+    await fixture.whenStable();
+    expect(getEmployees).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2, size: 25 }));
+    component.updateQuery({ sortBy: 'salary', sortDirection: 'desc' });
+    await fixture.whenStable();
+    expect(getEmployees).toHaveBeenLastCalledWith(
+      expect.objectContaining({ page: 0, size: 25, sortBy: 'salary' }),
+    );
+    component.search.set(' alex ');
+    component.searchEmployees();
+    await fixture.whenStable();
+    expect(getEmployees).toHaveBeenLastCalledWith(
+      expect.objectContaining({ search: 'alex', sortBy: 'salary', size: 25 }),
+    );
+    component.updateQuery({ role: 0 });
+    await fixture.whenStable();
+    component.updateQuery({ role: undefined });
+    await fixture.whenStable();
+    expect(getEmployees).toHaveBeenLastCalledWith(
+      expect.objectContaining({ role: undefined, search: 'alex' }),
+    );
+    const count = getEmployees.mock.calls.length;
+    component.retry();
+    await fixture.whenStable();
+    expect(getEmployees).toHaveBeenCalledTimes(count + 1);
   });
 });
