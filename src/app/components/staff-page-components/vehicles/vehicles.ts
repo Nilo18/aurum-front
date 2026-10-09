@@ -3,35 +3,62 @@ import { FormsModule } from '@angular/forms';
 import { StaffPreviewStore } from '../shared/staff-preview-store';
 import { Row } from '../shared/staff-row';
 import { human } from '../shared/staff-format';
+import { VehicleDTO, VehicleQuery, VehicleService } from '../../../services/vehicle-service';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { VehicleFiltering } from '../vehicle-filtering/vehicle-filtering';
+import { VehicleSorting } from '../vehicle-sorting/vehicle-sorting';
+import { VehiclePagination } from '../vehicle-pagination/vehicle-pagination';
 
 @Component({
   selector: 'app-vehicles',
-  imports: [FormsModule],
+  imports: [FormsModule, VehicleFiltering, VehicleSorting, VehiclePagination],
   templateUrl: './vehicles.html',
   styleUrl: './vehicles.scss',
 })
 export class Vehicles {
   readonly store = inject(StaffPreviewStore);
+  private vehicleService = inject(VehicleService);
   readonly human = human;
-
-  readonly search = signal('');
-  readonly filter = signal('');
   readonly editor = signal(false);
   readonly notice = signal('');
   readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('editorDialog');
-  readonly rows = computed(() => this.store.data().vehicles);
-  readonly filters = computed(() =>
-    Array.from(new Set(this.rows().map((row) => String(row['type'])))),
-  );
-  readonly filtered = computed(() =>
-    this.rows().filter(
-      (row) =>
-        (!this.filter() || String(row['type']) === this.filter()) &&
-        Object.entries(row).some(([key, value]) =>
-          this.searchValue(key, value).toLowerCase().includes(this.search().toLowerCase()),
-        ),
-    ),
-  );
+  private vehicleQuery = signal<VehicleQuery>({
+    page: 0,
+    size: 10,
+    sortBy: '',
+    sortDirection: '',
+  });
+  vehicles = rxResource({
+    params: () => this.vehicleQuery(),
+    stream: ({ params }) => this.vehicleService.getVehicles(params),
+  });
+  readonly query = this.vehicleQuery.asReadonly();
+  readonly page = computed(() => (this.vehicles.hasValue() ? this.vehicles.value() : undefined));
+  readonly rows = computed(() => this.page()?.content ?? []);
+  readonly busy = computed(() => this.vehicles.isLoading());
+
+  updateQuery(changes: Partial<VehicleQuery>, resetPage = true) {
+    this.vehicleQuery.update((query) => ({
+      ...query,
+      ...changes,
+      ...(resetPage ? { page: 0 } : {}),
+    }));
+  }
+
+  clearFilters() {
+    this.updateQuery({
+      type: undefined,
+      passengerFrom: undefined,
+      passengerTo: undefined,
+      weightFrom: undefined,
+      weightTo: undefined,
+    });
+  }
+
+  retry() {
+    if (!this.busy()) this.vehicles.reload();
+  }
+
   editing?: Row;
   draft: Row = {};
 
@@ -42,12 +69,8 @@ export class Vehicles {
     });
   }
 
-  private searchValue(key: string, value: unknown): string {
-    return human(value);
-  }
-
-  open(row?: Row): void {
-    this.editing = row;
+  open(row?: VehicleDTO): void {
+    this.editing = row ? { ...row } : undefined;
     this.draft = row
       ? { ...row }
       : {

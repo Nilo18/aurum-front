@@ -1,0 +1,73 @@
+<div class="vehicle-pagination">
+  <div class="vehicle-pagination__summary" aria-live="polite">
+    {{ first() }}–{{ last() }} of {{ total() }} vehicles
+  </div>
+  <nav aria-label="Vehicle pages">
+    <ul class="vehicle-pagination__pages">
+      <li class="page-item" [class.disabled]="disabled() || pageNumber() === 0">
+        <button
+          class="vehicle-controls__button"
+          [disabled]="disabled() || pageNumber() === 0"
+          (click)="paginate(0)"
+          aria-label="First page"
+        >
+          &laquo;
+        </button>
+      </li>
+      <li class="page-item" [class.disabled]="disabled() || pageNumber() === 0">
+        <button
+          class="vehicle-controls__button"
+          [disabled]="disabled() || pageNumber() === 0"
+          (click)="paginate(pageNumber() - 1)"
+        >
+          Prev
+        </button>
+      </li>
+      @for (number of pages(); track number) {
+        <li class="page-item" [class.active]="number === pageNumber()">
+          <button
+            class="vehicle-controls__button"
+            [disabled]="disabled()"
+            [attr.aria-current]="number === pageNumber() ? 'page' : null"
+            [attr.aria-label]="'Page ' + (number + 1)"
+            (click)="paginate(number)"
+          >
+            {{ number + 1 }}
+          </button>
+        </li>
+      }
+      <li class="page-item" [class.disabled]="disabled() || pageNumber() >= pageCount() - 1">
+        <button
+          class="vehicle-controls__button"
+          [disabled]="disabled() || pageNumber() >= pageCount() - 1"
+          (click)="paginate(pageNumber() + 1)"
+        >
+          Next
+        </button>
+      </li>
+      <li class="page-item" [class.disabled]="disabled() || pageNumber() >= pageCount() - 1">
+        <button
+          class="vehicle-controls__button"
+          [disabled]="disabled() || pageNumber() >= pageCount() - 1"
+          (click)="paginate(pageCount() - 1)"
+          aria-label="Last page"
+        >
+          &raquo;
+        </button>
+      </li>
+    </ul>
+  </nav>
+  <div class="vehicle-pagination__size">
+    <label for="vehicles-size">Per page</label
+    ><select
+      id="vehicles-size"
+      [disabled]="disabled()"
+      [ngModel]="size()"
+      (ngModelChange)="paginate(0, $event)"
+    >
+      @for (count of [10, 25, 50]; track count) {
+        <option [ngValue]="count">{{ count }}</option>
+      }
+    </select>
+  </div>
+</div>

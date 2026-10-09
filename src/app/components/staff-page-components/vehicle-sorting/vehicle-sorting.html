@@ -1,0 +1,26 @@
+<fieldset class="vehicle-sorting" [disabled]="disabled()">
+  <legend class="visually-hidden">Sort vehicles</legend>
+  <label class="vehicle-controls__field">
+    Sort by
+    <select
+      [ngModel]="query().sortBy || ''"
+      (ngModelChange)="sort($event, query().sortDirection || 'asc')"
+    >
+      <option value="">Default order</option>
+      @for (field of fields; track field) {
+        <option [value]="field">{{ label(field) }}</option>
+      }
+    </select>
+  </label>
+  <label class="vehicle-controls__field">
+    Direction
+    <select
+      [disabled]="disabled() || !query().sortBy"
+      [ngModel]="query().sortDirection || 'asc'"
+      (ngModelChange)="sort(query().sortBy || '', $event)"
+    >
+      <option value="asc">Ascending</option>
+      <option value="desc">Descending</option>
+    </select>
+  </label>
+</fieldset>

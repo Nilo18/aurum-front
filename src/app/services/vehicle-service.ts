@@ -1,7 +1,15 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BackendUrlHolderService } from './backend-url-holder-service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { QueryFormatterService } from './query-formatter-service';
+import { PageResponse } from './event-service';
+
+export interface VehicleDTO {
+  publicId: string;
+  type: VehicleType;
+  passengerCapacity: number;
+  cargoWeightLimit: number;
+}
 
 export interface VehicleQuery {
   page?: number;
@@ -24,20 +32,16 @@ export enum VehicleType {
   providedIn: 'root',
 })
 export class VehicleService {
-  private backendUrlHolder = inject(BackendUrlHolderService)
-  private baseUrl = this.backendUrlHolder.getBaseUrl()
-  private http = inject(HttpClient)
-  private queryFormatter = inject(QueryFormatterService)
-  private employeeQuery = signal<VehicleQuery>({
-    page: 0,
-    size: 10,
-    sortBy: '',
-    sortDirection: '',
-  });
+  private backendUrlHolder = inject(BackendUrlHolderService);
+  private baseUrl = this.backendUrlHolder.getBaseUrl();
+  private http = inject(HttpClient);
+  private queryFormatter = inject(QueryFormatterService);
 
-  getVehicles() {
-    const cleanedQuery = this.queryFormatter.removeEmptyProperties(this.employeeQuery());
+  getVehicles(query: VehicleQuery) {
+    const cleanedQuery = this.queryFormatter.removeEmptyProperties(query);
     const httpParams = new HttpParams({ fromObject: cleanedQuery });
-    return 
+    return this.http.get<PageResponse<VehicleDTO>>(`${this.baseUrl}/api/vehicle`, {
+      params: httpParams,
+    });
   }
 }

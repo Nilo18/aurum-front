@@ -1,0 +1,12 @@
+@use '../shared/vehicle-controls';
+@include vehicle-controls.styles;
+.vehicle-sorting {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(120px, 1fr);
+  gap: 12px;
+}
+@media (max-width: 400px) {
+  .vehicle-sorting {
+    grid-template-columns: 1fr;
+  }
+}

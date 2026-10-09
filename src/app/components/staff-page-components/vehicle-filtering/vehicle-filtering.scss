@@ -1,0 +1,27 @@
+@use '../shared/vehicle-controls';
+@include vehicle-controls.styles;
+.vehicle-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+.vehicle-filters__range legend {
+  float: none;
+  width: auto;
+  margin-bottom: 9px;
+  color: #bdb09a;
+  font-size: 10px;
+}
+.vehicle-filters__range-inputs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  color: #776e5e;
+}
+@media (max-width: 800px) {
+  .vehicle-filters {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

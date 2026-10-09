@@ -1,0 +1,68 @@
+<fieldset class="vehicle-filters" [disabled]="disabled()">
+  <legend class="visually-hidden">Filter vehicles</legend>
+  <label class="vehicle-controls__field">
+    Vehicle type
+    <select [ngModel]="query().type" (ngModelChange)="filterType($event)">
+      <option [ngValue]="undefined">All vehicle types</option>
+      @for (type of types; track type) {
+        <option [ngValue]="type">{{ human(type) }}</option>
+      }
+    </select>
+  </label>
+  <fieldset class="vehicle-filters__range">
+    <legend>Passenger capacity</legend>
+    <div class="vehicle-filters__range-inputs">
+      <label class="vehicle-controls__field">
+        <span class="visually-hidden">Minimum passenger capacity</span>
+        <input
+          type="number"
+          min="0"
+          step="1"
+          placeholder="Min"
+          [ngModel]="capacityDraft().passengerFrom"
+          (ngModelChange)="filterCapacity('passengerFrom', $event)"
+        />
+      </label>
+      <span aria-hidden="true">–</span>
+      <label class="vehicle-controls__field">
+        <span class="visually-hidden">Maximum passenger capacity</span>
+        <input
+          type="number"
+          min="0"
+          step="1"
+          placeholder="Max"
+          [ngModel]="capacityDraft().passengerTo"
+          (ngModelChange)="filterCapacity('passengerTo', $event)"
+        />
+      </label>
+    </div>
+  </fieldset>
+  <fieldset class="vehicle-filters__range">
+    <legend>Cargo limit (kg)</legend>
+    <div class="vehicle-filters__range-inputs">
+      <label class="vehicle-controls__field">
+        <span class="visually-hidden">Minimum cargo limit (kg)</span>
+        <input
+          type="number"
+          min="0"
+          step="any"
+          placeholder="Min"
+          [ngModel]="capacityDraft().weightFrom"
+          (ngModelChange)="filterCapacity('weightFrom', $event)"
+        />
+      </label>
+      <span aria-hidden="true">–</span>
+      <label class="vehicle-controls__field">
+        <span class="visually-hidden">Maximum cargo limit (kg)</span>
+        <input
+          type="number"
+          min="0"
+          step="any"
+          placeholder="Max"
+          [ngModel]="capacityDraft().weightTo"
+          (ngModelChange)="filterCapacity('weightTo', $event)"
+        />
+      </label>
+    </div>
+  </fieldset>
+</fieldset>

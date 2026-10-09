@@ -1,7 +1,7 @@
 <div class="vehicles">
   <div class="vehicles__topline">
     <span>AURUM <span class="vehicles__divider">/</span> WORKSPACE</span
-    ><span class="vehicles__preview"><i></i> Sample data · session only</span>
+    ><span>VEHICLE COLLECTION</span>
   </div>
 
   <header>
@@ -15,32 +15,47 @@
     </button>
   </header>
   <div class="vehicles__summary">
-    <span class="vehicles__summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
+    <span class="vehicles__summary-number">{{
+      (page()?.totalElements ?? 0).toString().padStart(2, '0')
+    }}</span>
     <div>
-      <strong>Vehicles in your collection</strong>
+      <strong>Matching vehicles</strong>
       <p>Considered details. Confident decisions.</p>
     </div>
   </div>
-  <section class="vehicles__panel">
-    <div class="vehicles__toolbar">
-      <label class="vehicles__search"
-        ><span aria-hidden="true">⌕</span
-        ><input
-          aria-label="Search records"
-          placeholder="Search this collection…"
-          [ngModel]="search()"
-          (ngModelChange)="search.set($event)" /></label
-      ><select
-        aria-label="Filter records"
-        [ngModel]="filter()"
-        (ngModelChange)="filter.set($event)"
-      >
-        <option value="">All types</option>
-        @for (option of filters(); track option) {
-          <option [value]="option">{{ human(option) }}</option>
-        }</select
-      ><span class="vehicles__result-count">{{ filtered().length }} results</span>
+  <section class="vehicles__panel" [attr.aria-busy]="busy()">
+    <div class="vehicles__controls">
+      <div class="vehicles__controls-heading">
+        <div>
+          <p class="vehicles__eyebrow">FLEET DETAILS</p>
+          <h2>Find the right capacity</h2>
+        </div>
+        <app-vehicle-sorting
+          [query]="query()"
+          [disabled]="busy()"
+          (changed)="updateQuery($event)"
+        />
+      </div>
+      <app-vehicle-filtering [query]="query()" (changed)="updateQuery($event)" />
     </div>
+    @if (vehicles.error()) {
+      <div class="vehicles__load-error" role="alert">
+        <span>Unable to load vehicles. Please try again.</span>
+        <button
+          class="vehicles__button vehicles__button--secondary"
+          [disabled]="busy()"
+          (click)="retry()"
+        >
+          Retry
+        </button>
+      </div>
+    }
+    @if (busy()) {
+      <div class="vehicles__loading" role="status">
+        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        Loading vehicles…
+      </div>
+    }
     <div class="vehicles__table-scroll">
       <table>
         <thead>
@@ -53,9 +68,9 @@
           </tr>
         </thead>
         <tbody>
-          @for (row of filtered(); track row['id']) {
+          @for (row of rows(); track row.publicId) {
             <tr>
-              <td class="vehicles__record-id">#{{ row['id'] }}</td>
+              <td class="vehicles__record-id">#{{ row.publicId }}</td>
               <td>
                 <span class="vehicles__badge" [attr.data-tone]="row['type']">{{
                   human(row['type'])
@@ -67,7 +82,7 @@
                 <button
                   class="vehicles__button vehicles__button--text"
                   (click)="open(row)"
-                  [attr.aria-label]="'Edit vehicle ' + row['id']"
+                  [attr.aria-label]="'Edit vehicle ' + row.publicId"
                 >
                   Edit ↗
                 </button>
@@ -77,22 +92,23 @@
         </tbody>
       </table>
     </div>
-    @if (!filtered().length) {
+    @if (!busy() && !vehicles.error() && !rows().length) {
       <div class="vehicles__empty">
         <h2>No records found</h2>
-        <p>Try another search or add your first vehicle.</p>
-        <button
-          class="vehicles__button vehicles__button--text"
-          (click)="search.set(''); filter.set('')"
-        >
+        <p>Adjust the type or capacity filters to find vehicles.</p>
+        <button class="vehicles__button vehicles__button--text" (click)="clearFilters()">
           Clear filters
         </button>
       </div>
     }
-    <footer>
-      <span>{{ filtered().length }} of {{ rows().length }} records</span
-      ><span>AURUM · Made for memorable moments</span>
-    </footer>
+    <div class="vehicles__pagination">
+      <app-vehicle-pagination
+        [query]="query()"
+        [page]="page()"
+        [disabled]="busy()"
+        (changed)="updateQuery($event, false)"
+      />
+    </div>
   </section>
   @if (notice()) {
     <p class="vehicles__notice" role="status">
