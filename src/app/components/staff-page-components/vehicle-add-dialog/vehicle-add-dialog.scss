@@ -1,0 +1,130 @@
+:host {
+  display: block;
+  min-height: 100%;
+  border-left: 1px solid #514126;
+  background: #12100c;
+  color: #e2d8c6;
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
+}
+h2 {
+  margin: 0;
+  font:
+    400 24px Georgia,
+    serif;
+}
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  color: #bdb09a;
+  font-size: 10px;
+}
+input,
+select {
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #3c3427;
+  border-radius: 4px;
+  background: #0b0a08;
+  color: #ddd3c2;
+  color-scheme: dark;
+  font-size: 11px;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #d0ac62;
+  outline-offset: 3px;
+}
+.vehicle-add-dialog {
+  padding: 28px;
+  &__panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  &__eyebrow {
+    margin: 0 0 12px;
+    color: #b69b65;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+  }
+  &__editor-note {
+    margin: 20px 0;
+    color: #948a79;
+    font-size: 11px;
+    line-height: 1.8;
+  }
+  &__fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 16px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+    @media (max-width: 540px) {
+      grid-template-columns: 1fr;
+    }
+  }
+  &__button {
+    cursor: pointer;
+    font-size: 11px;
+    &--primary,
+    &--secondary {
+      padding: 12px 18px;
+      border: 1px solid #b69550;
+      border-radius: 4px;
+      background: #c6a35e;
+      color: #16130e;
+      font-weight: 600;
+    }
+    &--primary {
+      &:hover {
+        background: #dfbd79;
+      }
+    }
+    &--secondary {
+      background: transparent;
+      border-color: #393329;
+      color: #bdb09a;
+    }
+    &--text {
+      padding: 6px;
+      border: 0;
+      background: transparent;
+      color: #bba16d;
+    }
+  }
+  &__form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid #32291b;
+  }
+  &__error {
+    margin: 16px 0 0;
+    color: #d39990;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+}
+button:disabled,
+fieldset:disabled {
+  opacity: 0.6;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+.vehicle-add-dialog {
+  &__field-error {
+    color: #d39990;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+}

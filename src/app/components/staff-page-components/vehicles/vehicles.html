@@ -10,7 +10,7 @@
       <h1>Vehicles</h1>
       <p>A considered fleet for guests and everything they need.</p>
     </div>
-    <button class="vehicles__button vehicles__button--primary" (click)="open()">
+    <button class="vehicles__button vehicles__button--primary" (click)="open()" [disabled]="busy()">
       ＋ Add vehicle
     </button>
   </header>
@@ -36,11 +36,15 @@
           (changed)="updateQuery($event)"
         />
       </div>
-      <app-vehicle-filtering [query]="query()" (changed)="updateQuery($event)" />
+      <app-vehicle-filtering
+        [disabled]="deleting() !== undefined"
+        [query]="query()"
+        (changed)="updateQuery($event)"
+      />
     </div>
     @if (vehicles.error()) {
       <div class="vehicles__load-error" role="alert">
-        <span>Unable to load vehicles. Please try again.</span>
+        <span>{{ loadError() }}</span>
         <button
           class="vehicles__button vehicles__button--secondary"
           [disabled]="busy()"
@@ -50,7 +54,10 @@
         </button>
       </div>
     }
-    @if (busy()) {
+    @if (deleteError()) {
+      <div class="vehicles__load-error" role="alert">{{ deleteError() }}</div>
+    }
+    @if (vehicles.isLoading()) {
       <div class="vehicles__loading" role="status">
         <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
         Loading vehicles…
@@ -64,7 +71,7 @@
             <th scope="col">Vehicle type</th>
             <th scope="col">Passenger capacity</th>
             <th scope="col">Cargo limit (kg)</th>
-            <th scope="col"><span class="visually-hidden">Actions</span></th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -82,9 +89,24 @@
                 <button
                   class="vehicles__button vehicles__button--text"
                   (click)="open(row)"
+                  [disabled]="busy()"
                   [attr.aria-label]="'Edit vehicle ' + row.publicId"
                 >
                   Edit ↗
+                </button>
+                <button
+                  type="button"
+                  class="vehicles__delete-btn"
+                  (click)="deleteVehicle(row.publicId)"
+                  [disabled]="busy()"
+                  [attr.aria-label]="'Delete vehicle ' + row.publicId"
+                >
+                  @if (deleting() === row.publicId) {
+                    <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                    <span role="status">Deleting…</span>
+                  } @else {
+                    Delete
+                  }
                 </button>
               </td>
             </tr>
@@ -116,67 +138,3 @@
     </p>
   }
 </div>
-@if (editor()) {
-  <dialog
-    #editorDialog
-    class="vehicles__editor"
-    aria-modal="true"
-    aria-labelledby="editor-title"
-    (cancel)="close()"
-  >
-    <div class="vehicles__panel-heading">
-      <div>
-        <p class="vehicles__eyebrow">THE DETAILS</p>
-        <h2 id="editor-title">{{ editing ? 'Edit' : 'New' }} vehicle</h2>
-      </div>
-      <button
-        class="vehicles__button vehicles__button--text"
-        (click)="close()"
-        aria-label="Close editor"
-      >
-        ✕
-      </button>
-    </div>
-    <p class="vehicles__editor-note">Sample workspace · changes last for this session.</p>
-    <form #editorForm="ngForm" (ngSubmit)="editorForm.valid && save()">
-      <div class="vehicles__fields">
-        <label
-          >Vehicle type<select name="type" [(ngModel)]="draft['type']" required>
-            <option value="TRUCK">Truck</option>
-            <option value="PASSENGER_VEHICLE">Passenger vehicle</option>
-          </select></label
-        >
-        <label
-          >Passenger capacity<input
-            type="number"
-            name="passengerCapacity"
-            [(ngModel)]="draft['passengerCapacity']"
-            required
-            min="0"
-            step="1"
-        /></label>
-        <label
-          >Cargo limit (kg)<input
-            type="number"
-            name="cargoWeightLimit"
-            [(ngModel)]="draft['cargoWeightLimit']"
-            required
-            min="0"
-            step="any"
-        /></label>
-      </div>
-
-      <div class="vehicles__form-actions">
-        <button
-          type="button"
-          class="vehicles__button vehicles__button--secondary"
-          (click)="close()"
-        >
-          Cancel</button
-        ><button type="submit" class="vehicles__button vehicles__button--primary">
-          Save vehicle
-        </button>
-      </div>
-    </form>
-  </dialog>
-}

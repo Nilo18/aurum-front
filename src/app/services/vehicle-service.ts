@@ -3,10 +3,18 @@ import { BackendUrlHolderService } from './backend-url-holder-service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { QueryFormatterService } from './query-formatter-service';
 import { PageResponse } from './event-service';
+import { firstValueFrom } from 'rxjs';
+import { GenericResponse } from './home-service';
 
 export interface VehicleDTO {
   publicId: string;
-  type: VehicleType;
+  type: VehicleType | '';
+  passengerCapacity: number;
+  cargoWeightLimit: number;
+}
+
+export interface CreateVehicleRequest {
+  type: VehicleType | '';
   passengerCapacity: number;
   cargoWeightLimit: number;
 }
@@ -43,5 +51,44 @@ export class VehicleService {
     return this.http.get<PageResponse<VehicleDTO>>(`${this.baseUrl}/api/vehicle`, {
       params: httpParams,
     });
+  }
+
+  async addVehicle(request: CreateVehicleRequest) {
+    try {
+      const res = await firstValueFrom(
+        this.http.post<VehicleDTO>(`${this.baseUrl}/api/vehicle`, request),
+      );
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.log("Couldn't add a new vehicle: ", error);
+      throw error;
+    }
+  }
+
+  async updateVehicle(request: VehicleDTO) {
+    try {
+      const res = await firstValueFrom(
+        this.http.put<VehicleDTO>(`${this.baseUrl}/api/vehicle`, request),
+      );
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.log("Couldn't update the vehicle: ", error);
+      throw error;
+    }
+  }
+
+  async deleteVehicle(publicId: string) {
+    try {
+      const res = await firstValueFrom(
+        this.http.delete<GenericResponse>(`${this.baseUrl}/api/vehicle/${publicId}`),
+      );
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.log("Couldn't delete the vehicle", error);
+      throw error;
+    }
   }
 }

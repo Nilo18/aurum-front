@@ -43,7 +43,8 @@ a:focus-visible {
 
 .aurum-verification-modal,
 .aurum-success-modal,
-.aurum-confirm-action-modal {
+.aurum-confirm-action-modal,
+.aurum-vehicle-modal {
   .modal-content {
     overflow: hidden;
     border: 0;
@@ -109,5 +110,40 @@ a:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .skeleton {
     animation: none;
+  }
+}
+
+.aurum-vehicle-modal {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+
+  .modal-dialog {
+    width: min(540px, 100%);
+    max-width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    margin: 0 0 0 auto;
+  }
+
+  .modal-content {
+    height: 100%;
+    max-height: 100dvh;
+    overflow: auto;
+  }
+
+  &.fade .modal-dialog {
+    transform: translateX(30px);
+    transition: transform 220ms ease-out;
+  }
+
+  &.show .modal-dialog {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurum-vehicle-modal.fade .modal-dialog {
+    transform: none;
+    transition: none;
   }
 }

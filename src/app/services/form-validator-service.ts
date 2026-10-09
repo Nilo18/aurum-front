@@ -30,8 +30,10 @@ export class FormValidatorService {
 
   formatLabel(field: string): string {
     return field
-      .replace(/_/g, ' ')                        
-      .replace(/^\w/, c => c.toUpperCase());    
+      .replace(/([A-Z])/g, ' $1')
+      .toLowerCase()
+      .replace(/^\w/, c => c.toUpperCase())
+      .trim();
   }
 
   getRequiredError(label: string, form: FormGroup): string {

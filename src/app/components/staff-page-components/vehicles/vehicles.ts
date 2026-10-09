@@ -1,7 +1,7 @@
-import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { StaffPreviewStore } from '../shared/staff-preview-store';
-import { Row } from '../shared/staff-row';
+import { getRequestErrorMessage } from '../../../services/request-error';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { VehicleAddDialog } from '../vehicle-add-dialog/vehicle-add-dialog';
+import { Component, computed, inject, signal } from '@angular/core';
 import { human } from '../shared/staff-format';
 import { VehicleDTO, VehicleQuery, VehicleService } from '../../../services/vehicle-service';
 import { rxResource } from '@angular/core/rxjs-interop';
@@ -11,17 +11,25 @@ import { VehiclePagination } from '../vehicle-pagination/vehicle-pagination';
 
 @Component({
   selector: 'app-vehicles',
-  imports: [FormsModule, VehicleFiltering, VehicleSorting, VehiclePagination],
+  imports: [VehicleFiltering, VehicleSorting, VehiclePagination],
   templateUrl: './vehicles.html',
   styleUrl: './vehicles.scss',
 })
 export class Vehicles {
-  readonly store = inject(StaffPreviewStore);
+  private readonly modal = inject(NgbModal);
   private vehicleService = inject(VehicleService);
   readonly human = human;
-  readonly editor = signal(false);
   readonly notice = signal('');
-  readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('editorDialog');
+  readonly deleting = signal<string | undefined>(undefined);
+  readonly deleteError = signal('');
+  private readonly refreshingAfterDelete = signal(false);
+  readonly loadError = computed(() =>
+    this.vehicles.error()
+      ? this.refreshingAfterDelete()
+        ? 'Vehicle deleted, but the list could not be refreshed. Please retry.'
+        : 'Unable to load vehicles. Please try again.'
+      : '',
+  );
   private vehicleQuery = signal<VehicleQuery>({
     page: 0,
     size: 10,
@@ -35,9 +43,10 @@ export class Vehicles {
   readonly query = this.vehicleQuery.asReadonly();
   readonly page = computed(() => (this.vehicles.hasValue() ? this.vehicles.value() : undefined));
   readonly rows = computed(() => this.page()?.content ?? []);
-  readonly busy = computed(() => this.vehicles.isLoading());
+  readonly busy = computed(() => this.vehicles.isLoading() || this.deleting() !== undefined);
 
   updateQuery(changes: Partial<VehicleQuery>, resetPage = true) {
+    this.refreshingAfterDelete.set(false);
     this.vehicleQuery.update((query) => ({
       ...query,
       ...changes,
@@ -59,38 +68,49 @@ export class Vehicles {
     if (!this.busy()) this.vehicles.reload();
   }
 
-  editing?: Row;
-  draft: Row = {};
-
-  constructor() {
-    effect(() => {
-      const dialog = this.dialog()?.nativeElement;
-      if (dialog && !dialog.open) dialog.showModal();
+  open(vehicle?: VehicleDTO): void {
+    if (this.busy()) return;
+    const modalRef = this.modal.open(VehicleAddDialog, {
+      centered: true,
+      ariaLabelledBy: 'vehicle-editor-title',
+      windowClass: 'aurum-vehicle-modal',
+      beforeDismiss: () => !modalRef.componentInstance.isSubmitting(),
     });
+    modalRef.componentInstance.vehicle = vehicle;
+    void modalRef.result.then(
+      (message: string) => {
+        this.notice.set(message);
+        this.vehicles.reload();
+      },
+      () => {},
+    );
   }
 
-  open(row?: VehicleDTO): void {
-    this.editing = row ? { ...row } : undefined;
-    this.draft = row
-      ? { ...row }
-      : {
-          type: 'TRUCK',
-          passengerCapacity: '',
-          cargoWeightLimit: '',
-        };
-    this.editor.set(true);
-  }
-
-  close(): void {
-    this.editor.set(false);
-  }
-
-  save(): void {
-    const row = { ...this.draft };
-    row['passengerCapacity'] = Number(row['passengerCapacity']);
-    row['cargoWeightLimit'] = Number(row['cargoWeightLimit']);
-    this.store.save('vehicles', row, this.editing);
-    this.close();
-    this.notice.set('Vehicle saved in this preview session.');
+  async deleteVehicle(publicId: string): Promise<void> {
+    if (this.busy()) return;
+    this.deleting.set(publicId);
+    this.deleteError.set('');
+    this.notice.set('');
+    try {
+      const response = await this.vehicleService.deleteVehicle(publicId);
+      if (response.status < 200 || response.status >= 300) {
+        this.deleteError.set(response.message || 'Unable to delete vehicle. Please try again.');
+        return;
+      }
+      this.notice.set('Vehicle deleted.');
+      const page = this.page();
+      if (page?.content.length === 1 && page.pageNumber > 0) {
+        this.updateQuery({ page: page.pageNumber - 1 }, false);
+      } else {
+        this.vehicles.reload();
+      }
+      this.refreshingAfterDelete.set(true);
+    } catch (error) {
+      this.deleteError.set(
+        getRequestErrorMessage(error, 'Unable to delete vehicle. Please try again.'),
+      );
+    } finally {
+      this.deleting.set(undefined);
+    }
   }
 }

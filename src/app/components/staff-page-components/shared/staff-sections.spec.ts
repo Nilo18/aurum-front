@@ -5,7 +5,6 @@ import { Feedback } from '../feedback/feedback';
 import { Menu } from '../menu/menu';
 import { Products } from '../products/products';
 import { Suppliers } from '../suppliers/suppliers';
-import { Vehicles } from '../vehicles/vehicles';
 import { StaffCollection, StaffPreviewStore } from './staff-preview-store';
 import { Row } from './staff-row';
 
@@ -22,7 +21,6 @@ const sections: [string, Type<EditableSection>, StaffCollection][] = [
   ['Menu', Menu, 'menu'],
   ['Products', Products, 'products'],
   ['Suppliers', Suppliers, 'suppliers'],
-  ['Vehicles', Vehicles, 'vehicles'],
 ];
 
 describe('Staff section ownership', () => {

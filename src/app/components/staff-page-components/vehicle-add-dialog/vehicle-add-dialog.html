@@ -1,0 +1,126 @@
+<div class="vehicle-add-dialog">
+  <div class="vehicle-add-dialog__panel-heading">
+    <div>
+      <p class="vehicle-add-dialog__eyebrow">THE DETAILS</p>
+      <h2 id="vehicle-editor-title">{{ editing ? 'Edit' : 'New' }} vehicle</h2>
+    </div>
+    <button
+      class="vehicle-add-dialog__button vehicle-add-dialog__button--text"
+      (click)="close()"
+      [disabled]="isSubmitting()"
+      aria-label="Close editor"
+    >
+      ✕
+    </button>
+  </div>
+  <p class="vehicle-add-dialog__editor-note">Add the vehicle details to your fleet.</p>
+  <form (ngSubmit)="save()" [formGroup]="vehicleForm" novalidate [attr.aria-busy]="isSubmitting()">
+    <fieldset class="vehicle-add-dialog__fields" [disabled]="isSubmitting()">
+      <label>
+        Vehicle type
+        @let typeError = formValidator.getRequiredError('type', vehicleForm);
+        <select
+          name="type"
+          required
+          formControlName="type"
+          [attr.aria-invalid]="!!typeError"
+          [attr.aria-describedby]="typeError ? 'vehicle-type-error' : null"
+        >
+          <option value="TRUCK">Truck</option>
+          <option value="PASSENGER_VEHICLE">Passenger vehicle</option>
+        </select>
+        @if (typeError) {
+          <span id="vehicle-type-error" class="vehicle-add-dialog__field-error" role="alert">{{
+            typeError
+          }}</span>
+        }
+      </label>
+      @let passengerCapacityError =
+        vehicleForm.controls.passengerCapacity.touched
+          ? formValidator.getFirstError(
+              formValidator.getRequiredAmountError(
+                'passengerCapacity',
+                vehicleForm,
+                'Passenger capacity'
+              ),
+              formValidator.getPatternError(
+                'passengerCapacity',
+                vehicleForm,
+                'Passenger capacity must be a whole number.'
+              )
+            )
+          : '';
+      <label
+        >Passenger capacity<input
+          type="number"
+          name="passengerCapacity"
+          required
+          min="0"
+          step="1"
+          formControlName="passengerCapacity"
+          [attr.aria-invalid]="!!passengerCapacityError"
+          [attr.aria-describedby]="passengerCapacityError ? 'passengerCapacity-error' : null"
+        />
+        @if (passengerCapacityError) {
+          <span id="passengerCapacity-error" class="vehicle-add-dialog__field-error" role="alert">{{
+            passengerCapacityError
+          }}</span>
+        }
+      </label>
+      @let cargoWeightLimitError =
+        vehicleForm.controls.cargoWeightLimit.touched
+          ? formValidator.getFirstError(
+              formValidator.getRequiredAmountError(
+                'cargoWeightLimit',
+                vehicleForm,
+                'Cargo limit (kg)'
+              )
+            )
+          : '';
+      <label
+        >Cargo weight limit (kg)<input
+          type="number"
+          name="cargoWeightLimit"
+          required
+          min="0"
+          step="any"
+          formControlName="cargoWeightLimit"
+          [attr.aria-invalid]="!!cargoWeightLimitError"
+          [attr.aria-describedby]="cargoWeightLimitError ? 'cargoWeightLimit-error' : null"
+        />
+        @if (cargoWeightLimitError) {
+          <span id="cargoWeightLimit-error" class="vehicle-add-dialog__field-error" role="alert">{{
+            cargoWeightLimitError
+          }}</span>
+        }
+      </label>
+    </fieldset>
+
+    @if (submissionError()) {
+      <p class="vehicle-add-dialog__error" role="alert">{{ submissionError() }}</p>
+    }
+    <p class="visually-hidden" role="status">
+      {{ isSubmitting() ? 'Saving vehicle. Please wait.' : '' }}
+    </p>
+    <div class="vehicle-add-dialog__form-actions">
+      <button
+        type="button"
+        class="vehicle-add-dialog__button vehicle-add-dialog__button--secondary"
+        (click)="close()"
+        [disabled]="isSubmitting()"
+      >
+        Cancel</button
+      ><button
+        type="submit"
+        class="vehicle-add-dialog__button vehicle-add-dialog__button--primary"
+        [disabled]="isSubmitting()"
+      >
+        @if (isSubmitting()) {
+          <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span> Saving…
+        } @else {
+          Save vehicle
+        }
+      </button>
+    </div>
+  </form>
+</div>
