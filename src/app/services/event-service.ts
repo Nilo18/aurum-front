@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BackendUrlHolderService } from './backend-url-holder-service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 // import { ClientType } from '../components/request-event-components/event-request-form/event-request.models';
@@ -107,13 +107,6 @@ export class EventService {
   private baseUrl = this.backendUrlHolder.getBaseUrl();
   private http = inject(HttpClient);
   private queryFormatter = inject(QueryFormatterService);
-  private eventQuery = signal<EventQuery>({
-    page: 0,
-    size: 10,
-    sortBy: '',
-    sortDirection: '',
-    search: '',
-  });
 
   async verifyCreateEventRequest(email: string) {
     try {
@@ -141,65 +134,10 @@ export class EventService {
     }
   }
 
-  searchEvents(search: string) {
-    this.eventQuery.update((query) => ({
-      ...query,
-      search: search,
-      page: 0,
-    }));
-
-    return this.getEvents();
-  }
-
-  filterEvents<K extends EventFilterKey>(field: K, value: EventQuery[K]) {
-    this.eventQuery.update((query) => ({
-      ...query,
-      [field]: value,
-      page: 0,
-    }));
-
-    return this.getEvents();
-  }
-
-  sortEvents(sortBy: string, sortDirection: string) {
-    this.eventQuery.update((query) => ({
-      ...query,
-      sortBy: sortBy,
-      sortDirection: sortDirection,
-    }));
-
-    return this.getEvents();
-  }
-
-  paginateEvents(pageNumber: number, size?: number) {
-    this.eventQuery.update((query) => ({
-      ...query,
-      page: pageNumber,
-      size: size ?? query.size,
-    }));
-
-    return this.getEvents();
-  }
-
-  async getEvents() {
-    try {
-      const cleanedQuery = this.queryFormatter.removeEmptyProperties(this.eventQuery());
-      const httpParams = new HttpParams({ fromObject: cleanedQuery });
-      const res = await firstValueFrom(
-        this.http.get<PageResponse<EventDTO>>(`${this.baseUrl}/api/event`, {
-          params: httpParams,
-        }),
-      );
-      console.log(res);
-      return res;
-    } catch (error) {
-      console.log("Couldn't get events: ", error);
-      throw error;
-    }
-  }
-
-  getEventQuery() {
-    return this.eventQuery;
+  getEvents(query: EventQuery) {
+    const cleanedQuery = this.queryFormatter.removeEmptyProperties(query);
+    const params = new HttpParams({ fromObject: cleanedQuery });
+    return this.http.get<PageResponse<EventDTO>>(`${this.baseUrl}/api/event`, { params });
   }
 
   async deleteEvent(id: number) {

@@ -42,6 +42,7 @@ describe('Events API controls', () => {
     const fixture = TestBed.createComponent(Events);
     fixture.detectChanges();
     await Promise.resolve();
+    fixture.detectChanges();
     http.expectOne((request) => request.url.endsWith('/api/event')).flush(page);
     await fixture.whenStable();
     expect(fixture.componentInstance.events.value()).toEqual(page);
@@ -49,7 +50,9 @@ describe('Events API controls', () => {
     const filter = fixture.debugElement.query(By.directive(EventFiltering))
       .componentInstance as EventFiltering;
     const filtering = filter.filter('status', EventStatus.CONFIRMED);
-    expect(fixture.componentInstance.pending()).toBe(true);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.busy()).toBe(true);
+    fixture.detectChanges();
     http
       .expectOne(
         (request) =>
@@ -63,6 +66,7 @@ describe('Events API controls', () => {
     const sorting = (
       fixture.debugElement.query(By.directive(EventSorting)).componentInstance as EventSorting
     ).sort('date', 'desc');
+    fixture.detectChanges();
     http
       .expectOne(
         (request) =>
@@ -77,6 +81,7 @@ describe('Events API controls', () => {
     const pagination = fixture.debugElement.query(By.directive(EventPagination))
       .componentInstance as EventPagination;
     const paging = pagination.paginate(1);
+    fixture.detectChanges();
     http
       .expectOne(
         (request) => request.params.get('page') === '1' && request.params.get('size') === '10',
@@ -93,12 +98,14 @@ describe('Events API controls', () => {
     const fixture = TestBed.createComponent(Events);
     fixture.detectChanges();
     await Promise.resolve();
+    fixture.detectChanges();
     http
       .expectOne((request) => request.url.endsWith('/api/event'))
       .flush('Unavailable', { status: 500, statusText: 'Server error' });
     await fixture.whenStable();
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeTruthy();
     const retry = fixture.componentInstance.retry();
+    fixture.detectChanges();
     http.expectOne((request) => request.url.endsWith('/api/event')).flush(page);
     await retry;
     await fixture.whenStable();
@@ -108,6 +115,7 @@ describe('Events API controls', () => {
     const fixture = TestBed.createComponent(Events);
     fixture.detectChanges();
     await Promise.resolve();
+    fixture.detectChanges();
     http
       .expectOne((request) => request.url.endsWith('/api/event'))
       .flush({
@@ -152,6 +160,7 @@ describe('Events API controls', () => {
     request.flush({ status: 200, message: 'Deleted' });
     await Promise.resolve();
     await Promise.resolve();
+    fixture.detectChanges();
     http.expectOne((request) => request.method === 'GET').flush({ ...page, totalElements: 34 });
     await deleting;
     await fixture.whenStable();
@@ -174,6 +183,7 @@ describe('Events API controls', () => {
     open.mockReturnValue({ componentInstance: {}, result: Promise.resolve(true) });
     const deleting = fixture.componentInstance.delete(1);
     await Promise.resolve();
+    fixture.detectChanges();
     http
       .expectOne((request) => request.method === 'DELETE')
       .flush({ message: 'Event cannot be deleted.' }, { status: 409, statusText: 'Conflict' });
@@ -191,13 +201,16 @@ describe('Events API controls', () => {
     open.mockReturnValue({ componentInstance: {}, result: Promise.resolve(true) });
     const deleting = fixture.componentInstance.delete(1);
     await Promise.resolve();
+    fixture.detectChanges();
     http.expectOne((request) => request.method === 'DELETE').flush({ status: 200 });
     await Promise.resolve();
     await Promise.resolve();
+    fixture.detectChanges();
     http
       .expectOne((request) => request.method === 'GET')
       .flush('Unavailable', { status: 500, statusText: 'Server error' });
     await deleting;
+    await fixture.whenStable();
     expect(fixture.componentInstance.rows()).toEqual([]);
     expect(fixture.componentInstance.error()).toContain('Event deleted');
     expect(fixture.componentInstance.busy()).toBe(false);

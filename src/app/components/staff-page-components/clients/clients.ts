@@ -1,11 +1,11 @@
-import { Component, computed, inject, resource, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, signal } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmActionModal } from '../../general-components/confirm-action-modal/confirm-action-modal';
 import { getRequestErrorMessage } from '../../../services/request-error';
 import { FormsModule } from '@angular/forms';
 import { human } from '../shared/staff-format';
-import { ClientService, ClientDTO } from '../../../services/client-service';
-import { PageResponse } from '../../../services/event-service';
+import { ClientService, ClientQuery } from '../../../services/client-service';
 import { ClientsFiltering } from '../clients-filtering/clients-filtering';
 import { ClientsSorting } from '../clients-sorting/clients-sorting';
 import { ClientsPagination } from '../clients-pagination/clients-pagination';
@@ -22,13 +22,29 @@ export class Clients {
   readonly deleting = signal<string | undefined>(undefined);
   readonly deleteError = signal('');
   readonly human = human;
-  readonly query = this.service.getClientQuery();
+  private readonly clientQuery = signal<ClientQuery>({
+    page: 0,
+    size: 10,
+    search: '',
+    sortBy: '',
+    sortDirection: '',
+  });
+  readonly query = this.clientQuery.asReadonly();
   readonly search = signal(this.query().search ?? '');
-  readonly pending = signal(false);
-  readonly error = signal('');
-  readonly clients = resource({ loader: () => this.service.getClients() });
+  private readonly refreshingAfterDelete = signal(false);
+  readonly error = computed(() =>
+    this.clients.error()
+      ? this.refreshingAfterDelete()
+        ? 'Client deleted, but the list could not be refreshed. Please retry.'
+        : 'Unable to load clients. Please try again.'
+      : '',
+  );
+  readonly clients = rxResource({
+    params: () => this.clientQuery(),
+    stream: ({ params }) => this.service.getClients(params),
+  });
   readonly busy = computed(
-    () => this.pending() || this.clients.isLoading() || this.confirming() || !!this.deleting(),
+    () => this.clients.isLoading() || this.confirming() || !!this.deleting(),
   );
   readonly page = computed(() => (this.clients.hasValue() ? this.clients.value() : undefined));
   readonly rows = computed(() =>
@@ -36,36 +52,25 @@ export class Clients {
   );
   readonly notice = signal('');
 
-  start() {
-    this.pending.set(true);
-    this.error.set('');
+  updateQuery(changes: Partial<ClientQuery>, resetPage = true) {
+    this.refreshingAfterDelete.set(false);
+    this.clientQuery.update((query) => ({
+      ...query,
+      ...changes,
+      ...(resetPage ? { page: 0 } : {}),
+    }));
   }
-  receive(page: PageResponse<ClientDTO>) {
-    this.clients.set(page);
-    this.pending.set(false);
-  }
-  fail() {
-    this.pending.set(false);
-    this.error.set('Unable to load clients. Please try again.');
-  }
-  async searchClients() {
+
+  searchClients() {
     if (this.busy()) return;
-    this.search.set(this.search().trim());
-    this.start();
-    try {
-      this.receive(await this.service.searchClients(this.search()));
-    } catch {
-      this.fail();
-    }
+    const search = this.search().trim();
+    this.search.set(search);
+    this.updateQuery({ search });
   }
-  async retry() {
+
+  retry() {
     if (this.busy()) return;
-    this.start();
-    try {
-      this.receive(await this.service.getClients());
-    } catch {
-      this.fail();
-    }
+    this.clients.reload();
   }
 
   async deleteClient(email: string): Promise<void> {
@@ -106,17 +111,13 @@ export class Clients {
           totalElements: Math.max(0, current.totalElements - 1),
         });
       }
-      try {
-        const currentPage = this.page();
-        const page =
-          currentPage && !currentPage.content.length && currentPage.pageNumber > 0
-            ? await this.service.paginateClients(currentPage.pageNumber - 1)
-            : await this.service.getClients();
-        this.receive(page);
-        this.error.set('');
-      } catch {
-        this.error.set('Client deleted, but the list could not be refreshed. Please retry.');
+      const currentPage = this.page();
+      if (currentPage && !currentPage.content.length && currentPage.pageNumber > 0) {
+        this.updateQuery({ page: currentPage.pageNumber - 1 }, false);
+      } else {
+        this.clients.reload();
       }
+      this.refreshingAfterDelete.set(true);
     } catch (error) {
       this.deleteError.set(
         getRequestErrorMessage(error, 'Unable to delete client. Please try again.'),

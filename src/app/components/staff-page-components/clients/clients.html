@@ -42,18 +42,14 @@
           <app-clients-sorting
             [query]="query()"
             [disabled]="busy()"
-            (started)="start()"
-            (changed)="receive($event)"
-            (failed)="fail()"
+            (changed)="updateQuery($event)"
           />
         </div>
       </div>
       <app-clients-filtering
         [query]="query()"
         [disabled]="busy()"
-        (started)="start()"
-        (changed)="receive($event)"
-        (failed)="fail()"
+        (changed)="updateQuery($event)"
       />
     </div>
     @if (error() || clients.error()) {
@@ -73,7 +69,7 @@
         Deleting client...
       </div>
     }
-    @if (pending() || clients.isLoading()) {
+    @if (clients.isLoading()) {
       <div class="px-4 py-3" role="status">
         <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
         clients...
@@ -127,9 +123,7 @@
         [query]="query()"
         [page]="page()"
         [disabled]="busy()"
-        (started)="start()"
-        (changed)="receive($event)"
-        (failed)="fail()"
+        (changed)="updateQuery($event, false)"
       />
     </div>
   </section>

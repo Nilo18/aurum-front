@@ -1,10 +1,11 @@
+import { rxResource } from '@angular/core/rxjs-interop';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmActionModal } from '../../general-components/confirm-action-modal/confirm-action-modal';
 import { getRequestErrorMessage } from '../../../services/request-error';
-import { Component, computed, inject, resource, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { human, currency } from '../shared/staff-format';
-import { EventService, EventDTO, PageResponse } from '../../../services/event-service';
+import { EventService, EventQuery } from '../../../services/event-service';
 import { EventFiltering } from '../event-filtering/event-filtering';
 import { EventSorting } from '../event-sorting/event-sorting';
 import { EventPagination } from '../event-pagination/event-pagination';
@@ -23,50 +24,51 @@ export class Events {
   readonly notice = signal('');
   readonly human = human;
   readonly currency = currency;
-  readonly query = this.service.getEventQuery().asReadonly();
+  private readonly eventQuery = signal<EventQuery>({
+    page: 0,
+    size: 10,
+    search: '',
+    sortBy: '',
+    sortDirection: '',
+  });
+  readonly query = this.eventQuery.asReadonly();
   readonly search = signal(this.query().search ?? '');
-  readonly pending = signal(false);
-  readonly error = signal('');
-  readonly events = resource({ loader: () => this.service.getEvents() });
+  private readonly refreshingAfterDelete = signal(false);
+  readonly error = computed(() =>
+    this.events.error()
+      ? this.refreshingAfterDelete()
+        ? 'Event deleted, but the list could not be refreshed. Please retry.'
+        : 'Unable to load events. Please try again.'
+      : '',
+  );
+  readonly events = rxResource({
+    params: () => this.eventQuery(),
+    stream: ({ params }) => this.service.getEvents(params),
+  });
   readonly busy = computed(
-    () =>
-      this.pending() ||
-      this.events.isLoading() ||
-      this.confirming() ||
-      this.deleting() !== undefined,
+    () => this.events.isLoading() || this.confirming() || this.deleting() !== undefined,
   );
   readonly page = computed(() => (this.events.hasValue() ? this.events.value() : undefined));
   readonly rows = computed(() => this.page()?.content ?? []);
-  start() {
-    this.pending.set(true);
-    this.error.set('');
+  updateQuery(changes: Partial<EventQuery>, resetPage = true) {
+    this.refreshingAfterDelete.set(false);
+    this.eventQuery.update((query) => ({
+      ...query,
+      ...changes,
+      ...(resetPage ? { page: 0 } : {}),
+    }));
   }
-  receive(page: PageResponse<EventDTO>) {
-    this.events.set(page);
-    this.pending.set(false);
-  }
-  fail() {
-    this.pending.set(false);
-    this.error.set('Unable to load events. Please try again.');
-  }
-  async searchEvents() {
+
+  searchEvents() {
     if (this.busy()) return;
-    this.search.set(this.search().trim());
-    this.start();
-    try {
-      this.receive(await this.service.searchEvents(this.search()));
-    } catch {
-      this.fail();
-    }
+    const search = this.search().trim();
+    this.search.set(search);
+    this.updateQuery({ search });
   }
-  async retry() {
+
+  retry() {
     if (this.busy()) return;
-    this.start();
-    try {
-      this.receive(await this.service.getEvents());
-    } catch {
-      this.fail();
-    }
+    this.events.reload();
   }
 
   async delete(id: number): Promise<void> {
@@ -107,17 +109,13 @@ export class Events {
           totalElements: Math.max(0, current.totalElements - 1),
         });
       }
-      try {
-        const currentPage = this.page();
-        const page =
-          currentPage && !currentPage.content.length && currentPage.pageNumber > 0
-            ? await this.service.paginateEvents(currentPage.pageNumber - 1)
-            : await this.service.getEvents();
-        this.receive(page);
-        this.error.set('');
-      } catch {
-        this.error.set('Event deleted, but the list could not be refreshed. Please retry.');
+      const currentPage = this.page();
+      if (currentPage && !currentPage.content.length && currentPage.pageNumber > 0) {
+        this.updateQuery({ page: currentPage.pageNumber - 1 }, false);
+      } else {
+        this.events.reload();
       }
+      this.refreshingAfterDelete.set(true);
     } catch (error) {
       this.deleteError.set(
         getRequestErrorMessage(error, 'Unable to delete event. Please try again.'),

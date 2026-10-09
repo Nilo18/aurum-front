@@ -37,6 +37,7 @@ describe('Clients API controls', () => {
     const fixture = TestBed.createComponent(Clients);
     fixture.detectChanges();
     await Promise.resolve();
+    fixture.detectChanges();
     http.expectOne((request) => request.url.endsWith('/api/client')).flush(page);
     await fixture.whenStable();
     expect(fixture.componentInstance.clients.value()).toEqual(page);
@@ -44,7 +45,9 @@ describe('Clients API controls', () => {
     const filter = fixture.debugElement.query(By.directive(ClientsFiltering))
       .componentInstance as ClientsFiltering;
     const filtering = filter.filter(ClientType.PERSON);
-    expect(fixture.componentInstance.pending()).toBe(true);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.busy()).toBe(true);
+    fixture.detectChanges();
     http
       .expectOne(
         (request) => request.params.get('type') === 'PERSON' && request.params.get('page') === '0',
@@ -57,6 +60,7 @@ describe('Clients API controls', () => {
     const sorting = (
       fixture.debugElement.query(By.directive(ClientsSorting)).componentInstance as ClientsSorting
     ).sort('name', 'desc');
+    fixture.detectChanges();
     http
       .expectOne(
         (request) =>
@@ -71,6 +75,7 @@ describe('Clients API controls', () => {
     const pagination = fixture.debugElement.query(By.directive(ClientsPagination))
       .componentInstance as ClientsPagination;
     const paging = pagination.paginate(1);
+    fixture.detectChanges();
     http
       .expectOne(
         (request) => request.params.get('page') === '1' && request.params.get('size') === '10',
@@ -87,12 +92,14 @@ describe('Clients API controls', () => {
     const fixture = TestBed.createComponent(Clients);
     fixture.detectChanges();
     await Promise.resolve();
+    fixture.detectChanges();
     http
       .expectOne((request) => request.url.endsWith('/api/client'))
       .flush({ ...page, pageNumber: 2 });
     await fixture.whenStable();
     fixture.componentInstance.search.set('  Nino  ');
     const searching = fixture.componentInstance.searchClients();
+    fixture.detectChanges();
     http
       .expectOne(
         (request) => request.params.get('search') === 'Nino' && request.params.get('page') === '0',
@@ -103,6 +110,7 @@ describe('Clients API controls', () => {
     const filter = fixture.debugElement.query(By.directive(ClientsFiltering))
       .componentInstance as ClientsFiltering;
     const clearing = filter.filter(undefined);
+    fixture.detectChanges();
     http
       .expectOne(
         (request) => !request.params.has('type') && request.params.get('search') === 'Nino',
@@ -113,6 +121,7 @@ describe('Clients API controls', () => {
     const pagination = fixture.debugElement.query(By.directive(ClientsPagination))
       .componentInstance as ClientsPagination;
     const resizing = pagination.paginate(0, 25);
+    fixture.detectChanges();
     http
       .expectOne(
         (request) => request.params.get('size') === '25' && request.params.get('page') === '0',
@@ -122,12 +131,13 @@ describe('Clients API controls', () => {
     await fixture.whenStable();
     expect(pagination.last()).toBe(25);
     const failing = pagination.paginate(1);
+    fixture.detectChanges();
     http
       .expectOne((request) => request.params.get('page') === '1')
       .flush('Unavailable', { status: 500, statusText: 'Server error' });
     await failing;
     await fixture.whenStable();
-    expect(pagination.pageNumber()).toBe(0);
+    expect(pagination.pageNumber()).toBe(1);
     expect(fixture.componentInstance.busy()).toBe(false);
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeTruthy();
   });
@@ -136,12 +146,14 @@ describe('Clients API controls', () => {
     const fixture = TestBed.createComponent(Clients);
     fixture.detectChanges();
     await Promise.resolve();
+    fixture.detectChanges();
     http
       .expectOne((request) => request.url.endsWith('/api/client'))
       .flush('Unavailable', { status: 500, statusText: 'Server error' });
     await fixture.whenStable();
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeTruthy();
     const retry = fixture.componentInstance.retry();
+    fixture.detectChanges();
     http.expectOne((request) => request.url.endsWith('/api/client')).flush(page);
     await retry;
     await fixture.whenStable();
@@ -151,6 +163,7 @@ describe('Clients API controls', () => {
     const fixture = TestBed.createComponent(Clients);
     fixture.detectChanges();
     await Promise.resolve();
+    fixture.detectChanges();
     http
       .expectOne((request) => request.url.endsWith('/api/client'))
       .flush({
@@ -185,6 +198,7 @@ describe('Clients API controls', () => {
     expect(request.request.body).toEqual({ email: 'nino@example.com' });
     request.flush({ status: 200, message: 'Deleted' });
     await Promise.resolve();
+    fixture.detectChanges();
     http.expectOne((request) => request.method === 'GET').flush({ ...page, totalElements: 34 });
     await deleting;
     await fixture.whenStable();
@@ -207,6 +221,7 @@ describe('Clients API controls', () => {
     open.mockReturnValue({ componentInstance: {}, result: Promise.resolve(true) });
     const deleting = fixture.componentInstance.deleteClient('nino@example.com');
     await Promise.resolve();
+    fixture.detectChanges();
     http
       .expectOne((request) => request.method === 'DELETE')
       .flush({ message: 'Client has active events.' }, { status: 409, statusText: 'Conflict' });
@@ -224,12 +239,15 @@ describe('Clients API controls', () => {
     open.mockReturnValue({ componentInstance: {}, result: Promise.resolve(true) });
     const deleting = fixture.componentInstance.deleteClient('nino@example.com');
     await Promise.resolve();
+    fixture.detectChanges();
     http.expectOne((request) => request.method === 'DELETE').flush({ status: 200 });
     await Promise.resolve();
+    fixture.detectChanges();
     http
       .expectOne((request) => request.method === 'GET')
       .flush('Unavailable', { status: 500, statusText: 'Server error' });
     await deleting;
+    await fixture.whenStable();
     expect(fixture.componentInstance.rows()).toEqual([]);
     expect(fixture.componentInstance.error()).toContain('Client deleted');
     expect(fixture.componentInstance.busy()).toBe(false);

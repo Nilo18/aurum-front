@@ -1,3 +1,4 @@
+import { Subject } from 'rxjs';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { vi } from 'vitest';
@@ -22,18 +23,14 @@ const response: DashboardGetResponse = {
 
 describe('Dashboard', () => {
   let fixture: ComponentFixture<Dashboard>;
-  let resolveRequest: (data: DashboardGetResponse) => void;
-  let rejectRequest: (error: unknown) => void;
+  let request: Subject<DashboardGetResponse>;
   let getDashboardData: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
-    getDashboardData = vi.fn().mockImplementation(
-      () =>
-        new Promise<DashboardGetResponse>((resolve, reject) => {
-          resolveRequest = resolve;
-          rejectRequest = reject;
-        }),
-    );
+    getDashboardData = vi.fn().mockImplementation(() => {
+      request = new Subject<DashboardGetResponse>();
+      return request.asObservable();
+    });
     await TestBed.configureTestingModule({
       imports: [Dashboard],
       providers: [provideRouter([]), { provide: DashboardService, useValue: { getDashboardData } }],
@@ -47,14 +44,16 @@ describe('Dashboard', () => {
     expect(fixture.nativeElement.querySelector('.dashboard__stats .skeleton')).not.toBeNull();
     await fixture.componentInstance.loadDashboard();
     expect(getDashboardData).toHaveBeenCalledTimes(1);
-    resolveRequest(response);
+    request.next(response);
+    request.complete();
     await Promise.resolve();
     fixture.detectChanges();
     await fixture.whenStable();
   });
 
   it('renders backend metrics, event details, and section counts', async () => {
-    resolveRequest(response);
+    request.next(response);
+    request.complete();
     await Promise.resolve();
     fixture.detectChanges();
     await fixture.whenStable();
@@ -77,7 +76,7 @@ describe('Dashboard', () => {
   });
 
   it('shows a backend failure and lets the user retry successfully', async () => {
-    rejectRequest(new Error('Backend unavailable'));
+    request.error(new Error('Backend unavailable'));
     await Promise.resolve();
     fixture.detectChanges();
     await fixture.whenStable();
@@ -90,7 +89,8 @@ describe('Dashboard', () => {
     expect(getDashboardData).toHaveBeenCalledTimes(2);
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
     expect(fixture.nativeElement.querySelector('[role="status"]')).not.toBeNull();
-    resolveRequest({ ...response, eventsInPreparation: [] });
+    request.next({ ...response, eventsInPreparation: [] });
+    request.complete();
     await Promise.resolve();
     fixture.detectChanges();
     await fixture.whenStable();

@@ -6,7 +6,7 @@
       ><select
         id="filter-eventType"
         class="form-select"
-        [ngModel]="draft().eventType"
+        [ngModel]="query().eventType"
         (ngModelChange)="filter('eventType', $event)"
       >
         <option [ngValue]="undefined">Any event type</option>
@@ -20,7 +20,7 @@
       ><select
         id="filter-location"
         class="form-select"
-        [ngModel]="draft().location"
+        [ngModel]="query().location"
         (ngModelChange)="filter('location', $event)"
       >
         <option [ngValue]="undefined">Any location</option>
@@ -34,7 +34,7 @@
       ><select
         id="filter-status"
         class="form-select"
-        [ngModel]="draft().status"
+        [ngModel]="query().status"
         (ngModelChange)="filter('status', $event)"
       >
         <option [ngValue]="undefined">Any status</option>
@@ -50,7 +50,7 @@
         class="form-control"
         type="number"
         min="0"
-        [ngModel]="draft().costFrom"
+        [ngModel]="query().costFrom"
         [ngModelOptions]="{ updateOn: 'blur' }"
         (ngModelChange)="filter('costFrom', $event)"
       />
@@ -62,7 +62,7 @@
         class="form-control"
         type="number"
         min="0"
-        [ngModel]="draft().costTo"
+        [ngModel]="query().costTo"
         [ngModelOptions]="{ updateOn: 'blur' }"
         (ngModelChange)="filter('costTo', $event)"
       />
@@ -74,7 +74,7 @@
         class="form-control"
         type="number"
         min="0"
-        [ngModel]="draft().guestFrom"
+        [ngModel]="query().guestFrom"
         [ngModelOptions]="{ updateOn: 'blur' }"
         (ngModelChange)="filter('guestFrom', $event)"
       />
@@ -86,7 +86,7 @@
         class="form-control"
         type="number"
         min="0"
-        [ngModel]="draft().guestTo"
+        [ngModel]="query().guestTo"
         [ngModelOptions]="{ updateOn: 'blur' }"
         (ngModelChange)="filter('guestTo', $event)"
       />
@@ -97,7 +97,7 @@
         id="filter-eventFrom"
         class="form-control"
         type="date"
-        [ngModel]="draft().eventFrom"
+        [ngModel]="query().eventFrom"
         [ngModelOptions]="{ updateOn: 'blur' }"
         (ngModelChange)="filter('eventFrom', $event)"
       />
@@ -108,7 +108,7 @@
         id="filter-eventTo"
         class="form-control"
         type="date"
-        [ngModel]="draft().eventTo"
+        [ngModel]="query().eventTo"
         [ngModelOptions]="{ updateOn: 'blur' }"
         (ngModelChange)="filter('eventTo', $event)"
       />

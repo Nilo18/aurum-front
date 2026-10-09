@@ -41,19 +41,11 @@
           <app-event-sorting
             [query]="query()"
             [disabled]="busy()"
-            (started)="start()"
-            (changed)="receive($event)"
-            (failed)="fail()"
+            (changed)="updateQuery($event)"
           />
         </div>
       </div>
-      <app-event-filtering
-        [query]="query()"
-        [disabled]="busy()"
-        (started)="start()"
-        (changed)="receive($event)"
-        (failed)="fail()"
-      />
+      <app-event-filtering [query]="query()" [disabled]="busy()" (changed)="updateQuery($event)" />
     </div>
     @if (error() || events.error()) {
       <div class="alert alert-danger m-4" role="alert">
@@ -66,7 +58,7 @@
     @if (deleteError()) {
       <div class="alert alert-danger m-4" role="alert">{{ deleteError() }}</div>
     }
-    @if (pending() || events.isLoading()) {
+    @if (events.isLoading()) {
       <div class="px-4 py-3" role="status">
         <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
         events...
@@ -127,9 +119,7 @@
         [query]="query()"
         [page]="page()"
         [disabled]="busy()"
-        (started)="start()"
-        (changed)="receive($event)"
-        (failed)="fail()"
+        (changed)="updateQuery($event, false)"
       />
     </div>
   </section>

@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BackendUrlHolderService } from './backend-url-holder-service';
-import { firstValueFrom } from 'rxjs';
 
 export interface DashboardEventDTO {
   eventType: string; // or a union/enum type matching Event.EventType
@@ -32,14 +31,7 @@ export class DashboardService {
   private baseUrl = this.backendUrlHolder.getBaseUrl();
   private http = inject(HttpClient);
 
-  async getDashboardData() {
-    try {
-      const res = await firstValueFrom(this.http.get<DashboardGetResponse>(`${this.baseUrl}/api/dashboard`))
-      console.log(res)
-      return res
-    } catch (error) {
-      console.log("Couldn't get dashboard data: ", error)
-      throw error
-    }
+  getDashboardData() {
+    return this.http.get<DashboardGetResponse>(`${this.baseUrl}/api/dashboard`);
   }
 }
