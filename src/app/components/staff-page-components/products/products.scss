@@ -1,3 +1,4 @@
+@use '../shared/client-controls';
 @use '../shared/staff-section';
 
 @include staff-section.styles('products');

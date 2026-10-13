@@ -21,4 +21,33 @@ describe('EmployeesFiltering', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  it('debounces salary changes and preserves zero, decimals, and clearing', () => {
+    vi.useFakeTimers();
+    try {
+      const changed = vi.fn();
+      component.changed.subscribe(changed);
+      component.filterSalary('salaryFrom', 1);
+      vi.advanceTimersByTime(200);
+      component.filterSalary('salaryFrom', 100.5);
+      component.filterSalary('salaryTo', 500);
+      expect(component.salaryDraft().salaryFrom).toBe(100.5);
+      vi.advanceTimersByTime(399);
+      expect(changed).not.toHaveBeenCalled();
+      vi.advanceTimersByTime(1);
+      expect(changed).toHaveBeenLastCalledWith({ salaryFrom: 100.5, salaryTo: 500 });
+      component.filterSalary('salaryFrom', 0);
+      component.filterSalary('salaryTo', null);
+      vi.advanceTimersByTime(400);
+      expect(changed).toHaveBeenLastCalledWith({ salaryFrom: 0, salaryTo: undefined });
+      component.filterSalary('salaryFrom', -1);
+      vi.advanceTimersByTime(400);
+      expect(changed).toHaveBeenCalledTimes(2);
+      component.filterSalary('salaryFrom', 200);
+      fixture.destroy();
+      vi.advanceTimersByTime(400);
+      expect(changed).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

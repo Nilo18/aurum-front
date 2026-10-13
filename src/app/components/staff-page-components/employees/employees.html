@@ -55,7 +55,7 @@
       </div>
       <app-employees-filtering
         [query]="query()"
-        [disabled]="busy()"
+        [disabled]="isSubmitting() || confirming() || !!deleting()"
         (changed)="updateQuery($event)"
       />
     </div>

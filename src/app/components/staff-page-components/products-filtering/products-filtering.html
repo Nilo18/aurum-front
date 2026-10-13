@@ -1,0 +1,34 @@
+<fieldset [disabled]="disabled()" class="row g-3 border-0 p-0 m-0">
+  <div class="col-12 col-md-4">
+    <label for="products-category" class="form-label">Category</label>
+    <select
+      id="products-category"
+      class="form-select"
+      [ngModel]="query().productCategory || ''"
+      (ngModelChange)="filterCategory($event)"
+    >
+      <option value="">All categories</option>
+      @for (category of categories; track category) {
+        <option [value]="category">{{ human(category) }}</option>
+      }
+    </select>
+  </div>
+  @for (range of ranges; track range.field) {
+    <div class="col-12 col-md-4">
+      <label [for]="'products-' + range.field" class="form-label">{{ range.label }}</label>
+      <input
+        [id]="'products-' + range.field"
+        class="form-control"
+        type="number"
+        min="0"
+        [ngModel]="query()[range.field]"
+        (change)="
+          filterNumber(
+            range.field,
+            $any($event.target).value === '' ? null : $any($event.target).valueAsNumber
+          )
+        "
+      />
+    </div>
+  }
+</fieldset>

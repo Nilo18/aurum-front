@@ -3,37 +3,70 @@ import { FormsModule } from '@angular/forms';
 import { StaffPreviewStore } from '../shared/staff-preview-store';
 import { Row } from '../shared/staff-row';
 import { human, currency } from '../shared/staff-format';
+import { ProductDTO, ProductQuery, ProductService } from '../../../services/product-service';
+import { rxResource } from '@angular/core/rxjs-interop';
+
+import { ProductsFiltering } from '../products-filtering/products-filtering';
+import { ProductsSorting } from '../products-sorting/products-sorting';
+import { ProductsPagination } from '../products-pagination/products-pagination';
+import { getRequestErrorMessage } from '../../../services/request-error';
 
 @Component({
   selector: 'app-products',
-  imports: [FormsModule],
+  imports: [FormsModule, ProductsFiltering, ProductsSorting, ProductsPagination],
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
 export class Products {
   readonly store = inject(StaffPreviewStore);
+  private productService = inject(ProductService);
   readonly human = human;
   readonly currency = currency;
+  readonly productQuery = signal<ProductQuery>({
+    page: 0,
+    size: 10,
+    search: '',
+    sortBy: '',
+    sortDirection: '',
+  });
   readonly search = signal('');
-  readonly filter = signal('');
+  readonly query = this.productQuery.asReadonly();
+  readonly error = computed(() => {
+    const error = this.products.error();
+    return error ? getRequestErrorMessage(error, 'Unable to load products. Please try again.') : '';
+  });
+  readonly busy = computed(() => this.products.isLoading());
   readonly editor = signal(false);
   readonly notice = signal('');
   readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('editorDialog');
-  readonly rows = computed(() => this.store.data().products);
-  readonly filters = computed(() =>
-    Array.from(new Set(this.rows().map((row) => String(row['category'])))),
-  );
-  readonly filtered = computed(() =>
-    this.rows().filter(
-      (row) =>
-        (!this.filter() || String(row['category']) === this.filter()) &&
-        Object.entries(row).some(([key, value]) =>
-          this.searchValue(key, value).toLowerCase().includes(this.search().toLowerCase()),
-        ),
-    ),
-  );
+  readonly products = rxResource({
+    params: () => this.productQuery(),
+    stream: ({ params }) => this.productService.getProducts(params),
+  });
+  readonly page = computed(() => (this.products.hasValue() ? this.products.value() : undefined));
+  readonly rows = computed(() => this.page()?.content ?? []);
+
+  searchProducts(): void {
+    if (this.busy()) return;
+    const search = this.search().trim();
+    this.search.set(search);
+    this.updateQuery({ search });
+  }
+
+  retry(): void {
+    if (!this.busy()) this.products.reload();
+  }
+
   editing?: Row;
   draft: Row = {};
+
+  updateQuery(changes: Partial<ProductQuery>, resetPage = true) {
+    this.productQuery.update((query) => ({
+      ...query,
+      ...changes,
+      ...(resetPage ? { page: 0 } : {}),
+    }));
+  }
 
   constructor() {
     effect(() => {
@@ -49,14 +82,8 @@ export class Products {
     );
   }
 
-  private searchValue(key: string, value: unknown): string {
-    if (key === 'price') return this.currency(value);
-    if (key === 'supplierId') return this.supplierName(value);
-    return human(value);
-  }
-
-  open(row?: Row): void {
-    this.editing = row;
+  open(row?: ProductDTO | Row): void {
+    this.editing = row ? { ...row } : undefined;
     this.draft = row
       ? { ...row }
       : {

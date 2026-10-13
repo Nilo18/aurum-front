@@ -41,4 +41,30 @@
       }
     </select>
   </div>
+  <div class="col-12 col-md-6">
+    <label for="employees-salaryFrom" class="form-label">Salary From (₾)</label>
+    <input
+      id="employees-salaryFrom"
+      class="form-control"
+      type="number"
+      min="0"
+      step="any"
+      placeholder="Minimum salary"
+      [ngModel]="salaryDraft().salaryFrom"
+      (ngModelChange)="filterSalary('salaryFrom', $event)"
+    />
+  </div>
+  <div class="col-12 col-md-6">
+    <label for="employees-salaryTo" class="form-label">Salary To (₾)</label>
+    <input
+      id="employees-salaryTo"
+      class="form-control"
+      type="number"
+      min="0"
+      step="any"
+      placeholder="Maximum salary"
+      [ngModel]="salaryDraft().salaryTo"
+      (ngModelChange)="filterSalary('salaryTo', $event)"
+    />
+  </div>
 </fieldset>

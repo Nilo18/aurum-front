@@ -49,6 +49,8 @@ export interface EmployeeQuery {
   role?: EmployeeRole;
   type?: EmployeeType;
   status?: EmployeeStatus;
+  salaryFrom?: number;
+  salaryTo?: number;
   sortBy?: string;
   sortDirection?: 'ASC' | 'DESC' | string;
 }

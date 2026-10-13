@@ -1,7 +1,7 @@
 <div class="products">
   <div class="products__topline">
     <span>AURUM <span class="products__divider">/</span> WORKSPACE</span
-    ><span class="products__preview"><i></i> Sample data · session only</span>
+    ><span class="products__preview"><i></i> PRODUCT COLLECTION</span>
   </div>
 
   <header>
@@ -10,37 +10,67 @@
       <h1>Products</h1>
       <p>The essentials that bring every occasion together.</p>
     </div>
-    <button class="products__button products__button--primary" (click)="open()">
+    <button class="products__button products__button--primary" (click)="open()" [disabled]="busy()">
       ＋ Add product
     </button>
   </header>
   <div class="products__summary">
-    <span class="products__summary-number">{{ rows().length.toString().padStart(2, '0') }}</span>
+    <span class="products__summary-number">{{ page()?.totalElements ?? 0 }}</span>
     <div>
       <strong>Products in your collection</strong>
       <p>Considered details. Confident decisions.</p>
     </div>
   </div>
-  <section class="products__panel">
-    <div class="products__toolbar">
-      <label class="products__search"
-        ><span aria-hidden="true">⌕</span
-        ><input
-          aria-label="Search records"
-          placeholder="Search this collection…"
-          [ngModel]="search()"
-          (ngModelChange)="search.set($event)" /></label
-      ><select
-        aria-label="Filter records"
-        [ngModel]="filter()"
-        (ngModelChange)="filter.set($event)"
-      >
-        <option value="">All categorys</option>
-        @for (option of filters(); track option) {
-          <option [value]="option">{{ human(option) }}</option>
-        }</select
-      ><span class="products__result-count">{{ filtered().length }} results</span>
+  <section class="products__panel" [attr.aria-busy]="busy()">
+    <div class="p-4">
+      <div class="row g-3 align-items-end mb-4">
+        <div class="col-12 col-lg-6">
+          <form (ngSubmit)="searchProducts()">
+            <label for="products-search" class="form-label">Search collection</label>
+            <div class="input-group">
+              <input
+                id="products-search"
+                name="search"
+                class="form-control"
+                placeholder="Search products..."
+                [disabled]="busy()"
+                [ngModel]="search()"
+                (ngModelChange)="search.set($event)"
+              />
+              <button class="btn btn-outline-warning" type="submit" [disabled]="busy()">
+                Search
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="col-12 col-lg-6">
+          <app-products-sorting
+            [query]="query()"
+            [disabled]="busy()"
+            (changed)="updateQuery($event)"
+          />
+        </div>
+      </div>
+      <app-products-filtering
+        [query]="query()"
+        [disabled]="busy()"
+        (changed)="updateQuery($event)"
+      />
     </div>
+    @if (error()) {
+      <div class="alert alert-danger m-4" role="alert">
+        {{ error() }}
+        <button class="btn btn-sm btn-outline-danger ms-2" [disabled]="busy()" (click)="retry()">
+          Retry
+        </button>
+      </div>
+    }
+    @if (products.isLoading()) {
+      <div class="px-4 py-3" role="status">
+        <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
+        products...
+      </div>
+    }
     <div class="products__table-scroll">
       <table>
         <thead>
@@ -55,19 +85,20 @@
           </tr>
         </thead>
         <tbody>
-          @for (row of filtered(); track row['id']) {
+          @for (row of rows(); track row.publicId) {
             <tr>
-              <td class="products__record-id">#{{ row['id'] }}</td>
+              <td class="products__record-id">#{{ row.publicId }}</td>
               <td>{{ human(row['productName']) }}</td>
               <td>{{ human(row['category']) }}</td>
               <td>{{ currency(row['price']) }}</td>
-              <td>{{ supplierName(row['supplierId']) }}</td>
+              <td>{{ row['supplierName'] }}</td>
               <td>{{ human(row['quantity']) }}</td>
               <td>
                 <button
                   class="products__button products__button--text"
                   (click)="open(row)"
-                  [attr.aria-label]="'Edit product ' + row['id']"
+                  [disabled]="busy()"
+                  [attr.aria-label]="'Edit product ' + row.publicId"
                 >
                   Edit ↗
                 </button>
@@ -77,22 +108,20 @@
         </tbody>
       </table>
     </div>
-    @if (!filtered().length) {
+    @if (!busy() && !error() && !rows().length) {
       <div class="products__empty">
-        <h2>No records found</h2>
-        <p>Try another search or add your first product.</p>
-        <button
-          class="products__button products__button--text"
-          (click)="search.set(''); filter.set('')"
-        >
-          Clear filters
-        </button>
+        <h2>No products found</h2>
+        <p>Try another search or adjust your filters.</p>
       </div>
     }
-    <footer>
-      <span>{{ filtered().length }} of {{ rows().length }} records</span
-      ><span>AURUM · Made for memorable moments</span>
-    </footer>
+    <div class="p-4">
+      <app-products-pagination
+        [query]="query()"
+        [page]="page()"
+        [disabled]="busy()"
+        (changed)="updateQuery($event, false)"
+      />
+    </div>
   </section>
   @if (notice()) {
     <p class="products__notice" role="status">

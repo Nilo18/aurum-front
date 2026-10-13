@@ -3,7 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Feedback } from '../feedback/feedback';
 import { Menu } from '../menu/menu';
-import { Products } from '../products/products';
 import { Suppliers } from '../suppliers/suppliers';
 import { StaffCollection, StaffPreviewStore } from './staff-preview-store';
 import { Row } from './staff-row';
@@ -19,7 +18,6 @@ interface EditableSection {
 const sections: [string, Type<EditableSection>, StaffCollection][] = [
   ['Feedback', Feedback, 'feedback'],
   ['Menu', Menu, 'menu'],
-  ['Products', Products, 'products'],
   ['Suppliers', Suppliers, 'suppliers'],
 ];
 
@@ -99,11 +97,4 @@ describe('Staff section ownership', () => {
       expect(store.data()[collection].at(-1)?.['id']).toBe(added['id']);
     });
   }
-
-  it('keeps section filters independent and searches related names', () => {
-    const products = TestBed.createComponent(Products).componentInstance;
-    expect(products.filter()).toBe('');
-    products.search.set('SUP-002');
-    expect(products.filtered().map((row) => row['supplierId'])).toEqual([2]);
-  });
 });
