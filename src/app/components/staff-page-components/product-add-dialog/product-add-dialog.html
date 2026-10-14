@@ -1,0 +1,172 @@
+<div class="product-add-dialog">
+  <div class="product-add-dialog__panel-heading">
+    <div>
+      <p class="product-add-dialog__eyebrow">THE DETAILS</p>
+      <h2 id="product-editor-title">{{ product ? 'Edit' : 'New' }} product</h2>
+    </div>
+    <button
+      type="button"
+      class="product-add-dialog__button product-add-dialog__button--text"
+      (click)="close()"
+      [disabled]="isSubmitting()"
+      aria-label="Close editor"
+    >
+      &#10005;
+    </button>
+  </div>
+  <p class="product-add-dialog__editor-note">Sample workspace · changes last for this session.</p>
+  <form [formGroup]="productForm" (ngSubmit)="save()" novalidate [attr.aria-busy]="isSubmitting()">
+    <fieldset class="product-add-dialog__fields" [disabled]="isSubmitting()">
+      @let productNameError =
+        formValidator.getFirstError(
+          formValidator.getRequiredError('productName', productForm),
+          formValidator.getMaxLengthError('productName', productForm)
+        );
+      <label>
+        Product name
+        <input
+          type="text"
+          name="productName"
+          formControlName="productName"
+          required
+          [attr.aria-invalid]="!!productNameError"
+          [attr.aria-describedby]="productNameError ? 'product-productName-error' : null"
+        />
+        @if (productNameError) {
+          <span
+            id="product-productName-error"
+            class="product-add-dialog__field-error"
+            role="alert"
+            >{{ productNameError }}</span
+          >
+        }
+      </label>
+      @let categoryError = formValidator.getRequiredError('category', productForm);
+      <label>
+        Category
+        <select
+          name="category"
+          formControlName="category"
+          required
+          [attr.aria-invalid]="!!categoryError"
+          [attr.aria-describedby]="categoryError ? 'product-category-error' : null"
+        >
+          @for (category of categories; track category) {
+            <option [value]="category">{{ capitalizeFirstLetter(category) }}</option>
+          }
+        </select>
+        @if (categoryError) {
+          <span id="product-category-error" class="product-add-dialog__field-error" role="alert">{{
+            categoryError
+          }}</span>
+        }
+      </label>
+      @let priceError =
+        productForm.controls.price.touched
+          ? formValidator.getFirstError(
+              formValidator.getRequiredAmountError('price', productForm, 'Unit price'),
+              formValidator.getPatternError(
+                'price',
+                productForm,
+                'Unit price must have at most 10 integer digits and 2 decimal places.'
+              )
+            )
+          : '';
+      <label>
+        Unit price (&#8382;)
+        <input
+          type="number"
+          name="price"
+          formControlName="price"
+          required
+          [attr.aria-invalid]="!!priceError"
+          [attr.aria-describedby]="priceError ? 'product-price-error' : null"
+          min="0"
+          step="any"
+        />
+        @if (priceError) {
+          <span id="product-price-error" class="product-add-dialog__field-error" role="alert">{{
+            priceError
+          }}</span>
+        }
+      </label>
+      @let supplierIdError = formValidator.getRequiredError('supplierId', productForm);
+      <label>
+        Supplier
+        <select
+          name="supplierId"
+          formControlName="supplierId"
+          required
+          [attr.aria-invalid]="!!supplierIdError"
+          [attr.aria-describedby]="supplierIdError ? 'product-supplierId-error' : null"
+        >
+          <option [ngValue]="null" disabled>Select supplier</option>
+          @for (
+            supplier of supplierNames.hasValue() ? supplierNames.value() : [];
+            track supplier.id
+          ) {
+            <option [ngValue]="supplier.id">{{ supplier.name }}</option>
+          }
+        </select>
+        @if (supplierIdError) {
+          <span
+            id="product-supplierId-error"
+            class="product-add-dialog__field-error"
+            role="alert"
+            >{{ supplierIdError }}</span
+          >
+        }
+      </label>
+      @let quantityError =
+        productForm.controls.quantity.touched
+          ? formValidator.getRequiredAmountError('quantity', productForm)
+          : '';
+      <label>
+        Quantity
+        <input
+          type="number"
+          name="quantity"
+          formControlName="quantity"
+          required
+          [attr.aria-invalid]="!!quantityError"
+          [attr.aria-describedby]="quantityError ? 'product-quantity-error' : null"
+          min="0"
+          step="any"
+        />
+        @if (quantityError) {
+          <span id="product-quantity-error" class="product-add-dialog__field-error" role="alert">{{
+            quantityError
+          }}</span>
+        }
+      </label>
+    </fieldset>
+    @if (supplierNames.error()) {
+      <p class="product-add-dialog__error" role="alert">
+        Unable to load suppliers.
+        <button type="button" (click)="supplierNames.reload()" [disabled]="isSubmitting()">
+          Retry
+        </button>
+      </p>
+    }
+    @if (submissionError()) {
+      <p class="product-add-dialog__error" role="alert">{{ submissionError() }}</p>
+    }
+    <div class="product-add-dialog__form-actions">
+      <button
+        type="button"
+        class="product-add-dialog__button product-add-dialog__button--secondary"
+        (click)="close()"
+        [disabled]="isSubmitting()"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="product-add-dialog__button product-add-dialog__button--primary"
+        [disabled]="isSubmitting()"
+      >
+        {{ isSubmitting() ? 'Saving...' : 'Save product' }}
+      </button>
+    </div>
+  </form>
+</div>

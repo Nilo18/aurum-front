@@ -1,11 +1,11 @@
-import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { StaffPreviewStore } from '../shared/staff-preview-store';
-import { Row } from '../shared/staff-row';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { human, currency } from '../shared/staff-format';
-import { ProductDTO, ProductQuery, ProductService } from '../../../services/product-service';
+import { ProductQuery, ProductRowDTO, ProductService } from '../../../services/product-service';
 import { rxResource } from '@angular/core/rxjs-interop';
 
+import { ProductAddDialog } from '../product-add-dialog/product-add-dialog';
 import { ProductsFiltering } from '../products-filtering/products-filtering';
 import { ProductsSorting } from '../products-sorting/products-sorting';
 import { ProductsPagination } from '../products-pagination/products-pagination';
@@ -18,7 +18,7 @@ import { getRequestErrorMessage } from '../../../services/request-error';
   styleUrl: './products.scss',
 })
 export class Products {
-  readonly store = inject(StaffPreviewStore);
+  private readonly modal = inject(NgbModal);
   private productService = inject(ProductService);
   readonly human = human;
   readonly currency = currency;
@@ -31,14 +31,19 @@ export class Products {
   });
   readonly search = signal('');
   readonly query = this.productQuery.asReadonly();
+  readonly deleting = signal<string | undefined>(undefined);
+  readonly deleteError = signal('');
+  private readonly refreshingAfterDelete = signal(false);
   readonly error = computed(() => {
     const error = this.products.error();
-    return error ? getRequestErrorMessage(error, 'Unable to load products. Please try again.') : '';
+    return error
+      ? this.refreshingAfterDelete()
+        ? 'Product deleted, but the list could not be refreshed. Please retry.'
+        : getRequestErrorMessage(error, 'Unable to load products. Please try again.')
+      : '';
   });
-  readonly busy = computed(() => this.products.isLoading());
-  readonly editor = signal(false);
+  readonly busy = computed(() => this.products.isLoading() || this.deleting() !== undefined);
   readonly notice = signal('');
-  readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('editorDialog');
   readonly products = rxResource({
     params: () => this.productQuery(),
     stream: ({ params }) => this.productService.getProducts(params),
@@ -57,10 +62,8 @@ export class Products {
     if (!this.busy()) this.products.reload();
   }
 
-  editing?: Row;
-  draft: Row = {};
-
   updateQuery(changes: Partial<ProductQuery>, resetPage = true) {
+    this.refreshingAfterDelete.set(false);
     this.productQuery.update((query) => ({
       ...query,
       ...changes,
@@ -68,45 +71,59 @@ export class Products {
     }));
   }
 
-  constructor() {
-    effect(() => {
-      const dialog = this.dialog()?.nativeElement;
-      if (dialog && !dialog.open) dialog.showModal();
+  open(product?: ProductRowDTO): void {
+    if (this.busy()) return;
+    const modalRef = this.modal.open(ProductAddDialog, {
+      centered: true,
+      ariaLabelledBy: 'product-editor-title',
+      windowClass: 'aurum-vehicle-modal',
+      beforeDismiss: () => !modalRef.componentInstance.isSubmitting(),
     });
-  }
-
-  supplierName(value: unknown): string {
-    return String(
-      this.store.data().suppliers.find((row) => row['id'] === Number(value))?.['partnerNumber'] ??
-        `Supplier #${value}`,
+    modalRef.componentInstance.product = product
+      ? {
+          publicId: product.publicId,
+          productName: product.productName,
+          category: product.category,
+          price: product.price,
+          supplierId: product.supplier.id,
+          quantity: product.quantity,
+        }
+      : undefined;
+    void modalRef.result.then(
+      (message: string) => {
+        this.refreshingAfterDelete.set(false);
+        this.notice.set(message);
+        this.products.reload();
+      },
+      () => {},
     );
   }
 
-  open(row?: ProductDTO | Row): void {
-    this.editing = row ? { ...row } : undefined;
-    this.draft = row
-      ? { ...row }
-      : {
-          productName: '',
-          category: '',
-          price: '',
-          supplierId: '',
-          quantity: '',
-        };
-    this.editor.set(true);
-  }
-
-  close(): void {
-    this.editor.set(false);
-  }
-
-  save(): void {
-    const row = { ...this.draft };
-    row['price'] = Number(row['price']);
-    row['supplierId'] = Number(row['supplierId']);
-    row['quantity'] = Number(row['quantity']);
-    this.store.save('products', row, this.editing);
-    this.close();
-    this.notice.set('Product saved in this preview session.');
+  async deleteProduct(publicId: string): Promise<void> {
+    if (this.busy()) return;
+    this.deleting.set(publicId);
+    this.deleteError.set('');
+    this.notice.set('');
+    try {
+      const response = await this.productService.deleteProduct(publicId);
+      if (response.status < 200 || response.status >= 300) {
+        this.deleteError.set(response.message || 'Unable to delete product. Please try again.');
+        return;
+      }
+      this.notice.set('Product deleted.');
+      const page = this.page();
+      if (page?.content.length === 1 && page.pageNumber > 0) {
+        this.updateQuery({ page: page.pageNumber - 1 }, false);
+      } else {
+        this.products.reload();
+      }
+      this.refreshingAfterDelete.set(true);
+    } catch (error) {
+      this.deleteError.set(
+        getRequestErrorMessage(error, 'Unable to delete product. Please try again.'),
+      );
+    } finally {
+      this.deleting.set(undefined);
+    }
   }
 }

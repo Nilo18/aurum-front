@@ -18,7 +18,7 @@ export enum ProductCategory {
 export interface ProductQuery {
   page?: number;
   size?: number;
-  productCategory?: ProductCategory; // Assuming ProductCategory is an enum or type defined elsewhere
+  productCategory?: ProductCategory;
   priceFrom?: number;
   priceTo?: number;
   supplierId?: number;
@@ -43,7 +43,7 @@ export interface ProductRowDTO {
   productName: string;
   category: ProductCategory;
   price: number;
-  supplierName: string;
+  supplier: ProductSectionSupplierDTO;
   quantity: number;
 }
 
@@ -67,7 +67,7 @@ export class ProductService {
   getProducts(query: ProductQuery) {
     const cleanedQuery = this.queryFormatter.removeEmptyProperties(query);
     const httpParams = new HttpParams({ fromObject: cleanedQuery });
-    return this.http.get<PageResponse<ProductSectionSupplierDTO>>(`${this.baseUrl}/api/product`, {
+    return this.http.get<PageResponse<ProductRowDTO>>(`${this.baseUrl}/api/product`, {
       params: httpParams,
     });
   }

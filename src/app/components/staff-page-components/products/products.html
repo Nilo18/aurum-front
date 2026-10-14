@@ -65,6 +65,9 @@
         </button>
       </div>
     }
+    @if (deleteError()) {
+      <div class="alert alert-danger m-4" role="alert">{{ deleteError() }}</div>
+    }
     @if (products.isLoading()) {
       <div class="px-4 py-3" role="status">
         <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
@@ -91,7 +94,7 @@
               <td>{{ human(row['productName']) }}</td>
               <td>{{ human(row['category']) }}</td>
               <td>{{ currency(row['price']) }}</td>
-              <td>{{ row['supplierName'] }}</td>
+              <td>{{ row['supplier'].name }}</td>
               <td>{{ human(row['quantity']) }}</td>
               <td>
                 <button
@@ -101,6 +104,20 @@
                   [attr.aria-label]="'Edit product ' + row.publicId"
                 >
                   Edit ↗
+                </button>
+                <button
+                  type="button"
+                  class="products__delete-btn"
+                  (click)="deleteProduct(row.publicId)"
+                  [disabled]="busy()"
+                  [attr.aria-label]="'Delete product ' + row.publicId"
+                >
+                  @if (deleting() === row.publicId) {
+                    <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                    <span role="status">Deleting…</span>
+                  } @else {
+                    Delete
+                  }
                 </button>
               </td>
             </tr>
@@ -129,79 +146,3 @@
     </p>
   }
 </div>
-@if (editor()) {
-  <dialog
-    #editorDialog
-    class="products__editor"
-    aria-modal="true"
-    aria-labelledby="editor-title"
-    (cancel)="close()"
-  >
-    <div class="products__panel-heading">
-      <div>
-        <p class="products__eyebrow">THE DETAILS</p>
-        <h2 id="editor-title">{{ editing ? 'Edit' : 'New' }} product</h2>
-      </div>
-      <button
-        class="products__button products__button--text"
-        (click)="close()"
-        aria-label="Close editor"
-      >
-        ✕
-      </button>
-    </div>
-    <p class="products__editor-note">Sample workspace · changes last for this session.</p>
-    <form #editorForm="ngForm" (ngSubmit)="editorForm.valid && save()">
-      <div class="products__fields">
-        <label
-          >Product name<input
-            type="text"
-            name="productName"
-            [(ngModel)]="draft['productName']"
-            required
-        /></label>
-        <label
-          >Category<input type="text" name="category" [(ngModel)]="draft['category']" required
-        /></label>
-        <label
-          >Unit price (₾)<input
-            type="number"
-            name="price"
-            [(ngModel)]="draft['price']"
-            required
-            min="0"
-            step="any"
-        /></label>
-        <label
-          >Supplier<select name="supplierId" [(ngModel)]="draft['supplierId']" required>
-            <option value="" disabled>Select supplier</option>
-            @for (row of store.data()['suppliers']; track row['id']) {
-              <option [ngValue]="row['id']">{{ row['partnerNumber'] }}</option>
-            }
-          </select></label
-        >
-        <label
-          >Quantity<input
-            type="number"
-            name="quantity"
-            [(ngModel)]="draft['quantity']"
-            required
-            min="0"
-            step="any"
-        /></label>
-      </div>
-
-      <div class="products__form-actions">
-        <button
-          type="button"
-          class="products__button products__button--secondary"
-          (click)="close()"
-        >
-          Cancel</button
-        ><button type="submit" class="products__button products__button--primary">
-          Save product
-        </button>
-      </div>
-    </form>
-  </dialog>
-}

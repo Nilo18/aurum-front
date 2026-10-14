@@ -1,6 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ProductQuery, ProductDTO } from '../../../services/product-service';
+import { ProductQuery, ProductDTO, ProductRowDTO } from '../../../services/product-service';
 import { PageResponse } from '../../../services/event-service';
 @Component({
   selector: 'app-products-pagination',
@@ -13,7 +13,7 @@ export class ProductsPagination {
   readonly disabled = input(false);
   readonly changed = output<Pick<ProductQuery, 'page' | 'size'>>();
 
-  readonly page = input<PageResponse<ProductDTO>>();
+  readonly page = input<PageResponse<ProductRowDTO>>();
   readonly pageNumber = computed(() => this.query().page ?? 0);
   readonly size = computed(() => this.query().size ?? 10);
   readonly total = computed(() => this.page()?.totalElements ?? 0);

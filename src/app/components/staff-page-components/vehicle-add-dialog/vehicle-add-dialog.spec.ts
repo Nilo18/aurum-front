@@ -29,7 +29,8 @@ describe('VehicleAddDialog request states', () => {
     return fixture;
   }
   it('blocks invalid forms and preserves zero when initializing edits', async () => {
-    const component = TestBed.createComponent(VehicleAddDialog).componentInstance;
+    const fixture = TestBed.createComponent(VehicleAddDialog);
+    const component = fixture.componentInstance;
     await component.save();
     expect(component.vehicleForm.touched).toBe(true);
     expect(addVehicle).not.toHaveBeenCalled();
@@ -39,6 +40,7 @@ describe('VehicleAddDialog request states', () => {
       passengerCapacity: 0,
       cargoWeightLimit: 0,
     };
+    fixture.detectChanges();
     expect(component.vehicleForm.value.passengerCapacity).toBe(0);
     component.vehicleForm.patchValue({ passengerCapacity: 1.5 });
     await component.save();
@@ -104,7 +106,8 @@ describe('VehicleAddDialog request states', () => {
     expect(close).not.toHaveBeenCalled();
   });
   it('updates using edited form values and the original publicId, awaiting completion', async () => {
-    const component = validDialog().componentInstance;
+    const fixture = TestBed.createComponent(VehicleAddDialog);
+    const component = fixture.componentInstance;
     const original = {
       publicId: 'vehicle-42',
       type: VehicleType.TRUCK,
@@ -112,6 +115,7 @@ describe('VehicleAddDialog request states', () => {
       cargoWeightLimit: 3500,
     };
     component.vehicle = original;
+    fixture.detectChanges();
     component.vehicleForm.patchValue({ passengerCapacity: 8, cargoWeightLimit: 4000 });
     let resolveRequest!: (value: unknown) => void;
     updateVehicle.mockReturnValueOnce(

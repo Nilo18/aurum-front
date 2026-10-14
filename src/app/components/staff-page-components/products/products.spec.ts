@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ReplaySubject } from 'rxjs';
 import { vi } from 'vitest';
 import { Products } from './products';
-import { ProductDTO, ProductCategory, ProductService } from '../../../services/product-service';
+import { ProductRowDTO, ProductCategory, ProductService } from '../../../services/product-service';
 import { PageResponse } from '../../../services/event-service';
 import { ProductsSorting } from '../products-sorting/products-sorting';
 import { ProductsPagination } from '../products-pagination/products-pagination';
@@ -11,14 +11,16 @@ import { ProductsFiltering } from '../products-filtering/products-filtering';
 import { By } from '@angular/platform-browser';
 
 describe('Products backend collection', () => {
-  let response: ReplaySubject<PageResponse<ProductDTO>>;
+  let response: ReplaySubject<PageResponse<ProductRowDTO>>;
   const getProducts = vi.fn();
+  const deleteProduct = vi.fn();
   beforeEach(() => {
+    deleteProduct.mockReset();
     response = new ReplaySubject(1);
     getProducts.mockReset().mockImplementation(() => response);
     TestBed.configureTestingModule({
       imports: [Products],
-      providers: [{ provide: ProductService, useValue: { getProducts } }],
+      providers: [{ provide: ProductService, useValue: { getProducts, deleteProduct } }],
     });
   });
 
@@ -34,7 +36,7 @@ describe('Products backend collection', () => {
           productName: 'Backend plate',
           category: ProductCategory.TABLEWARE,
           price: 12,
-          supplierId: 1,
+          supplier: { id: 1, name: 'Supplier' },
           quantity: 3,
         },
       ],
@@ -88,5 +90,63 @@ describe('Products backend collection', () => {
     fixture.componentInstance.searchProducts();
     expect(fixture.componentInstance.query().search).toBe('glass');
     expect(fixture.componentInstance.query().sortBy).toBe('price');
+  });
+  it('prevents duplicate deletes and returns to the previous page after deleting its final product', async () => {
+    const fixture = TestBed.createComponent(Products);
+    const component = fixture.componentInstance;
+    component.updateQuery({ page: 2 }, false);
+    response.next({ content: [], pageNumber: 2, pageSize: 10, totalElements: 21 });
+    await fixture.whenStable();
+    response.next({
+      content: [
+        {
+          publicId: 'product-1',
+          productName: 'Plate',
+          category: ProductCategory.TABLEWARE,
+          price: 12,
+          supplier: { id: 1, name: 'Supplier' },
+          quantity: 3,
+        },
+      ],
+      pageNumber: 2,
+      pageSize: 10,
+      totalElements: 21,
+    });
+    await fixture.whenStable();
+    let resolveDelete!: (value: unknown) => void;
+    deleteProduct.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveDelete = resolve;
+      }),
+    );
+    const pending = component.deleteProduct('product-1');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.products__delete-btn').disabled).toBe(true);
+    expect(fixture.nativeElement.querySelector('.products__delete-btn').textContent).toContain(
+      'Deleting',
+    );
+    await component.deleteProduct('product-1');
+    expect(deleteProduct).toHaveBeenCalledTimes(1);
+    resolveDelete({ status: 200 });
+    await pending;
+    expect(component.query().page).toBe(1);
+    expect(component.notice()).toBe('Product deleted.');
+    expect(component.deleting()).toBeUndefined();
+  });
+
+  it('shows a delete failure without reloading the list and allows retry', async () => {
+    const fixture = TestBed.createComponent(Products);
+    response.next({ content: [], pageNumber: 0, pageSize: 10, totalElements: 0 });
+    await fixture.whenStable();
+    deleteProduct.mockRejectedValueOnce(
+      new HttpErrorResponse({
+        status: 409,
+        error: { message: 'Product is in use.' },
+      }),
+    );
+    await fixture.componentInstance.deleteProduct('product-1');
+    expect(fixture.componentInstance.deleteError()).toBe('Product is in use.');
+    expect(fixture.componentInstance.busy()).toBe(false);
+    expect(getProducts).toHaveBeenCalledTimes(1);
   });
 });

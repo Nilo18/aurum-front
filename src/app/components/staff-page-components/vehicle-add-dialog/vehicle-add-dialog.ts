@@ -1,5 +1,5 @@
 import { FormValidatorService } from '../../../services/form-validator-service';
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -16,7 +16,7 @@ import { getRequestErrorMessage } from '../../../services/request-error';
   templateUrl: './vehicle-add-dialog.html',
   styleUrl: './vehicle-add-dialog.scss',
 })
-export class VehicleAddDialog {
+export class VehicleAddDialog implements OnInit {
   readonly modal = inject(NgbActiveModal);
   readonly formValidator = inject(FormValidatorService);
   private readonly vehicleService = inject(VehicleService);
@@ -34,17 +34,16 @@ export class VehicleAddDialog {
       [Validators.required, Validators.min(0), Validators.max(100000)],
     ],
   });
-  editing?: VehicleDTO;
+  vehicle?: VehicleDTO;
 
-  @Input()
-  set vehicle(vehicle: VehicleDTO | undefined) {
-    this.editing = vehicle;
-    this.submissionError.set('');
-    this.vehicleForm.reset({
-      type: vehicle?.type ?? VehicleType.TRUCK,
-      passengerCapacity: vehicle?.passengerCapacity ?? null,
-      cargoWeightLimit: vehicle?.cargoWeightLimit ?? null,
-    });
+  ngOnInit(): void {
+    if (this.vehicle) {
+      this.vehicleForm.patchValue({
+        type: this.vehicle.type,
+        passengerCapacity: this.vehicle.passengerCapacity,
+        cargoWeightLimit: this.vehicle.cargoWeightLimit,
+      });
+    }
   }
 
   close(): void {
@@ -65,8 +64,8 @@ export class VehicleAddDialog {
       cargoWeightLimit: Number(values.cargoWeightLimit),
     };
     this.isSubmitting.set(true);
-    if (this.editing !== undefined) {
-      await this.update({ ...request, publicId: this.editing.publicId });
+    if (this.vehicle !== undefined) {
+      await this.update({ ...request, publicId: this.vehicle.publicId });
     } else {
       await this.add(request);
     }

@@ -2,3 +2,22 @@
 @use '../shared/staff-section';
 
 @include staff-section.styles('products');
+
+.products__delete-btn {
+  padding: 6px;
+  border: none;
+  background-color: transparent;
+  color: #bbad93;
+  font-size: 10px;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    color: #edcf91;
+  }
+}
+
+.products__delete-btn:disabled,
+.products__button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}

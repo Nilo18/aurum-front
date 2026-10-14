@@ -93,7 +93,10 @@ describe('Vehicles reactive query', () => {
     await Promise.resolve();
     expect(fixture.componentInstance.notice()).toContain('Vehicle saved');
     await fixture.whenStable();
-    open.mockReturnValue({ componentInstance: {}, result: Promise.reject('cancel') });
+    open.mockReturnValue({
+      componentInstance: {},
+      result: Promise.reject('cancel'),
+    });
     fixture.componentInstance.open();
     await Promise.resolve();
   });
