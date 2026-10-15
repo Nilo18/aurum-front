@@ -19,7 +19,9 @@ describe('ProductAddDialog', () => {
         { provide: ProductService, useValue: { addProduct, updateProduct } },
         {
           provide: SupplierService,
-          useValue: { getSupplierNames: async () => [{ id: 7, name: 'Supplier' }] },
+          useValue: {
+            getSupplierNames: async () => [{ publicId: 'supplier-7', name: 'Supplier' }],
+          },
         },
       ],
     });
@@ -33,7 +35,7 @@ describe('ProductAddDialog', () => {
       productName: 'Plate',
       category: ProductCategory.TABLEWARE,
       price: 0,
-      supplierId: 7,
+      supplierId: 'supplier-7',
       quantity: 0,
     };
     await fixture.whenStable();
@@ -41,13 +43,20 @@ describe('ProductAddDialog', () => {
       productName: 'Plate',
       category: ProductCategory.TABLEWARE,
       price: 0,
-      supplierId: 7,
+      supplierId: 'supplier-7',
       quantity: 0,
     });
     component.productForm.patchValue({ price: 12 });
     updateProduct.mockResolvedValueOnce({ publicId: 'product-42' });
     await component.save();
-    expect(updateProduct).toHaveBeenCalledWith({ ...component.product, price: 12 });
+    expect(updateProduct).toHaveBeenCalledWith({
+      publicId: 'product-42',
+      productName: 'Plate',
+      category: ProductCategory.TABLEWARE,
+      price: 12,
+      supplierPublicId: 'supplier-7',
+      quantity: 0,
+    });
     expect(addProduct).not.toHaveBeenCalled();
     expect(close).toHaveBeenCalledWith('Product saved.');
   });
@@ -61,11 +70,18 @@ describe('ProductAddDialog', () => {
     component.productForm.patchValue({
       productName: 'Plate',
       price: 12,
-      supplierId: 7,
+      supplierId: 'supplier-7',
       quantity: 0,
     });
     addProduct.mockRejectedValueOnce(new Error('offline'));
     await component.save();
+    expect(addProduct).toHaveBeenCalledWith({
+      productName: 'Plate',
+      category: ProductCategory.FOOD_INGREDIENT,
+      price: 12,
+      supplierPublicId: 'supplier-7',
+      quantity: 0,
+    });
     expect(close).not.toHaveBeenCalled();
     expect(component.submissionError()).toBeTruthy();
     expect(component.isSubmitting()).toBe(false);

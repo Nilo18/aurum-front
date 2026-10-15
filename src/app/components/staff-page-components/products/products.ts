@@ -85,7 +85,7 @@ export class Products {
           productName: product.productName,
           category: product.category,
           price: product.price,
-          supplierId: product.supplier.id,
+          supplierId: product.supplier.publicId,
           quantity: product.quantity,
         }
       : undefined;

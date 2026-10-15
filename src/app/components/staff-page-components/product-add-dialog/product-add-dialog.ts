@@ -32,7 +32,7 @@ export class ProductAddDialog implements OnInit {
       null as number | null,
       [Validators.required, Validators.min(0), Validators.pattern(/^\d{1,10}(\.\d{1,2})?$/)],
     ],
-    supplierId: [null as number | null, Validators.required],
+    supplierId: [null as string | null, Validators.required],
     quantity: [null as number | null, [Validators.required, Validators.min(0)]],
   });
   readonly supplierNames = resource({ loader: () => this.supplierService.getSupplierNames() });
@@ -65,7 +65,7 @@ export class ProductAddDialog implements OnInit {
       productName: values.productName!,
       category: values.category!,
       price: Number(values.price),
-      supplierId: Number(values.supplierId),
+      supplierPublicId: values.supplierId!,
       quantity: Number(values.quantity),
     };
     this.isSubmitting.set(true);

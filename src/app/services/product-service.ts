@@ -34,7 +34,7 @@ export interface ProductDTO {
   productName: string;
   category: ProductCategory;
   price: number;
-  supplierId: number;
+  supplierId: string;
   quantity: number;
 }
 
@@ -51,8 +51,12 @@ export interface CreateProductRequest {
   productName: string;
   category: ProductCategory;
   price: number;
-  supplierId: number;
+  supplierPublicId: string;
   quantity: number;
+}
+
+export interface UpdateProductRequest extends CreateProductRequest {
+  publicId: string;
 }
 
 @Injectable({
@@ -85,7 +89,7 @@ export class ProductService {
     }
   }
 
-  async updateProduct(request: ProductDTO) {
+  async updateProduct(request: UpdateProductRequest) {
     try {
       const res = await firstValueFrom(
         this.http.put<ProductDTO>(`${this.baseUrl}/api/product`, request),

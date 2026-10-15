@@ -103,9 +103,9 @@
           <option [ngValue]="null" disabled>Select supplier</option>
           @for (
             supplier of supplierNames.hasValue() ? supplierNames.value() : [];
-            track supplier.id
+            track supplier.publicId
           ) {
-            <option [ngValue]="supplier.id">{{ supplier.name }}</option>
+            <option [ngValue]="supplier.publicId">{{ supplier.name }}</option>
           }
         </select>
         @if (supplierIdError) {

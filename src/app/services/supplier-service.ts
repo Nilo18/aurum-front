@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
 export interface ProductSectionSupplierDTO {
-  id: number,
+  publicId: string,
   name: string
 }
 
