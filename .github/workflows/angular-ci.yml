@@ -27,14 +27,18 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    # 4. Run Angular Linting (Optional but recommended)
+    # 4. Install browser binaries for the Vitest provider (Restricted to Chromium to save build time)
+    - name: Install Playwright Browsers
+      run: npx playwright install chromium --with-deps
+
+    # 5. Run Angular Linting (Optional but recommended)
     - name: Run lint
       run: npm run lint --if-present
 
-    # 5. Run headless test suite
+    # 6. Run headless test suite
     - name: Run unit tests
       run: npm run test:ci
 
-    # 6. Compile the production build artifacts
+    # 7. Compile the production build artifacts
     - name: Build Angular application
       run: npm run build
