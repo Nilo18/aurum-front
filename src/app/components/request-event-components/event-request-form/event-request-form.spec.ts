@@ -1,3 +1,4 @@
+import { ClientType } from '../../../services/client-service';
 import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { EventService } from '../../../services/event-service';
@@ -20,12 +21,16 @@ describe('EventRequestForm', () => {
 
   beforeEach(() => {
     verifyCreateEventRequest.mockReset().mockResolvedValue({ transactionKey: 'key' });
-    open.mockReset().mockReturnValue({ componentInstance: {}, result: Promise.resolve('verified') });
+    open
+      .mockReset()
+      .mockReturnValue({ componentInstance: {}, result: Promise.resolve('verified') });
     getMenuItems.mockReset().mockResolvedValue(dishes);
     TestBed.configureTestingModule({
-      providers: [{ provide: MenuService, useValue: { getMenuItems } },
+      providers: [
+        { provide: MenuService, useValue: { getMenuItems } },
         { provide: EventService, useValue: { verifyCreateEventRequest } },
-        { provide: NgbModal, useValue: { open } }],
+        { provide: NgbModal, useValue: { open } },
+      ],
     });
   });
 
@@ -59,8 +64,19 @@ describe('EventRequestForm', () => {
     component.setCuisine(CuisineType.MEDITERRANEAN);
     await fixture.whenStable();
     component.form.patchValue({
-      client: { type: 'ORGANIZATION', name: 'Company', email: 'test@example.com', phone: '+14155552671' },
-      event: { eventType: 'GALA DINNER', date: component.minDate, guestCount: 10, location: 'AURUM BANQUET HALL', notes: 'Vegetarian' },
+      client: {
+        type: ClientType.ORGANIZATION,
+        name: 'Company',
+        email: 'test@example.com',
+        phone: '+14155552671',
+      },
+      event: {
+        eventType: 'GALA DINNER',
+        date: component.minDate,
+        guestCount: 10,
+        location: 'AURUM BANQUET HALL',
+        notes: 'Vegetarian',
+      },
     });
     component.review();
     fixture.detectChanges();
@@ -68,13 +84,20 @@ describe('EventRequestForm', () => {
     expect(component.request.menuItemIds).toEqual([1]);
     component.request.menuItemIds.push(99);
     expect(component.selectedMenu()).toEqual([1]);
-    expect(component.request.client.type).toBe('ORGANIZATION');
+    expect(component.request.client.type).toBe(ClientType.ORGANIZATION);
     expect(component.request.event).toEqual({
-      eventType: 'GALA DINNER', date: component.minDate, guestCount: 10, location: 'AURUM BANQUET HALL',
-      notes: 'Vegetarian', totalCost: null, status: 'REQUESTED',
+      eventType: 'GALA DINNER',
+      date: component.minDate,
+      guestCount: 10,
+      location: 'AURUM BANQUET HALL',
+      notes: 'Vegetarian',
+      totalCost: null,
+      status: 'REQUESTED',
     });
     expect(component.request.client).not.toHaveProperty('id');
-    expect(fixture.nativeElement.querySelector('.request-layout__summary').textContent).toContain('Pkhali');
+    expect(fixture.nativeElement.querySelector('.request-layout__summary').textContent).toContain(
+      'Pkhali',
+    );
     component.edit();
     fixture.detectChanges();
     expect(component.client.name.value).toBe('Company');
@@ -104,14 +127,21 @@ describe('EventRequestForm', () => {
 
   it('shows loading, handles a failed fetch and retries with an empty menu', async () => {
     let reject!: (reason: Error) => void;
-    getMenuItems.mockImplementationOnce(() => new Promise((_, fail) => { reject = fail; }));
+    getMenuItems.mockImplementationOnce(
+      () =>
+        new Promise((_, fail) => {
+          reject = fail;
+        }),
+    );
     const fixture = TestBed.createComponent(EventRequestForm);
     fixture.detectChanges();
     TestBed.tick();
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelectorAll('.skeleton--button').length).toBe(8);
     expect(fixture.nativeElement.textContent).not.toContain('Loading dishes');
-    expect(fixture.nativeElement.querySelector('.request-layout__menu').getAttribute('aria-busy')).toBe('true');
+    expect(
+      fixture.nativeElement.querySelector('.request-layout__menu').getAttribute('aria-busy'),
+    ).toBe('true');
     fixture.componentInstance.addDish(dishes[0]);
     expect(fixture.componentInstance.selectedMenu()).toEqual([]);
     reject(new Error('Unavailable'));
@@ -141,7 +171,9 @@ describe('EventRequestForm', () => {
     fixture.detectChanges();
     expect(component.menuError()).toContain(message);
     expect(component.selectedMenu()).toEqual([1]);
-    expect(fixture.nativeElement.querySelector('.request-layout__summary').textContent).toContain('Pkhali');
+    expect(fixture.nativeElement.querySelector('.request-layout__summary').textContent).toContain(
+      'Pkhali',
+    );
     component.addDish(dishes[1]);
     expect(component.selectedMenu()).toEqual([1]);
     component.retryMenu();
@@ -154,20 +186,47 @@ describe('EventRequestForm', () => {
     const fixture = await setup();
     const component = fixture.componentInstance;
     component.form.patchValue({
-      client: { type: 'ORGANIZATION', name: 'Company', email: 'test@example.com', phone: '+14155552671' },
-      event: { eventType: 'GALA DINNER', date: component.minDate, guestCount: 10, location: 'HOTEL', notes: 'Vegetarian' },
+      client: {
+        type: ClientType.ORGANIZATION,
+        name: 'Company',
+        email: 'test@example.com',
+        phone: '+14155552671',
+      },
+      event: {
+        eventType: 'GALA DINNER',
+        date: component.minDate,
+        guestCount: 10,
+        location: 'HOTEL',
+        notes: 'Vegetarian',
+      },
     });
     component.addDish(dishes[0]);
     await component.orderEvent();
     expect(verifyCreateEventRequest).toHaveBeenCalledExactlyOnceWith('test@example.com');
     expect(open.mock.results[0].value.componentInstance.eventInfo).toEqual({
-      client: { clientType: 'ORGANIZATION', name: 'Company', email: 'test@example.com', phone: '+14155552671' },
-      event: { eventType: 'GALA DINNER', date: component.minDate, guestCount: 10, location: 'HOTEL', notes: 'Vegetarian', totalCost: undefined },
-      menuItemIds: [1], transactionKey: 'key',
+      client: {
+        clientType: ClientType.ORGANIZATION,
+        name: 'Company',
+        email: 'test@example.com',
+        phone: '+14155552671',
+      },
+      event: {
+        eventType: 'GALA DINNER',
+        date: component.minDate,
+        guestCount: 10,
+        location: 'HOTEL',
+        notes: 'Vegetarian',
+        totalCost: undefined,
+      },
+      menuItemIds: [1],
+      transactionKey: 'key',
     });
     expect(component.submitted()).toBe(true);
     expect(open).toHaveBeenCalledTimes(2);
-    expect(open).toHaveBeenLastCalledWith(SuccessModal, expect.objectContaining({ windowClass: 'aurum-success-modal' }));
+    expect(open).toHaveBeenLastCalledWith(
+      SuccessModal,
+      expect.objectContaining({ windowClass: 'aurum-success-modal' }),
+    );
     await component.orderEvent();
     expect(verifyCreateEventRequest).toHaveBeenCalledTimes(1);
   });
@@ -178,5 +237,4 @@ describe('EventRequestForm', () => {
     expect(verifyCreateEventRequest).not.toHaveBeenCalled();
     expect(open).not.toHaveBeenCalled();
   });
-
 });

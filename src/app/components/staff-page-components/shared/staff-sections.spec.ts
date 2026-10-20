@@ -1,7 +1,6 @@
 import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { Feedback } from '../feedback/feedback';
 import { Menu } from '../menu/menu';
 import { Suppliers } from '../suppliers/suppliers';
 import { StaffCollection, StaffPreviewStore } from './staff-preview-store';
@@ -16,7 +15,6 @@ interface EditableSection {
 }
 
 const sections: [string, Type<EditableSection>, StaffCollection][] = [
-  ['Feedback', Feedback, 'feedback'],
   ['Menu', Menu, 'menu'],
   ['Suppliers', Suppliers, 'suppliers'],
 ];
