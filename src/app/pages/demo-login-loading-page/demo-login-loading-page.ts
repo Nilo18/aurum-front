@@ -28,7 +28,7 @@ export class DemoLoginLoadingPage implements OnInit {
   }
 
   async login(): Promise<void> {
-    if (this.isLoading()) return;
+    if (this.isLoading() || this.destroyRef.destroyed) return;
 
     this.isLoading.set(true);
     this.errorMessage.set('');
@@ -37,16 +37,33 @@ export class DemoLoginLoadingPage implements OnInit {
     try {
       const res = await this.authService.loginAsDemo();
 
+      if (this.destroyRef.destroyed) return;
+
       if (res?.status !== 200 || !res.token) {
         this.errorMessage.set('We could not start your demo session. Please try again.');
         return;
       }
 
-      this.tokenService.saveToken(res.token);
+      try {
+        this.tokenService.saveToken(res.token);
+      } catch {
+        this.errorMessage.set('Allow site storage to start your demo session, then try again.');
+        return;
+      }
 
       this.loadingMessage.set('Opening your workspace');
-      this.router.navigate(['/staff']);
+      try {
+        const navigated = await this.router.navigate(['/staff']);
+        if (!navigated && !this.destroyRef.destroyed) {
+          this.errorMessage.set('We could not open your workspace. Please try again.');
+        }
+      } catch {
+        if (!this.destroyRef.destroyed) {
+          this.errorMessage.set('We could not open your workspace. Please try again.');
+        }
+      }
     } catch (error) {
+      if (this.destroyRef.destroyed) return;
       this.errorMessage.set(
         getRequestErrorMessage(error, 'We could not start your demo session. Please try again.'),
       );
