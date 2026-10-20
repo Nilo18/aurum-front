@@ -1,0 +1,40 @@
+name: Angular CI/CD Pipeline
+
+# Controls when the workflow will run
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Download the repository files onto the runner
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # 2. Setup the Node.js environment
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20 # Match this to your local Node version
+        cache: 'npm'     # Optimizes speeds by caching node_modules
+
+    # 3. Clean install of dependencies
+    - name: Install dependencies
+      run: npm ci
+
+    # 4. Run Angular Linting (Optional but recommended)
+    - name: Run lint
+      run: npm run lint --if-present
+
+    # 5. Run headless test suite
+    - name: Run unit tests
+      run: npm run test:ci
+
+    # 6. Compile the production build artifacts
+    - name: Build Angular application
+      run: npm run build
