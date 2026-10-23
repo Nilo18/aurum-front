@@ -27,7 +27,7 @@
             [attr.aria-describedby]="emailError ? 'staff-email-error' : null"
           />
           <!-- @if (emailError) { -->
-          <p class="error" id="staff-email-error">{{ emailError }}</p>
+          <p class="staff-login__field-error" id="staff-email-error">{{ emailError }}</p>
           <!-- } -->
         </div>
 
@@ -58,7 +58,7 @@
             </button>
           </div>
           <!-- @if (passwordError) { -->
-          <p class="error" id="staff-password-error">{{ passwordError }}</p>
+          <p class="staff-login__field-error" id="staff-password-error">{{ passwordError }}</p>
           <!-- } -->
         </div>
 
@@ -79,7 +79,7 @@
             <option [ngValue]="roles.STAFF">Staff</option>
           </select>
           <!-- @if (roleError) { -->
-          <p class="error" id="staff-role-error">{{ roleError }}</p>
+          <p class="staff-login__field-error" id="staff-role-error">{{ roleError }}</p>
           <!-- } -->
         </div>
       </fieldset>

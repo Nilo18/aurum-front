@@ -22,14 +22,20 @@
           <input
             id="menu-search"
             name="search"
-            class="form-control"
+            class="menu__search-input form-control"
             type="search"
             placeholder="Search menu items..."
             [ngModel]="menuQuery().search"
             (ngModelChange)="updateQuery({ search: $event })"
             [disabled]="deleting() !== undefined"
           />
-          <button class="btn btn-outline-warning" type="submit" [disabled]="busy()">Search</button>
+          <button
+            class="menu__search-button btn btn-outline-warning"
+            type="submit"
+            [disabled]="busy()"
+          >
+            Search
+          </button>
         </div>
       </form>
       <app-menu-filtering
@@ -70,7 +76,7 @@
           @for (item of menuPage()?.content; track item.publicId) {
             <tr>
               <td class="menu__record-id">#{{ item.publicId }}</td>
-              <td>{{ item.name }}</td>
+              <td class="menu__name">{{ item.name }}</td>
               <td>
                 <span class="menu__badge">{{ human(item.category) }}</span>
               </td>

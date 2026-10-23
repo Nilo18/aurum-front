@@ -104,8 +104,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .loader-screen__orbit::after,
-  .loader-screen__progress span {
-    animation: none;
+  .loader-screen {
+    &__orbit::after,
+    &__progress span {
+      animation: none;
+    }
   }
 }

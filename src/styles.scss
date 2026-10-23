@@ -30,14 +30,6 @@ a:focus-visible {
   outline-offset: 4px;
 }
 
-.error {
-  margin: 0;
-  margin-top: 5px;
-  color: red;
-  line-height: 0;
-  font-size: 11px;
-  // overflow-wrap: break-word;
-}
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
 
@@ -53,13 +45,6 @@ a:focus-visible {
     border-radius: 0;
     background: transparent;
   }
-}
-
-.aurum-logo {
-  color: #c6921d !important;
-  font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
-  // font-size: 16px;
-  letter-spacing: 0.42em;
 }
 
 // Reusable loading placeholders. Override these custom properties where needed.

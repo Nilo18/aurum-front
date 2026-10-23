@@ -1,3 +1,32 @@
 @use '../shared/staff-section';
+
 @use '../shared/event-controls';
+
 @include staff-section.styles('events');
+
+.events {
+  &__event-type {
+    color: #eee4d4;
+    font-weight: 500;
+  }
+
+  &__badge--confirmed,
+  &__badge--completed {
+    color: #9cbea5;
+    background: rgba(117, 157, 120, 0.062745098);
+    border-color: #364c3b;
+  }
+
+  &__badge--requested,
+  &__badge--planning {
+    color: #cfaf72;
+    background: rgba(183, 148, 68, 0.062745098);
+    border-color: #554326;
+  }
+
+  &__badge--cancelled,
+  &__badge--rejected {
+    color: #d39990;
+    border-color: #5e3730;
+  }
+}

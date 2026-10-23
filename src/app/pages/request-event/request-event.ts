@@ -4,6 +4,7 @@ import { EventRequestForm } from '../../components/request-event-components/even
 import { RequestEventIntro } from '../../components/request-event-components/request-event-intro/request-event-intro';
 
 @Component({
+  host: { class: 'request-event-page' },
   selector: 'app-request-event',
   imports: [RouterLink, EventRequestForm, RequestEventIntro],
   templateUrl: './request-event.html',

@@ -31,12 +31,16 @@
     align-items: center;
     gap: 16px;
     margin: 0 0 16px;
-    font: 28px/1.3 Georgia, serif;
+    font:
+      28px/1.3 Georgia,
+      serif;
   }
 
   &__number {
     color: #c79625;
-    font: 11px 'Montserrat', sans-serif;
+    font:
+      11px 'Montserrat',
+      sans-serif;
     letter-spacing: 0.12em;
   }
 
@@ -112,7 +116,9 @@
 
   &__heading {
     margin: 0 0 16px;
-    font: 23px/1.4 Georgia, serif;
+    font:
+      23px/1.4 Georgia,
+      serif;
   }
 
   &__menu-item {
@@ -127,7 +133,9 @@
   &__dish-name {
     margin: 0;
     overflow-wrap: anywhere;
-    font: 18px/1.4 Georgia, serif;
+    font:
+      18px/1.4 Georgia,
+      serif;
   }
 
   &__btn-section {

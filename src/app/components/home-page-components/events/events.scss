@@ -166,7 +166,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .events__card > img {
-    transition: none;
+  .events {
+    &__card > img {
+      transition: none;
+    }
   }
 }

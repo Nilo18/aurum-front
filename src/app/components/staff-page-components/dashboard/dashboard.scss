@@ -2,11 +2,20 @@
 
 @include staff-section.styles('dashboard');
 
-h1 em {
-  color: #bb9a59;
-  font-weight: 400;
-}
 .dashboard {
+  &__panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px;
+  }
+
+  &__panel-heading a,
+  &__panel-heading > span {
+    font-size: 10px;
+  }
+
   &__stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -15,16 +24,19 @@ h1 em {
     background: #100f0c;
     margin-bottom: 28px;
   }
+
   &__stats article {
     padding: 24px;
     border-right: 1px solid #2b271f;
   }
+
   &__stats span,
   &__stats small {
     display: block;
     font-size: 10px;
     color: #9d927f;
   }
+
   &__stats strong {
     display: block;
     font-family: Georgia, serif;
@@ -33,11 +45,13 @@ h1 em {
     margin: 12px 0;
     color: #ede6d9;
   }
+
   &__grid {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
     gap: 24px;
   }
+
   &__event-row {
     display: flex;
     align-items: center;
@@ -46,12 +60,15 @@ h1 em {
     border-top: 1px solid #25221b;
     color: #e3dacb;
   }
+
   &__event-row:hover {
     background: #19160f;
   }
+
   &__event-row .dashboard__badge {
     margin-left: auto;
   }
+
   &__date-tile {
     background: #211c12;
     border: 1px solid #3b301c;
@@ -60,6 +77,7 @@ h1 em {
     text-align: center;
     padding: 8px;
   }
+
   &__date-tile strong {
     display: block;
     font:
@@ -67,18 +85,13 @@ h1 em {
       serif;
     color: #c5a567;
   }
-}
-h3 {
-  font-size: 12px;
-  font-weight: 500;
-  margin: 0 0 7px;
-}
-.dashboard {
+
   &__event-row p {
     font-size: 10px;
     color: #988c78;
     margin: 0;
   }
+
   &__concierge {
     position: relative;
     overflow: hidden;
@@ -87,12 +100,14 @@ h3 {
     border-radius: 6px;
     background: radial-gradient(ellipse at bottom right, #362912, #14110c 75%);
   }
+
   &__concierge h2 {
     line-height: 1.5;
     font-size: 29px;
     position: relative;
     z-index: 1;
   }
+
   &__concierge > p:not(.dashboard__eyebrow) {
     font-size: 11px;
     line-height: 1.9;
@@ -100,28 +115,34 @@ h3 {
     max-width: 260px;
     margin: 16px 0 24px;
   }
+
   &__lower {
     padding: 32px 0 18px;
   }
+
   &__quick-links {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 12px;
   }
+
   &__quick-links a {
     padding: 20px;
     background: #100f0c;
     border: 1px solid #2b271f;
     border-radius: 4px;
   }
+
   &__quick-links a:hover {
     border-color: #8d7445;
     background: #1b170f;
   }
+
   &__quick-links span {
     font-size: 11px;
     color: #b6ab98;
   }
+
   &__quick-links strong {
     display: flex;
     justify-content: space-between;
@@ -130,57 +151,78 @@ h3 {
       serif;
     margin-top: 14px;
   }
+
+  &__state {
+    padding: 28px;
+    color: #b6ab98;
+    border: 1px solid #2b271f;
+    border-radius: 6px;
+    background: #100f0c;
+  }
+
+  &__state--error {
+    color: #e5b2a5;
+    border-color: #70483c;
+  }
 }
+
+h1 em {
+  color: #bb9a59;
+  font-weight: 400;
+}
+
+h3 {
+  font-size: 12px;
+  font-weight: 500;
+  margin: 0 0 7px;
+}
+
 @media (max-width: 1100px) {
   .dashboard {
     &__stats {
       grid-template-columns: repeat(2, 1fr);
     }
+
     &__stats article {
       border-bottom: 1px solid #2b271f;
     }
+
     &__grid {
       grid-template-columns: 1fr;
     }
+
     &__quick-links {
       grid-template-columns: repeat(3, 1fr);
     }
   }
 }
+
 @media (max-width: 700px) {
   .dashboard {
     &__stats article {
       padding: 16px;
     }
+
     &__stats strong {
       font-size: 26px;
     }
+
     &__quick-links {
       grid-template-columns: 1fr;
     }
+
     &__lower > span {
       display: none;
     }
+
     &__event-row {
       gap: 10px;
       padding: 16px;
     }
+
     &__event-row .dashboard__badge {
       font-size: 8px;
       padding: 5px;
     }
   }
-}
-
-.dashboard__state {
-  padding: 28px;
-  color: #b6ab98;
-  border: 1px solid #2b271f;
-  border-radius: 6px;
-  background: #100f0c;
-}
-
-.dashboard__state--error {
-  color: #e5b2a5;
-  border-color: #70483c;
 }

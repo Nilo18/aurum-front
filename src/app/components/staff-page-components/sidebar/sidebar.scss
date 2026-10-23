@@ -1,4 +1,12 @@
 .staff-sidebar {
+  &__logo {
+    color: #c6921d !important;
+    font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
+
+    // font-size: 16px;
+    letter-spacing: 0.42em;
+  }
+
   z-index: 10;
   position: fixed;
   top: 0;
@@ -11,6 +19,7 @@
   padding-top: 20px;
   padding-bottom: 20px;
   background: #050504;
+
   &__header {
     display: flex;
     justify-content: space-between;
@@ -20,27 +29,33 @@
     padding-left: 12px;
     padding-right: 12px;
   }
+
   &__header p {
     margin-top: 5px;
     margin-bottom: 0;
   }
+
   &__header button {
     background: transparent;
     border: none;
   }
+
   &__header svg {
     color: #8a7b67;
     cursor: pointer;
     transition: 0.15s ease-in-out;
   }
+
   &__header svg:hover {
     color: rgb(177, 177, 177);
   }
+
   & .staff-sidebar__section--active {
     background-color: #1e1810;
     border-left-color: #ffc83b;
     color: #ffc83b;
   }
+
   &__section {
     background: transparent;
     border: none;
@@ -56,9 +71,11 @@
       background-color 0.15s ease-in-out,
       border-left-color 0.15s ease-in-out;
   }
+
   &__section:not(.staff-sidebar__section--active):hover {
     color: white;
   }
+
   &__signout {
     position: absolute;
     width: 100%;
@@ -76,24 +93,30 @@
       background-color 0.15s ease-in-out,
       border-left-color 0.15s ease-in-out;
   }
+
   &__signout p {
     margin-bottom: 0;
   }
+
   &__signout:hover {
     color: red;
   }
+
   overflow: hidden;
   transition: width 280ms cubic-bezier(0.22, 1, 0.36, 1);
+
   &__header {
     position: relative;
     min-height: 32px;
   }
-  &__header .aurum-logo {
+
+  &__header .staff-sidebar__logo {
     white-space: nowrap;
     transition:
       opacity 120ms ease,
       transform 280ms ease;
   }
+
   &__toggle {
     position: absolute;
     right: 4px;
@@ -103,23 +126,27 @@
     place-items: center;
     cursor: pointer;
   }
+
   &__toggle svg {
     transition:
       transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
       color 150ms ease;
   }
+
   &__section,
   &__signout {
     white-space: nowrap;
     overflow: hidden;
     flex-shrink: 0;
   }
+
   &__section > span:first-child,
   &__section > svg,
   &__signout > span:first-child,
   &__signout > svg {
     flex-shrink: 0;
   }
+
   &__label {
     opacity: 1;
     transform: translateX(0);
@@ -131,15 +158,21 @@
   &--collapsed {
     width: 59px;
   }
-  &--collapsed .aurum-logo,
+
+  &--collapsed .staff-sidebar__logo,
   &--collapsed .staff-sidebar__label {
     opacity: 0;
     transform: translateX(-8px);
     pointer-events: none;
     transition-delay: 0ms;
   }
+
   &--collapsed .staff-sidebar__toggle svg {
     transform: rotate(180deg);
+  }
+
+  &__signout-icon {
+    flex-shrink: 0;
   }
 }
 
@@ -151,14 +184,17 @@
     }
   }
 }
+
 @media (max-width: 700px) {
   .staff-sidebar {
     width: 59px;
-    & .aurum-logo,
+
+    & .staff-sidebar__logo,
     & .staff-sidebar__label {
       opacity: 0;
       pointer-events: none;
     }
+
     &__toggle {
       visibility: hidden;
     }

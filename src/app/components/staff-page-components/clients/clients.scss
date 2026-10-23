@@ -1,4 +1,12 @@
 @use '../shared/staff-section';
+
 @use '../shared/client-controls';
 
 @include staff-section.styles('clients');
+
+.clients {
+  &__name {
+    color: #eee4d4;
+    font-weight: 500;
+  }
+}

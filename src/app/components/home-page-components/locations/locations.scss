@@ -54,8 +54,7 @@
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(180deg, transparent 45%, rgba(5, 5, 4, 0.72) 100%),
-        rgba(5, 5, 4, 0.2);
+        linear-gradient(180deg, transparent 45%, rgba(5, 5, 4, 0.72) 100%), rgba(5, 5, 4, 0.2);
       transition: background-color 260ms ease;
       pointer-events: none;
     }
@@ -148,8 +147,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .locations__card img,
-  .locations__card span {
-    transition: none;
+  .locations {
+    &__card img,
+    &__card span {
+      transition: none;
+    }
   }
 }

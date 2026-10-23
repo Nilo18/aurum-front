@@ -37,7 +37,9 @@
               required
               formControlName="name"
             />
-            <p class="error">{{ formValidator.getRequiredMaxAmountError('name', registerForm) }}</p>
+            <p class="registration__field-error">
+              {{ formValidator.getRequiredMaxAmountError('name', registerForm) }}
+            </p>
           </div>
           <div>
             <label for="register-password">Password</label
@@ -50,7 +52,9 @@
               required
               formControlName="password"
             />
-            <p class="error">{{ formValidator.getRequiredError('password', registerForm) }}</p>
+            <p class="registration__field-error">
+              {{ formValidator.getRequiredError('password', registerForm) }}
+            </p>
           </div>
         </fieldset>
         @if (submissionError()) {

@@ -6,8 +6,8 @@
       <span class="contact__accent" aria-hidden="true"></span>
 
       <p class="contact__intro">
-        Begin with a private consultation. Your dedicated manager will respond within 24 hours
-        with the next steps for shaping your event.
+        Begin with a private consultation. Your dedicated manager will respond within 24 hours with
+        the next steps for shaping your event.
       </p>
 
       <address class="contact__details">
@@ -38,23 +38,47 @@
       <div class="contact__row">
         <label>
           <span>First and last name</span>
-          <input type="text" name="name" placeholder="Your full name" autocomplete="name" required 
-          formControlName="fullName"/>
-          <p class="error">{{ formValidator.getRequiredMaxAmountError('fullName', contactForm) }}</p>
+          <input
+            type="text"
+            name="name"
+            placeholder="Your full name"
+            autocomplete="name"
+            required
+            formControlName="fullName"
+          />
+          <p class="contact__field-error">
+            {{ formValidator.getRequiredMaxAmountError('fullName', contactForm) }}
+          </p>
         </label>
         <label>
           <span>Phone number</span>
-          <input type="tel" name="phone" placeholder="+995 5XX XXX XXX" autocomplete="tel" required
-          formControlName="phoneNumber"/>
-          <p class="error">{{ formValidator.getRequiredPhoneNumberError('phoneNumber', contactForm) }}</p>
+          <input
+            type="tel"
+            name="phone"
+            placeholder="+995 5XX XXX XXX"
+            autocomplete="tel"
+            required
+            formControlName="phoneNumber"
+          />
+          <p class="contact__field-error">
+            {{ formValidator.getRequiredPhoneNumberError('phoneNumber', contactForm) }}
+          </p>
         </label>
       </div>
 
       <label>
         <span>Email address</span>
-        <input type="email" name="email" placeholder="example@email.com" autocomplete="email" required
-        formControlName="emailAddress"/>
-        <p class="error">{{ formValidator.getRequiredEmailError('emailAddress', contactForm) }}</p>
+        <input
+          type="email"
+          name="email"
+          placeholder="example@email.com"
+          autocomplete="email"
+          required
+          formControlName="emailAddress"
+        />
+        <p class="contact__field-error">
+          {{ formValidator.getRequiredEmailError('emailAddress', contactForm) }}
+        </p>
       </label>
 
       <!-- <div class="contact__row">
@@ -88,7 +112,9 @@
           formControlName="message"
           required
         ></textarea>
-        <p class="error">{{ formValidator.getRequiredMaxAmountError('message', contactForm) }}</p>
+        <p class="contact__field-error">
+          {{ formValidator.getRequiredMaxAmountError('message', contactForm) }}
+        </p>
       </label>
 
       <button type="submit">
@@ -96,7 +122,9 @@
         <span aria-hidden="true">→</span>
       </button>
 
-      <p class="contact__privacy">By submitting, you agree to our confidential consultation policy.</p>
+      <p class="contact__privacy">
+        By submitting, you agree to our confidential consultation policy.
+      </p>
       @if (submitted()) {
         <p class="contact__success" role="status">Thank you. We’ll be in touch within 24 hours.</p>
       }

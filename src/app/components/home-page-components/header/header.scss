@@ -31,6 +31,7 @@
   &__logo {
     color: #c6921d !important;
     font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
+
     // font-size: 16px;
     letter-spacing: 0.42em;
   }
@@ -44,8 +45,9 @@
 
     a {
       position: relative;
-    //   padding: 29px 0 12px;
-    //   font-size: 10px;
+
+      //   padding: 29px 0 12px;
+      //   font-size: 10px;
       letter-spacing: 0.08em;
       white-space: nowrap;
       transition: color 180ms ease;
@@ -55,6 +57,7 @@
         position: absolute;
         left: 0;
         right: 0;
+
         // top: 10px;
         bottom: -5px;
         height: 1px;
@@ -87,7 +90,9 @@
     color: #bd8c1c !important;
     font-size: 10px;
     letter-spacing: 0.13em;
-    transition: background-color 180ms ease, color 180ms ease;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease;
 
     &:hover,
     &:focus-visible {
@@ -95,11 +100,11 @@
       color: #080705 !important;
     }
   }
-}
 
-.home-header--scroll {
-  background-color: #080705;
-  border-bottom: 1px solid #2a261f;
+  &--scroll {
+    background-color: #080705;
+    border-bottom: 1px solid #2a261f;
+  }
 }
 
 @media (max-width: 1100px) {
@@ -122,6 +127,7 @@
 @media (max-width: 720px) {
   .home-header {
     height: 68px;
+
     &__inner {
       width: calc(100% - 40px);
       grid-template-columns: 1fr auto;

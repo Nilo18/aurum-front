@@ -251,7 +251,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .process__panel {
-    animation: none;
+  .process {
+    &__panel {
+      animation: none;
+    }
   }
 }

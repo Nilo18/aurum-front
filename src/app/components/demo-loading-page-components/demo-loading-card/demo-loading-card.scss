@@ -3,6 +3,7 @@
   width: 100%;
   max-width: 600px;
 }
+
 .demo-card {
   width: 100%;
   max-width: 600px;
@@ -150,11 +151,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .demo-card__spinner {
-    animation: none;
-  }
+  .demo-card {
+    &__spinner {
+      animation: none;
+    }
 
-  .demo-card__retry {
-    transition: none;
+    &__retry {
+      transition: none;
+    }
   }
 }

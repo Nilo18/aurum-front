@@ -1,8 +1,22 @@
-:host {
-  display: block;
-}
-
 .contact {
+  &__field-error {
+    margin: 0;
+    margin-top: 5px;
+    color: red;
+    line-height: 0;
+    font-size: 11px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    margin: 0;
+    color: red;
+    font-size: 11px;
+    line-height: 14px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
   min-height: 750px;
   padding: 62px 32px 28px;
   background: #0d0c0a;
@@ -146,19 +160,6 @@
         letter-spacing: 0.26em;
         text-transform: uppercase;
       }
-
-      .error {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        margin: 0;
-        color: red;
-        font-size: 11px;
-        line-height: 14px;
-        white-space: normal;
-        overflow-wrap: anywhere;
-      }
     }
 
     input,
@@ -249,6 +250,10 @@
   &__success {
     color: #c99a29;
   }
+}
+
+:host {
+  display: block;
 }
 
 @media (max-width: 1000px) {

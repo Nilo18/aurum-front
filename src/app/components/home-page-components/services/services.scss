@@ -251,7 +251,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .services__visual img {
-    animation: none;
+  .services {
+    &__visual img {
+      animation: none;
+    }
   }
 }

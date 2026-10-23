@@ -266,7 +266,6 @@
   .about {
     &__grid {
       grid-template-columns: 1fr;
-
       article:nth-child(odd),
       article:nth-child(-n + 2) {
         border-right: 0;
@@ -281,7 +280,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .about__image img {
-    transition: none;
+  .about {
+    &__image img {
+      transition: none;
+    }
   }
 }

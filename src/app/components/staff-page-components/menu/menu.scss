@@ -2,33 +2,35 @@
 
 @include staff-section.styles('menu');
 
-.menu__controls {
-  display: grid;
-  gap: 20px;
-  padding: 20px;
-}
-.menu__pagination {
-  padding: 20px;
-}
-.menu__error {
-  color: #d39990;
-  padding: 16px;
-}
+.menu {
+  &__controls {
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+  }
 
-.menu__search-field {
-  width: 100%;
-  max-width: 100%;
-}
+  &__pagination {
+    padding: 20px;
+  }
 
-.menu__search-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #b5aa98;
-  font-size: 0.75rem;
-}
+  &__error {
+    color: #d39990;
+    padding: 16px;
+  }
 
-.menu__search {
-  .form-control {
+  &__search-field {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  &__search-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #b5aa98;
+    font-size: 0.75rem;
+  }
+
+  &__search-input {
     min-height: 44px;
     min-width: 0;
     padding: 11px 12px;
@@ -54,7 +56,7 @@
     }
   }
 
-  .btn-outline-warning {
+  &__search-button {
     --bs-btn-color: #c7af7e;
     --bs-btn-border-color: #685333;
     --bs-btn-hover-bg: #c7af7e;
@@ -63,5 +65,10 @@
     --bs-btn-disabled-color: #857c6c;
     --bs-btn-disabled-border-color: #494132;
     font-size: 0.8rem;
+  }
+
+  &__name {
+    color: #eee4d4;
+    font-weight: 500;
   }
 }

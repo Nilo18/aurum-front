@@ -9,6 +9,7 @@
     max-width: 1600px;
     margin: auto;
     padding: 16px 32px 48px 0;
+
     &__topline {
       display: flex;
       justify-content: space-between;
@@ -18,6 +19,146 @@
       font-size: 10px;
       letter-spacing: 2px;
       color: #9b9180;
+    }
+
+    &__summary p {
+      color: #948a79;
+      font-size: 12px;
+      margin: 0;
+      line-height: 1.8;
+    }
+
+    &__eyebrow {
+      font-size: 9px !important;
+      letter-spacing: 2.5px;
+      color: #b69b65 !important;
+      margin: 0 0 12px !important;
+      font-weight: 600;
+    }
+
+    &__button {
+      &--primary,
+      &--secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 18px;
+        border: 1px solid #b69550;
+        border-radius: 4px;
+        background: #c6a35e;
+        color: #16130e;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      &--primary:hover {
+        background: #dfbd79;
+        color: #16130e;
+      }
+
+      &--secondary {
+        background: transparent;
+        color: #bdb09b;
+        border-color: #393329;
+      }
+    }
+
+    &__panel {
+      border: 1px solid #2b271f;
+      background: #100f0c;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    &__summary {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 22px 26px;
+      margin-bottom: 26px;
+      background: linear-gradient(110deg, #201b12, #100f0c);
+      border: 1px solid #332b1e;
+      border-radius: 6px;
+    }
+
+    &__summary strong {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    &__summary p {
+      font-size: 10px;
+      margin-top: 5px;
+    }
+
+    &__table-scroll {
+      overflow: auto;
+    }
+
+    &__badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+      color: #bbad93;
+      background: rgba(255, 255, 255, 0.0235294118);
+      border: 1px solid #494031;
+      padding: 6px 9px;
+      border-radius: 4px;
+    }
+
+    &__button {
+      &--text {
+        background: transparent;
+        border: 0;
+        color: #bba16d;
+        font-size: 10px;
+        white-space: nowrap;
+        padding: 6px;
+      }
+
+      &--text:hover {
+        color: #edcf91;
+      }
+    }
+
+    &__empty {
+      text-align: center;
+      padding: 56px 20px;
+    }
+
+    &__empty p {
+      color: #968972;
+      font-size: 12px;
+      margin-top: 12px;
+    }
+
+    &__notice {
+      position: fixed;
+      bottom: 20px;
+      right: 24px;
+      z-index: 20;
+      background: #292314;
+      border: 1px solid #6d5930;
+      color: #e2cf9e;
+      padding: 14px 18px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    &__notice button {
+      border: 0;
+      background: none;
+      color: inherit;
+      margin-left: 20px;
+    }
+
+    &__summary-number {
+      font:
+        36px Georgia,
+        serif;
+      color: #c8a767;
     }
   }
 
@@ -42,23 +183,6 @@
     font-size: 12px;
     margin: 0;
     line-height: 1.8;
-  }
-
-  .#{$block} {
-    &__summary p {
-      color: #948a79;
-      font-size: 12px;
-      margin: 0;
-      line-height: 1.8;
-    }
-
-    &__eyebrow {
-      font-size: 9px !important;
-      letter-spacing: 2.5px;
-      color: #b69b65 !important;
-      margin: 0 0 12px !important;
-      font-weight: 600;
-    }
   }
 
   button,
@@ -94,111 +218,11 @@
     outline-offset: 3px;
   }
 
-  .#{$block} {
-    &__button {
-      &--primary,
-      &--secondary {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 12px 18px;
-        border: 1px solid #b69550;
-        border-radius: 4px;
-        background: #c6a35e;
-        color: #16130e;
-        font-size: 11px;
-        font-weight: 600;
-        white-space: nowrap;
-      }
-      &--primary:hover {
-        background: #dfbd79;
-        color: #16130e;
-      }
-      &--secondary {
-        background: transparent;
-        color: #bdb09b;
-        border-color: #393329;
-      }
-    }
-    &__panel {
-      border: 1px solid #2b271f;
-      background: #100f0c;
-      border-radius: 6px;
-      overflow: hidden;
-    }
-    &__panel-heading {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 24px;
-    }
-    &__panel-heading a,
-    &__panel-heading > span {
-      font-size: 10px;
-    }
-  }
-
   h2 {
     font-family: Georgia, serif;
     font-weight: 400;
     font-size: 24px;
     margin: 0;
-  }
-
-  .#{$block} {
-    &__summary {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      padding: 22px 26px;
-      margin-bottom: 26px;
-      background: linear-gradient(110deg, #201b12, #100f0c);
-      border: 1px solid #332b1e;
-      border-radius: 6px;
-    }
-    &__summary strong {
-      font-size: 12px;
-      font-weight: 500;
-    }
-    &__summary p {
-      font-size: 10px;
-      margin-top: 5px;
-    }
-    &__toolbar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 20px;
-    }
-    @if $block != 'menu' and $block != 'suppliers' {
-      &__search {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: #090907;
-        border: 1px solid #322c22;
-        border-radius: 4px;
-        // max-width: 360px;
-        flex: 1;
-        padding-left: 12px;
-        color: #b39a6c;
-        width: 100%;
-      }
-      &__search input {
-        border: 0;
-        background: transparent;
-        width: 100%;
-      }
-    }
-    &__toolbar select {
-      width: 190px;
-    }
-    &__result-count {
-      margin-left: auto;
-      font-size: 10px;
-      color: #9a8c76;
-    }
   }
 
   input,
@@ -216,12 +240,6 @@
 
   input::placeholder {
     color: #776e5e;
-  }
-
-  .#{$block} {
-    &__table-scroll {
-      overflow: auto;
-    }
   }
 
   table {
@@ -252,221 +270,45 @@
     background: #16130e;
   }
 
-  td:nth-child(2) {
-    color: #eee4d4;
-    font-weight: 500;
-  }
-
-  .#{$block} {
-    &__badge {
-      display: inline-block;
-      font-size: 9px;
-      font-weight: 400;
-      letter-spacing: 0.2px;
-      color: #bbad93;
-      background: rgba(255, 255, 255, 0.0235294118);
-      border: 1px solid #494031;
-      padding: 6px 9px;
-      border-radius: 4px;
-    }
-    &__badge[data-tone='CONFIRMED'],
-    &__badge[data-tone='COMPLETED'] {
-      color: #9cbea5;
-      background: rgba(117, 157, 120, 0.062745098);
-      border-color: #364c3b;
-    }
-    &__badge[data-tone='REQUESTED'],
-    &__badge[data-tone='PLANNING'] {
-      color: #cfaf72;
-      background: rgba(183, 148, 68, 0.062745098);
-      border-color: #554326;
-    }
-    &__badge[data-tone='CANCELLED'],
-    &__badge[data-tone='REJECTED'] {
-      color: #d39990;
-      border-color: #5e3730;
-    }
-    &__button {
-      &--text {
-        background: transparent;
-        border: 0;
-        color: #bba16d;
-        font-size: 10px;
-        white-space: nowrap;
-        padding: 6px;
-      }
-      &--text:hover {
-        color: #edcf91;
-      }
-    }
-  }
-
-  footer {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 16px 20px;
-    font-size: 9px;
-    color: #837761;
-  }
-
-  .#{$block} {
-    &__empty {
-      text-align: center;
-      padding: 56px 20px;
-    }
-    &__empty p {
-      color: #968972;
-      font-size: 12px;
-      margin-top: 12px;
-    }
-    &__notice {
-      position: fixed;
-      bottom: 20px;
-      right: 24px;
-      z-index: 20;
-      background: #292314;
-      border: 1px solid #6d5930;
-      color: #e2cf9e;
-      padding: 14px 18px;
-      border-radius: 4px;
-      font-size: 12px;
-    }
-    &__notice button {
-      border: 0;
-      background: none;
-      color: inherit;
-      margin-left: 20px;
-    }
-    &__backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      z-index: 40;
-    }
-    &__editor {
-      position: fixed;
-      inset: 0 0 0 auto;
-      margin: 0;
-      width: min(540px, 100%);
-      height: 100dvh;
-      max-height: 100dvh;
-      max-width: 100%;
-      background: #12100c;
-      color: #e2d8c6;
-      border: 0;
-      border-left: 1px solid #514126;
-      padding: 28px;
-      overflow: auto;
-      z-index: 41;
-    }
-    &__editor::backdrop {
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-    }
-    &__editor[open] {
-      animation: drawer-in 220ms ease-out;
-    }
-    &__editor .#{$block}__panel-heading {
-      padding: 0;
-    }
-    &__fields {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px 16px;
-    }
-    &__fields label {
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-      font-size: 10px;
-      color: #bdb09a;
-    }
-    &__fields .#{$block}__field--wide {
-      grid-column: 1/-1;
-    }
-    &__form-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      margin-top: 28px;
-      padding-top: 24px;
-      border-top: 1px solid #32291b;
-    }
-  }
-
-  @keyframes drawer-in {
-    from {
-      transform: translateX(30px);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
   @media (max-width: 1100px) {
     .#{$block} {
       padding-right: 20px;
+
       &__topline {
         letter-spacing: 1px;
       }
     }
   }
+
   @media (max-width: 700px) {
     header {
       align-items: flex-start;
       flex-direction: column;
       padding-top: 28px;
     }
+
     h1 {
       font-size: 32px;
     }
+
     .#{$block} {
       &__topline {
         flex-direction: column;
         gap: 10px;
       }
-      &__toolbar {
-        flex-wrap: wrap;
-      }
-      @if $block != 'menu' and $block != 'suppliers' {
-        &__search {
-          flex-basis: 100%;
-          max-width: none;
-        }
-      }
-      &__toolbar select {
-        width: 150px;
-      }
-    }
-    footer > span:last-child {
-      display: none;
-    }
-    .#{$block} {
-      &__fields {
-        grid-template-columns: 1fr;
-      }
+
       &__summary {
         padding: 18px;
       }
     }
   }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
       animation: none !important;
       transition: none !important;
-    }
-  }
-  .#{$block} {
-    &__summary-number {
-      font:
-        36px Georgia,
-        serif;
-      color: #c8a767;
     }
   }
 }

@@ -6,9 +6,7 @@
   isolation: isolate;
   padding: 34px 38px 28px;
   border: 1px solid rgba(201, 154, 41, 0.3);
-  background:
-    linear-gradient(145deg, rgba(22, 19, 14, 0.98), rgba(8, 7, 5, 0.99)),
-    #0d0c0a;
+  background: linear-gradient(145deg, rgba(22, 19, 14, 0.98), rgba(8, 7, 5, 0.99)), #0d0c0a;
   color: #eee7db;
   font-family: 'Montserrat', 'Segoe UI', sans-serif;
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.62);
@@ -62,7 +60,9 @@
   &__close {
     margin-top: 2px;
     opacity: 0.5;
-    transition: opacity 180ms ease, transform 180ms ease;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
 
     &:hover,
     &:focus-visible {
@@ -167,7 +167,10 @@
     font-weight: 700;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+    transition:
+      background-color 180ms ease,
+      border-color 180ms ease,
+      transform 180ms ease;
 
     &:hover:not(:disabled),
     &:focus-visible:not(:disabled) {
@@ -204,6 +207,20 @@
       font-size: 7px;
     }
   }
+
+  &__copy strong,
+  &__alert {
+    overflow-wrap: anywhere;
+  }
+
+  &__close:disabled {
+    cursor: wait;
+    opacity: 0.3;
+  }
+
+  &__input:read-only {
+    opacity: 0.65;
+  }
 }
 
 @media (max-width: 575.98px) {
@@ -221,13 +238,15 @@
   }
 }
 
-.verification-modal {
-  &__copy strong, &__alert { overflow-wrap: anywhere; }
-  &__close:disabled { cursor: wait; opacity: .3; }
-  &__input:read-only { opacity: .65; }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .verification-modal__close, .verification-modal__submit { transition: none; }
-  .spinner-border { animation: none; }
+  .verification-modal {
+    &__close,
+    &__submit {
+      transition: none;
+    }
+  }
+
+  .spinner-border {
+    animation: none;
+  }
 }

@@ -1,12 +1,14 @@
 :host {
   display: block;
 }
+
 .demo-page {
   display: flex;
   flex-direction: column;
   min-height: 100svh;
   background: #050504;
   color: #f0eadf;
+
   &__main {
     display: flex;
     flex: 1;
@@ -16,6 +18,7 @@
     padding: clamp(40px, 7vw, 88px) 20px;
     background: radial-gradient(ellipse at 50% 35%, #c6921d10, transparent 65%);
   }
+
   &__signature {
     margin: 28px 0 0;
     color: #a99e8c;

@@ -90,7 +90,7 @@
           @for (row of rows(); track $index) {
             <tr>
               <td>{{ human(row['name']) }}</td>
-              <td>{{ human(row['email']) }}</td>
+              <td class="clients__name">{{ human(row['email']) }}</td>
               <td>{{ human(row['phone']) }}</td>
               <td>
                 <span class="clients__badge" [attr.data-tone]="row['type']">{{

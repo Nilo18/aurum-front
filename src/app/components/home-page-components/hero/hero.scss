@@ -55,11 +55,12 @@
 
   &__image::before {
     background: linear-gradient(
-    to right, 
-    #050504 0%, 
-    #050504 1%,          /* Keeps it completely solid behind the text */
-    rgba(5, 5, 4, 0.8) 35%, /* Begins dropping opacity rapidly */
-    rgba(5, 5, 4, 0) 200%    /* Reaches 100% transparency just past the halfway mark */
+      to right,
+      #050504 0%,
+      #050504 1%,
+      /* Keeps it completely solid behind the text */ rgba(5, 5, 4, 0.8) 35%,
+      /* Begins dropping opacity rapidly */ rgba(5, 5, 4, 0) 200%
+        /* Reaches 100% transparency just past the halfway mark */
     );
   }
 
@@ -69,7 +70,10 @@
     gap: 14px;
     margin-bottom: 39px;
     color: #c18e18;
-    font: 600 10px/1.2 'Montserrat', 'Segoe UI', sans-serif;
+    font:
+      600 10px/1.2 'Montserrat',
+      'Segoe UI',
+      sans-serif;
     letter-spacing: 0.48em;
     white-space: nowrap;
 
@@ -148,7 +152,9 @@
     color: #171108;
 
     span {
-      font: 18px/1 Arial, sans-serif;
+      font:
+        18px/1 Arial,
+        sans-serif;
     }
 
     &:hover,

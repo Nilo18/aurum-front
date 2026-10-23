@@ -6,12 +6,14 @@
   color: #e2d8c6;
   font-family: 'Montserrat', 'Segoe UI', sans-serif;
 }
+
 h2 {
   margin: 0;
   font:
     400 24px Georgia,
     serif;
 }
+
 label {
   display: flex;
   flex-direction: column;
@@ -19,6 +21,7 @@ label {
   color: #bdb09a;
   font-size: 10px;
 }
+
 input,
 select {
   min-width: 0;
@@ -30,20 +33,24 @@ select {
   color-scheme: dark;
   font-size: 11px;
 }
+
 button:focus-visible,
 input:focus-visible,
 select:focus-visible {
   outline: 2px solid #d0ac62;
   outline-offset: 3px;
 }
+
 .product-add-dialog {
   padding: 28px;
+
   &__panel-heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
   }
+
   &__eyebrow {
     margin: 0 0 12px;
     color: #b69b65;
@@ -51,12 +58,14 @@ select:focus-visible {
     font-weight: 600;
     letter-spacing: 2.5px;
   }
+
   &__editor-note {
     margin: 20px 0;
     color: #948a79;
     font-size: 11px;
     line-height: 1.8;
   }
+
   &__fields {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -65,13 +74,16 @@ select:focus-visible {
     padding: 0;
     border: 0;
     min-width: 0;
+
     @media (max-width: 540px) {
       grid-template-columns: 1fr;
     }
   }
+
   &__button {
     cursor: pointer;
     font-size: 11px;
+
     &--primary,
     &--secondary {
       padding: 12px 18px;
@@ -81,16 +93,19 @@ select:focus-visible {
       color: #16130e;
       font-weight: 600;
     }
+
     &--primary {
       &:hover {
         background: #dfbd79;
       }
     }
+
     &--secondary {
       background: transparent;
       border-color: #393329;
       color: #bdb09a;
     }
+
     &--text {
       padding: 6px;
       border: 0;
@@ -98,6 +113,7 @@ select:focus-visible {
       color: #bba16d;
     }
   }
+
   &__form-actions {
     display: flex;
     justify-content: flex-end;
@@ -106,25 +122,26 @@ select:focus-visible {
     padding-top: 24px;
     border-top: 1px solid #32291b;
   }
+
   &__error {
     margin: 16px 0 0;
     color: #d39990;
     font-size: 12px;
     line-height: 1.6;
   }
-}
-button:disabled,
-fieldset:disabled {
-  opacity: 0.6;
-}
-button:disabled {
-  cursor: not-allowed;
-}
 
-.product-add-dialog {
   &__field-error {
     color: #d39990;
     font-size: 11px;
     line-height: 1.5;
   }
+}
+
+button:disabled,
+fieldset:disabled {
+  opacity: 0.6;
+}
+
+button:disabled {
+  cursor: not-allowed;
 }

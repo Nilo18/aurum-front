@@ -1,9 +1,12 @@
-:host {
-  display: grid;
-  min-width: 0;
-}
-
 .staff-login {
+  &__field-error {
+    margin: 0;
+    margin-top: 5px;
+    color: red;
+    line-height: 0;
+    font-size: 11px;
+  }
+
   &__eyebrow {
     margin: 0 0 24px;
     color: #d0a441;
@@ -14,7 +17,7 @@
     text-transform: uppercase;
   }
 
-  .error {
+  &__field-error {
     margin: 0;
     margin-top: 10px;
   }
@@ -23,35 +26,42 @@
     font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
     font-weight: 400;
   }
+
   &__panel {
     display: grid;
     place-items: center;
     padding: 56px 40px;
   }
+
   &__form-wrap {
     width: 100%;
     max-width: 390px;
   }
+
   h2 {
     margin: 0 0 12px;
     font-size: clamp(36px, 3.4vw, 48px);
   }
+
   &__intro {
     margin: 0 0 36px;
     color: #a99e8c;
     font-size: 13px;
     line-height: 1.7;
   }
+
   &__form {
     display: grid;
     gap: 24px;
   }
+
   label {
     display: block;
     margin-bottom: 10px;
     color: #d9d0c0;
     font-size: 12px;
   }
+
   input,
   select {
     display: block;
@@ -64,31 +74,39 @@
     color: #f0eadf;
     color-scheme: dark;
     font-size: 12px;
+
     &::placeholder {
       color: #928879;
       opacity: 1;
     }
+
     &:focus {
       outline: 1px solid #c79625;
       border-color: #c79625;
     }
   }
+
   select:invalid {
     color: #928879;
   }
+
   &__password {
     position: relative;
+
     input {
       padding-right: 70px;
     }
   }
+
   button {
     cursor: pointer;
   }
+
   button:focus-visible {
     outline: 2px solid #f0eadf;
     outline-offset: 4px;
   }
+
   &__reveal {
     position: absolute;
     right: 4px;
@@ -100,6 +118,7 @@
     color: #d4ad56;
     font-size: 11px;
   }
+
   &__submit {
     display: flex;
     justify-content: space-between;
@@ -114,20 +133,24 @@
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
+
     span {
       font-size: 20px;
       line-height: 1;
     }
+
     &:hover {
       background: #ddb448;
     }
   }
+
   &__status {
     margin: 0;
     color: #d4ad56;
     font-size: 12px;
     line-height: 1.7;
   }
+
   &__help {
     margin: 30px 0 0;
     padding-top: 24px;
@@ -136,19 +159,12 @@
     text-align: center;
     font-size: 11px;
     line-height: 1.9;
+
     span {
       color: #d9d0c0;
     }
   }
-}
 
-@media (max-width: 760px) {
-  .staff-login__panel {
-    padding: 44px 24px;
-  }
-}
-
-.staff-login {
   &__fields {
     display: grid;
     gap: 24px;
@@ -157,27 +173,43 @@
     padding: 0;
     border: 0;
   }
+
   input[aria-invalid='true'],
   select[aria-invalid='true'] {
     border-color: #e9a48f;
   }
+
   &__submit:disabled {
     background: #70581e;
     border-color: #70581e;
     cursor: wait;
   }
+
   &__fields:disabled {
     opacity: 0.65;
   }
+
+  &__submission-error {
+    margin: 0;
+    padding: 16px;
+    border: 1px solid #e9a48f40;
+    background: #e9a48f08;
+    color: #e9b5a3;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
 }
 
-.staff-login__submission-error {
-  margin: 0;
-  padding: 16px;
-  border: 1px solid #e9a48f40;
-  background: #e9a48f08;
-  color: #e9b5a3;
-  font-size: 12px;
-  line-height: 1.7;
-  overflow-wrap: anywhere;
+:host {
+  display: grid;
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .staff-login {
+    &__panel {
+      padding: 44px 24px;
+    }
+  }
 }

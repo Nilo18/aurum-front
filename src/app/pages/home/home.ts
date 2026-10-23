@@ -12,6 +12,7 @@ import { Footer } from '../../components/home-page-components/footer/footer';
 import { Locations } from '../../components/home-page-components/locations/locations';
 
 @Component({
+  host: { class: 'home-page' },
   selector: 'app-home',
   imports: [
     Header,
@@ -29,6 +30,4 @@ import { Locations } from '../../components/home-page-components/locations/locat
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
-export class Home {
-
-}
+export class Home {}

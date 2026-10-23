@@ -78,7 +78,7 @@
           @for (row of rows(); track row.publicId) {
             <tr>
               <td class="vehicles__record-id">#{{ row.publicId }}</td>
-              <td>
+              <td class="vehicles__type">
                 <span class="vehicles__badge" [attr.data-tone]="row['type']">{{
                   human(row['type'])
                 }}</span>

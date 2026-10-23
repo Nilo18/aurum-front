@@ -1,3 +1,5 @@
-.wrapper {
-  display: block;
+.home-page {
+  &__content {
+    display: block;
+  }
 }
