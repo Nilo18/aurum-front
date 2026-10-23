@@ -81,7 +81,7 @@ describe('Vehicles reactive query', () => {
     const componentInstance = {};
     open.mockReturnValue({
       componentInstance,
-      result: Promise.resolve('Vehicle saved in this preview session.'),
+      result: Promise.resolve('Vehicle saved.'),
     });
     const vehicle = fixture.componentInstance.rows()[0];
     fixture.componentInstance.open(vehicle);

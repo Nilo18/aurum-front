@@ -14,7 +14,7 @@
       &#10005;
     </button>
   </div>
-  <p class="product-add-dialog__editor-note">Sample workspace · changes last for this session.</p>
+  <p class="product-add-dialog__editor-note">Add the product details to your collection.</p>
   <form [formGroup]="productForm" (ngSubmit)="save()" novalidate [attr.aria-busy]="isSubmitting()">
     <fieldset class="product-add-dialog__fields" [disabled]="isSubmitting()">
       @let productNameError =
