@@ -1,3 +1,4 @@
+import { StringFormatterService } from '../../../services/string-formatter-service';
 import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
 import {
   FormBuilder,
@@ -6,7 +7,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { human, currency } from '../shared/staff-format';
 import { EmployeeService } from '../../../services/employee-service';
 import { getRequestErrorMessage } from '../../../services/request-error';
 import { FormValidatorService } from '../../../services/form-validator-service';
@@ -31,13 +31,12 @@ import { rxResource } from '@angular/core/rxjs-interop';
   styleUrl: './employees.scss',
 })
 export class Employees {
+  readonly stringFormatter = inject(StringFormatterService);
   private employeeService = inject(EmployeeService);
   public formValidator = inject(FormValidatorService);
   private modalService = inject(NgbModal);
   private fb = inject(FormBuilder);
   employeeForm!: FormGroup;
-  readonly human = human;
-  readonly currency = currency;
   readonly employeeQuery = signal<EmployeeQuery>({
     page: 0,
     size: 10,

@@ -1,10 +1,10 @@
+import { StringFormatterService } from '../../../services/string-formatter-service';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmActionModal } from '../../general-components/confirm-action-modal/confirm-action-modal';
 import { getRequestErrorMessage } from '../../../services/request-error';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { human, currency } from '../shared/staff-format';
 import { EventService, EventQuery } from '../../../services/event-service';
 import { EventFiltering } from '../event-filtering/event-filtering';
 import { EventSorting } from '../event-sorting/event-sorting';
@@ -16,14 +16,13 @@ import { EventPagination } from '../event-pagination/event-pagination';
   styleUrl: './events.scss',
 })
 export class Events {
+  readonly stringFormatter = inject(StringFormatterService);
   private readonly service = inject(EventService);
   private readonly modal = inject(NgbModal);
   readonly confirming = signal(false);
   readonly deleting = signal<number | undefined>(undefined);
   readonly deleteError = signal('');
   readonly notice = signal('');
-  readonly human = human;
-  readonly currency = currency;
   private readonly eventQuery = signal<EventQuery>({
     page: 0,
     size: 10,

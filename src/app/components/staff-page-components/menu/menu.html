@@ -78,10 +78,10 @@
               <td class="menu__record-id">#{{ item.publicId }}</td>
               <td class="menu__name">{{ item.name }}</td>
               <td>
-                <span class="menu__badge">{{ human(item.category) }}</span>
+                <span class="menu__badge">{{ stringFormatter.human(item.category) }}</span>
               </td>
-              <td>{{ human(item.type) }}</td>
-              <td>{{ currency(item.pricePerPerson) }}</td>
+              <td>{{ stringFormatter.human(item.type) }}</td>
+              <td>{{ stringFormatter.currency(item.pricePerPerson) }}</td>
               <td>
                 <button
                   class="menu__button menu__button--text"

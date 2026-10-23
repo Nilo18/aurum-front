@@ -87,7 +87,7 @@
               <td>
                 <ul class="suppliers__categories" aria-label="Product types">
                   @for (category of supplier.categories; track category) {
-                    <li class="suppliers__badge">{{ human(category) }}</li>
+                    <li class="suppliers__badge">{{ stringFormatter.human(category) }}</li>
                   } @empty {
                     <li class="suppliers__categories-empty">No product types</li>
                   }

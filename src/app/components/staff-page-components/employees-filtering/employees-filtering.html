@@ -9,7 +9,7 @@
     >
       <option [ngValue]="undefined">All specialties</option>
       @for (value of types; track value) {
-        <option [ngValue]="value">{{ human(value) }}</option>
+        <option [ngValue]="value">{{ stringFormatter.human(value) }}</option>
       }
     </select>
   </div>
@@ -23,7 +23,7 @@
     >
       <option [ngValue]="undefined">All roles</option>
       @for (value of roles; track value) {
-        <option [ngValue]="value">{{ human(value) }}</option>
+        <option [ngValue]="value">{{ stringFormatter.human(value) }}</option>
       }
     </select>
   </div>
@@ -37,7 +37,7 @@
     >
       <option [ngValue]="undefined">All statuses</option>
       @for (value of statuses; track value) {
-        <option [ngValue]="value">{{ human(value) }}</option>
+        <option [ngValue]="value">{{ stringFormatter.human(value) }}</option>
       }
     </select>
   </div>

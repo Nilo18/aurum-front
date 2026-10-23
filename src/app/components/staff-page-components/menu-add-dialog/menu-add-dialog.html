@@ -49,7 +49,7 @@
           [attr.aria-describedby]="categoryError ? 'menu-category-error' : null"
         >
           @for (option of categories; track option) {
-            <option [value]="option">{{ human(option) }}</option>
+            <option [value]="option">{{ stringFormatter.human(option) }}</option>
           }
         </select>
         @if (categoryError) {
@@ -68,7 +68,7 @@
           [attr.aria-describedby]="typeError ? 'menu-type-error' : null"
         >
           @for (option of cuisines; track option) {
-            <option [value]="option">{{ human(option) }}</option>
+            <option [value]="option">{{ stringFormatter.human(option) }}</option>
           }
         </select>
         @if (typeError) {

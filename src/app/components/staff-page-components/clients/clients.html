@@ -89,12 +89,12 @@
         <tbody>
           @for (row of rows(); track $index) {
             <tr>
-              <td>{{ human(row['name']) }}</td>
-              <td class="clients__name">{{ human(row['email']) }}</td>
-              <td>{{ human(row['phone']) }}</td>
+              <td>{{ stringFormatter.human(row['name']) }}</td>
+              <td class="clients__name">{{ stringFormatter.human(row['email']) }}</td>
+              <td>{{ stringFormatter.human(row['phone']) }}</td>
               <td>
                 <span class="clients__badge" [attr.data-tone]="row['type']">{{
-                  human(row['type'])
+                  stringFormatter.human(row['type'])
                 }}</span>
               </td>
               <td>

@@ -92,17 +92,17 @@
         <tbody>
           @for (row of rows(); track row.email) {
             <tr class="employees__row">
-              <td class="employees__cell">{{ human(row['name']) }}</td>
-              <td class="employees__cell">{{ human(row['email']) }}</td>
+              <td class="employees__cell">{{ stringFormatter.human(row['name']) }}</td>
+              <td class="employees__cell">{{ stringFormatter.human(row['email']) }}</td>
               <td class="employees__cell">
-                <span class="employees__badge">{{ human(row.specialty) }}</span>
+                <span class="employees__badge">{{ stringFormatter.human(row.specialty) }}</span>
               </td>
-              <td class="employees__cell">{{ currency(row.salary) }}</td>
+              <td class="employees__cell">{{ stringFormatter.currency(row.salary) }}</td>
               <td class="employees__cell">
-                <span class="employees__badge">{{ human(row.role) }}</span>
+                <span class="employees__badge">{{ stringFormatter.human(row.role) }}</span>
               </td>
               <td class="employees__cell">
-                <span class="employees__badge">{{ human(row.status) }}</span>
+                <span class="employees__badge">{{ stringFormatter.human(row.status) }}</span>
               </td>
               <td class="employees__cell">
                 <button

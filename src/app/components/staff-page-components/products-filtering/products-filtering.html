@@ -9,7 +9,7 @@
     >
       <option value="">All categories</option>
       @for (category of categories; track category) {
-        <option [value]="category">{{ human(category) }}</option>
+        <option [value]="category">{{ stringFormatter.human(category) }}</option>
       }
     </select>
   </div>

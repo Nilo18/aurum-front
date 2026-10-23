@@ -1,7 +1,7 @@
-import { Component, effect, input, output, signal } from '@angular/core';
+import { StringFormatterService } from '../../../services/string-formatter-service';
+import { Component, effect, input, output, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { VehicleQuery, VehicleType } from '../../../services/vehicle-service';
-import { human } from '../shared/staff-format';
 
 export type VehicleFilters = Pick<
   VehicleQuery,
@@ -19,11 +19,11 @@ const capacityFields: CapacityField[] = ['passengerFrom', 'passengerTo', 'weight
   styleUrl: './vehicle-filtering.scss',
 })
 export class VehicleFiltering {
+  readonly stringFormatter = inject(StringFormatterService);
   readonly query = input<VehicleQuery>({});
   readonly disabled = input(false);
   readonly changed = output<VehicleFilters>();
   readonly types = Object.values(VehicleType);
-  readonly human = human;
 
   readonly capacityDraft = signal<CapacityFilters>({});
   private previousCapacity: CapacityFilters = {};

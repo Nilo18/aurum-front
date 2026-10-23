@@ -1,7 +1,7 @@
-import { Component, input, output } from '@angular/core';
+import { StringFormatterService } from '../../../services/string-formatter-service';
+import { Component, input, output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProductCategory, ProductQuery } from '../../../services/product-service';
-import { human } from '../shared/staff-format';
 
 @Component({
   selector: 'app-products-filtering',
@@ -10,11 +10,11 @@ import { human } from '../shared/staff-format';
   styleUrl: './products-filtering.scss',
 })
 export class ProductsFiltering {
+  readonly stringFormatter = inject(StringFormatterService);
   readonly query = input<ProductQuery>({});
   readonly disabled = input(false);
   readonly changed = output<Partial<ProductQuery>>();
   readonly categories = Object.values(ProductCategory);
-  readonly human = human;
   readonly ranges = [
     { field: 'priceFrom', label: 'Price from (₾)' },
     { field: 'priceTo', label: 'Price to (₾)' },

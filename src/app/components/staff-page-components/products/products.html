@@ -91,11 +91,11 @@
           @for (row of rows(); track row.publicId) {
             <tr>
               <td class="products__record-id">#{{ row.publicId }}</td>
-              <td class="products__name">{{ human(row['productName']) }}</td>
-              <td>{{ human(row['category']) }}</td>
-              <td>{{ currency(row['price']) }}</td>
+              <td class="products__name">{{ stringFormatter.human(row['productName']) }}</td>
+              <td>{{ stringFormatter.human(row['category']) }}</td>
+              <td>{{ stringFormatter.currency(row['price']) }}</td>
               <td>{{ row['supplier'].name }}</td>
-              <td>{{ human(row['quantity']) }}</td>
+              <td>{{ stringFormatter.human(row['quantity']) }}</td>
               <td>
                 <button
                   class="products__button products__button--text"

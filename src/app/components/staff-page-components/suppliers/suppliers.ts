@@ -1,8 +1,8 @@
+import { StringFormatterService } from '../../../services/string-formatter-service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SupplierAddDialog } from '../supplier-add-dialog/supplier-add-dialog';
-import { human } from '../shared/staff-format';
 import { SupplierDTO, SupplierQuery, SupplierService } from '../../../services/supplier-service';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { SupplierSorting } from '../supplier-sorting/supplier-sorting';
@@ -17,6 +17,7 @@ import { getRequestErrorMessage } from '../../../services/request-error';
   styleUrl: './suppliers.scss',
 })
 export class Suppliers {
+  readonly stringFormatter = inject(StringFormatterService);
   private readonly modal = inject(NgbModal);
   private supplierService = inject(SupplierService);
   readonly supplierQuery = signal<SupplierQuery>({
@@ -31,7 +32,6 @@ export class Suppliers {
     stream: ({ params }) => this.supplierService.getSuppliers(params),
   });
 
-  readonly human = human;
   readonly busy = computed(() => this.suppliers.isLoading() || this.deleting() !== undefined);
   readonly deleting = signal<string | undefined>(undefined);
   readonly search = signal('');

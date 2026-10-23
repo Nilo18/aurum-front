@@ -1,3 +1,4 @@
+import { StringFormatterService } from '../../../services/string-formatter-service';
 import { Component, inject, OnInit, resource, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormValidatorService } from '../../../services/form-validator-service';
@@ -9,7 +10,6 @@ import {
   SupplierService,
 } from '../../../services/supplier-service';
 import { getRequestErrorMessage } from '../../../services/request-error';
-import { human } from '../shared/staff-format';
 
 @Component({
   selector: 'app-supplier-add-dialog',
@@ -18,11 +18,11 @@ import { human } from '../shared/staff-format';
   styleUrl: './supplier-add-dialog.scss',
 })
 export class SupplierAddDialog implements OnInit {
+  readonly stringFormatter = inject(StringFormatterService);
   readonly modal = inject(NgbActiveModal);
   private readonly supplierService = inject(SupplierService);
   readonly formValidator = inject(FormValidatorService);
   private readonly fb = inject(FormBuilder);
-  readonly human = human;
   readonly productCategories = Object.values(ProductCategory);
   availableProductCategories = resource({
     loader: async () => {

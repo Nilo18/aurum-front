@@ -10,7 +10,7 @@
     >
       <option value="">Default order</option>
       @for (field of fields; track field) {
-        <option [value]="field">{{ human(field) }}</option>
+        <option [value]="field">{{ stringFormatter.human(field) }}</option>
       }
     </select>
   </div>

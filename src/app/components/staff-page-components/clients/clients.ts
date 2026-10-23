@@ -1,10 +1,10 @@
+import { StringFormatterService } from '../../../services/string-formatter-service';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Component, computed, inject, signal } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmActionModal } from '../../general-components/confirm-action-modal/confirm-action-modal';
 import { getRequestErrorMessage } from '../../../services/request-error';
 import { FormsModule } from '@angular/forms';
-import { human } from '../shared/staff-format';
 import { ClientService, ClientQuery } from '../../../services/client-service';
 import { ClientsFiltering } from '../clients-filtering/clients-filtering';
 import { ClientsSorting } from '../clients-sorting/clients-sorting';
@@ -16,12 +16,12 @@ import { ClientsPagination } from '../clients-pagination/clients-pagination';
   styleUrl: './clients.scss',
 })
 export class Clients {
+  readonly stringFormatter = inject(StringFormatterService);
   private readonly service = inject(ClientService);
   private readonly modal = inject(NgbModal);
   readonly confirming = signal(false);
   readonly deleting = signal<string | undefined>(undefined);
   readonly deleteError = signal('');
-  readonly human = human;
   private readonly clientQuery = signal<ClientQuery>({
     page: 0,
     size: 10,

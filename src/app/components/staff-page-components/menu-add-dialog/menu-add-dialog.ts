@@ -1,3 +1,4 @@
+import { StringFormatterService } from '../../../services/string-formatter-service';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormValidatorService } from '../../../services/form-validator-service';
@@ -10,7 +11,6 @@ import {
   MenuService,
 } from '../../../services/menu-service';
 import { getRequestErrorMessage } from '../../../services/request-error';
-import { human } from '../shared/staff-format';
 
 @Component({
   selector: 'app-menu-add-dialog',
@@ -19,11 +19,11 @@ import { human } from '../shared/staff-format';
   styleUrl: './menu-add-dialog.scss',
 })
 export class MenuAddDialog implements OnInit {
+  readonly stringFormatter = inject(StringFormatterService);
   readonly modal = inject(NgbActiveModal);
   private readonly menuService = inject(MenuService);
   readonly formValidator = inject(FormValidatorService);
   private readonly fb = inject(FormBuilder);
-  readonly human = human;
   readonly categories: MenuItemCategory[] = ['APPETIZER', 'MAIN_COURSE', 'DESSERT', 'DRINK'];
   readonly cuisines = Object.values(CuisineType);
   readonly isSubmitting = signal(false);

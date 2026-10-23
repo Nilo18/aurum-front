@@ -5,7 +5,7 @@
     <select [ngModel]="query().type" (ngModelChange)="filterType($event)">
       <option [ngValue]="undefined">All vehicle types</option>
       @for (type of types; track type) {
-        <option [ngValue]="type">{{ human(type) }}</option>
+        <option [ngValue]="type">{{ stringFormatter.human(type) }}</option>
       }
     </select>
   </label>

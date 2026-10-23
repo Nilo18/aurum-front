@@ -49,7 +49,7 @@
                   [checked]="supplierForm.controls.categories.value.has(category)"
                   (change)="toggleCategory(category, $any($event.target).checked)"
                 />
-                <span>{{ human(category) }}</span>
+                <span>{{ stringFormatter.human(category) }}</span>
               </label>
             }
           } @else {
@@ -61,7 +61,7 @@
                   [checked]="supplierForm.controls.categories.value.has(category)"
                   (change)="toggleCategory(category, $any($event.target).checked)"
                 />
-                <span>{{ human(category) }}</span>
+                <span>{{ stringFormatter.human(category) }}</span>
               </label>
             }
           }

@@ -107,7 +107,7 @@
               ><span>{{ event.date.slice(0, 7) }}</span>
             </div>
             <div>
-              <h3>{{ human(event.eventType) }}</h3>
+              <h3>{{ stringFormatter.human(event.eventType) }}</h3>
               <p>{{ event.clientName }} · {{ event.guestCount | number }} guests</p>
             </div>
           </a>
@@ -134,7 +134,7 @@
     <div class="dashboard__quick-links">
       @for (link of links; track link.path) {
         <a [routerLink]="'/staff/' + link.path"
-          ><span>{{ human(link.path) }}</span
+          ><span>{{ stringFormatter.human(link.path) }}</span
           ><strong>{{ dashboard[link.count] | number }} <small>↗</small></strong></a
         >
       }

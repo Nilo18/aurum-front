@@ -1,4 +1,5 @@
-import { Component, effect, input, output, signal } from '@angular/core';
+import { StringFormatterService } from '../../../services/string-formatter-service';
+import { Component, effect, input, output, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   EmployeeQuery,
@@ -6,7 +7,6 @@ import {
   EmployeeRole,
   EmployeeStatus,
 } from '../../../services/employee-service';
-import { human } from '../shared/staff-format';
 @Component({
   selector: 'app-employees-filtering',
   imports: [FormsModule],
@@ -14,6 +14,7 @@ import { human } from '../shared/staff-format';
   styleUrl: './employees-filtering.scss',
 })
 export class EmployeesFiltering {
+  readonly stringFormatter = inject(StringFormatterService);
   readonly query = input<EmployeeQuery>({});
   readonly disabled = input(false);
   readonly changed =
@@ -21,7 +22,6 @@ export class EmployeesFiltering {
   readonly types = Object.keys(EmployeeType).filter((key) => Number.isNaN(Number(key)));
   readonly roles = Object.keys(EmployeeRole).filter((key) => Number.isNaN(Number(key)));
   readonly statuses = Object.keys(EmployeeStatus).filter((key) => Number.isNaN(Number(key)));
-  readonly human = human;
   readonly salaryDraft = signal<Pick<EmployeeQuery, 'salaryFrom' | 'salaryTo'>>({});
   private previousSalary: Pick<EmployeeQuery, 'salaryFrom' | 'salaryTo'> = {};
   private pendingSalary: Pick<EmployeeQuery, 'salaryFrom' | 'salaryTo'> = {};

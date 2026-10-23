@@ -8,7 +8,7 @@
   >
     <option [ngValue]="undefined">All client types</option>
     @for (type of types; track type) {
-      <option [ngValue]="type">{{ human(type) }}</option>
+      <option [ngValue]="type">{{ stringFormatter.human(type) }}</option>
     }
   </select>
 </fieldset>

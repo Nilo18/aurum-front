@@ -10,7 +10,7 @@
     >
       <option [ngValue]="undefined">All categories</option>
       @for (category of categories; track category) {
-        <option [ngValue]="category">{{ human(category) }}</option>
+        <option [ngValue]="category">{{ stringFormatter.human(category) }}</option>
       }
     </select>
   </div>
@@ -24,7 +24,7 @@
     >
       <option [ngValue]="undefined">All cuisines</option>
       @for (type of cuisines; track type) {
-        <option [ngValue]="type">{{ human(type) }}</option>
+        <option [ngValue]="type">{{ stringFormatter.human(type) }}</option>
       }
     </select>
   </div>

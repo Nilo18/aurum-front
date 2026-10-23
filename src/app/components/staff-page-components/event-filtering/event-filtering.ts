@@ -1,6 +1,6 @@
-import { Component, input, output } from '@angular/core';
+import { StringFormatterService } from '../../../services/string-formatter-service';
+import { Component, input, output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { human } from '../shared/staff-format';
 import {
   EventQuery,
   EventFilterKey,
@@ -15,6 +15,7 @@ import {
   styleUrl: './event-filtering.scss',
 })
 export class EventFiltering {
+  readonly stringFormatter = inject(StringFormatterService);
   readonly query = input<EventQuery>({});
   readonly disabled = input(false);
   readonly changed = output<Pick<EventQuery, EventFilterKey>>();
@@ -22,7 +23,6 @@ export class EventFiltering {
   readonly types = Object.values(EventType);
   readonly locations = Object.values(EventLocation);
   readonly statuses = Object.values(EventStatus);
-  readonly human = human;
   filter<K extends EventFilterKey>(field: K, value: EventQuery[K] | null) {
     if (this.disabled()) return;
     const normalized = value === null || value === '' ? undefined : value;

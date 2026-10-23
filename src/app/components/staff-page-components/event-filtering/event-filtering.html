@@ -11,7 +11,7 @@
       >
         <option [ngValue]="undefined">Any event type</option>
         @for (option of types; track option) {
-          <option [ngValue]="option">{{ human(option) }}</option>
+          <option [ngValue]="option">{{ stringFormatter.human(option) }}</option>
         }
       </select>
     </div>
@@ -25,7 +25,7 @@
       >
         <option [ngValue]="undefined">Any location</option>
         @for (option of locations; track option) {
-          <option [ngValue]="option">{{ human(option) }}</option>
+          <option [ngValue]="option">{{ stringFormatter.human(option) }}</option>
         }
       </select>
     </div>
@@ -39,7 +39,7 @@
       >
         <option [ngValue]="undefined">Any status</option>
         @for (option of statuses; track option) {
-          <option [ngValue]="option">{{ human(option) }}</option>
+          <option [ngValue]="option">{{ stringFormatter.human(option) }}</option>
         }
       </select>
     </div>

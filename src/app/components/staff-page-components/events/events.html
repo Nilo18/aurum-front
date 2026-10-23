@@ -82,11 +82,11 @@
           @for (row of rows(); track $index) {
             <tr>
               <td>{{ row.clientName }}</td>
-              <td class="events__event-type">{{ human(row.eventType) }}</td>
+              <td class="events__event-type">{{ stringFormatter.human(row.eventType) }}</td>
               <td>{{ row.date }}</td>
-              <td>{{ currency(row.totalCost) }}</td>
+              <td>{{ stringFormatter.currency(row.totalCost) }}</td>
               <td>{{ row.guestCount }}</td>
-              <td>{{ human(row.location) }}</td>
+              <td>{{ stringFormatter.human(row.location) }}</td>
               <td>
                 <span
                   class="events__badge"
@@ -96,7 +96,7 @@
                   [class.events__badge--planning]="row.status === 'PLANNING'"
                   [class.events__badge--cancelled]="row.status === 'CANCELLED'"
                   [class.events__badge--rejected]="row.status === 'REJECTED'"
-                  >{{ human(row.status) }}</span
+                  >{{ stringFormatter.human(row.status) }}</span
                 >
               </td>
               <td>

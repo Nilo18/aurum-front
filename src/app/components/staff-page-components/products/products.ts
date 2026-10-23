@@ -1,7 +1,7 @@
+import { StringFormatterService } from '../../../services/string-formatter-service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { human, currency } from '../shared/staff-format';
 import { ProductQuery, ProductRowDTO, ProductService } from '../../../services/product-service';
 import { rxResource } from '@angular/core/rxjs-interop';
 
@@ -18,10 +18,9 @@ import { getRequestErrorMessage } from '../../../services/request-error';
   styleUrl: './products.scss',
 })
 export class Products {
+  readonly stringFormatter = inject(StringFormatterService);
   private readonly modal = inject(NgbModal);
   private productService = inject(ProductService);
-  readonly human = human;
-  readonly currency = currency;
   readonly productQuery = signal<ProductQuery>({
     page: 0,
     size: 10,

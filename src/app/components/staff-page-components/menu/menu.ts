@@ -1,8 +1,8 @@
+import { StringFormatterService } from '../../../services/string-formatter-service';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MenuAddDialog } from '../menu-add-dialog/menu-add-dialog';
-import { human, currency } from '../shared/staff-format';
 import { MenuItemDTO, MenuItemQuery, MenuService } from '../../../services/menu-service';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MenuSorting } from '../menu-sorting/menu-sorting';
@@ -17,6 +17,7 @@ import { getRequestErrorMessage } from '../../../services/request-error';
   styleUrl: './menu.scss',
 })
 export class Menu {
+  readonly stringFormatter = inject(StringFormatterService);
   private readonly modal = inject(NgbModal);
   private menuService = inject(MenuService);
   readonly menuQuery = signal<MenuItemQuery>({
@@ -32,8 +33,6 @@ export class Menu {
   });
 
   readonly menuPage = computed(() => (this.menu.hasValue() ? this.menu.value() : undefined));
-  readonly human = human;
-  readonly currency = currency;
   readonly busy = computed(() => this.menu.isLoading() || this.deleting() !== undefined);
   readonly deleting = signal<string | undefined>(undefined);
   readonly notice = signal('');

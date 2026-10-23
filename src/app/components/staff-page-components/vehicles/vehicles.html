@@ -80,11 +80,11 @@
               <td class="vehicles__record-id">#{{ row.publicId }}</td>
               <td class="vehicles__type">
                 <span class="vehicles__badge" [attr.data-tone]="row['type']">{{
-                  human(row['type'])
+                  stringFormatter.human(row['type'])
                 }}</span>
               </td>
-              <td>{{ human(row['passengerCapacity']) }}</td>
-              <td>{{ human(row['cargoWeightLimit']) }}</td>
+              <td>{{ stringFormatter.human(row['passengerCapacity']) }}</td>
+              <td>{{ stringFormatter.human(row['cargoWeightLimit']) }}</td>
               <td>
                 <button
                   class="vehicles__button vehicles__button--text"
