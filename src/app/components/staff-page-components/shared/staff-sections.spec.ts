@@ -2,7 +2,6 @@ import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Menu } from '../menu/menu';
-import { Suppliers } from '../suppliers/suppliers';
 import { StaffCollection, StaffPreviewStore } from './staff-preview-store';
 import { Row } from './staff-row';
 
@@ -14,10 +13,7 @@ interface EditableSection {
   save(): void;
 }
 
-const sections: [string, Type<EditableSection>, StaffCollection][] = [
-  ['Menu', Menu, 'menu'],
-  ['Suppliers', Suppliers, 'suppliers'],
-];
+const sections: [string, Type<EditableSection>, StaffCollection][] = [['Menu', Menu, 'menu']];
 
 describe('Staff section ownership', () => {
   const showModal = Object.getOwnPropertyDescriptor(HTMLDialogElement.prototype, 'showModal');

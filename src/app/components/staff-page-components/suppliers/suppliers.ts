@@ -1,74 +1,94 @@
-import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { StaffPreviewStore } from '../shared/staff-preview-store';
-import { Row } from '../shared/staff-row';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SupplierAddDialog } from '../supplier-add-dialog/supplier-add-dialog';
 import { human } from '../shared/staff-format';
+import { SupplierDTO, SupplierQuery, SupplierService } from '../../../services/supplier-service';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { SupplierSorting } from '../supplier-sorting/supplier-sorting';
+import { SupplierFiltering } from '../supplier-filtering/supplier-filtering';
+import { SupplierPagination } from '../supplier-pagination/supplier-pagination';
+import { getRequestErrorMessage } from '../../../services/request-error';
 
 @Component({
   selector: 'app-suppliers',
-  imports: [FormsModule],
+  imports: [FormsModule, SupplierSorting, SupplierFiltering, SupplierPagination],
   templateUrl: './suppliers.html',
   styleUrl: './suppliers.scss',
 })
 export class Suppliers {
-  readonly store = inject(StaffPreviewStore);
-  readonly human = human;
+  private readonly modal = inject(NgbModal);
+  private supplierService = inject(SupplierService);
+  readonly supplierQuery = signal<SupplierQuery>({
+    page: 0,
+    size: 10,
+    search: '',
+    sortBy: '',
+    sortDirection: '',
+  });
+  suppliers = rxResource({
+    params: () => this.supplierQuery(),
+    stream: ({ params }) => this.supplierService.getSuppliers(params),
+  });
 
+  readonly human = human;
+  readonly busy = computed(() => this.suppliers.isLoading() || this.deleting() !== undefined);
+  readonly deleting = signal<string | undefined>(undefined);
   readonly search = signal('');
   readonly filter = signal('');
-  readonly editor = signal(false);
   readonly notice = signal('');
-  readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('editorDialog');
-  readonly rows = computed(() => this.store.data().suppliers);
-  readonly filters = computed(() =>
-    Array.from(new Set(this.rows().map((row) => String(row['city'])))),
-  );
-  readonly filtered = computed(() =>
-    this.rows().filter(
-      (row) =>
-        (!this.filter() || String(row['city']) === this.filter()) &&
-        Object.entries(row).some(([key, value]) =>
-          this.searchValue(key, value).toLowerCase().includes(this.search().toLowerCase()),
-        ),
-    ),
-  );
-  editing?: Row;
-  draft: Row = {};
+  readonly deleteError = signal('');
 
-  constructor() {
-    effect(() => {
-      const dialog = this.dialog()?.nativeElement;
-      if (dialog && !dialog.open) dialog.showModal();
+  updateQuery(changes: Partial<SupplierQuery>, resetPage = true) {
+    this.supplierQuery.update((query) => ({
+      ...query,
+      ...changes,
+      ...(resetPage ? { page: 0 } : {}),
+    }));
+  }
+
+  open(supplier?: SupplierDTO): void {
+    if (this.busy()) return;
+    const modalRef = this.modal.open(SupplierAddDialog, {
+      centered: true,
+      ariaLabelledBy: 'supplier-editor-title',
+      windowClass: 'aurum-supplier-modal',
+      beforeDismiss: () => !modalRef.componentInstance.isSubmitting(),
     });
+    modalRef.componentInstance.supplier = supplier;
+    void modalRef.result.then(
+      (message: string) => {
+        this.notice.set(message);
+        this.suppliers.reload();
+      },
+      () => {},
+    );
   }
 
-  private searchValue(key: string, value: unknown): string {
-    return human(value);
-  }
-
-  open(row?: Row): void {
-    this.editing = row;
-    this.draft = row
-      ? { ...row }
-      : {
-          partnerNumber: '',
-          productType: '',
-          city: '',
-          street: '',
-          number: '',
-        };
-    this.editor.set(true);
-  }
-
-  close(): void {
-    this.editor.set(false);
-  }
-
-  save(): void {
-    const row = { ...this.draft };
-
-    this.store.save('suppliers', row, this.editing);
-    this.close();
-    this.notice.set('Supplier saved in this preview session.');
+  async deleteSupplier(publicId: string): Promise<void> {
+    if (this.busy()) return;
+    this.deleting.set(publicId);
+    this.deleteError.set('');
+    this.notice.set('');
+    try {
+      const response = await this.supplierService.deleteSupplier(publicId);
+      if (response.status < 200 || response.status >= 300) {
+        this.deleteError.set(response.message || 'Unable to delete supplier. Please try again.');
+        return;
+      }
+      this.notice.set('Supplier deleted.');
+      const page = this.suppliers.value();
+      if (page?.content.length === 1 && page.pageNumber > 0) {
+        this.updateQuery({ page: page.pageNumber - 1 }, false);
+      } else {
+        this.suppliers.reload();
+      }
+    } catch (error) {
+      this.deleteError.set(
+        getRequestErrorMessage(error, 'Unable to delete supplier. Please try again.'),
+      );
+    } finally {
+      this.deleting.set(undefined);
+    }
   }
 }

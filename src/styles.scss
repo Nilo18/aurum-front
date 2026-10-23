@@ -44,7 +44,8 @@ a:focus-visible {
 .aurum-verification-modal,
 .aurum-success-modal,
 .aurum-confirm-action-modal,
-.aurum-vehicle-modal {
+.aurum-vehicle-modal,
+.aurum-supplier-modal {
   .modal-content {
     overflow: hidden;
     border: 0;
@@ -113,7 +114,8 @@ a:focus-visible {
   }
 }
 
-.aurum-vehicle-modal {
+.aurum-vehicle-modal,
+.aurum-supplier-modal {
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(4px);
 
@@ -142,7 +144,8 @@ a:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .aurum-vehicle-modal.fade .modal-dialog {
+  .aurum-vehicle-modal.fade .modal-dialog,
+  .aurum-supplier-modal.fade .modal-dialog {
     transform: none;
     transition: none;
   }

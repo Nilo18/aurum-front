@@ -1,0 +1,84 @@
+<div class="supplier-add-dialog">
+  <div class="supplier-add-dialog__panel-heading">
+    <div>
+      <p class="supplier-add-dialog__eyebrow">THE DETAILS</p>
+      <h2 id="supplier-editor-title">{{ supplier ? 'Edit' : 'New' }} supplier</h2>
+    </div>
+    <button
+      class="supplier-add-dialog__button supplier-add-dialog__button--text"
+      (click)="close()"
+      [disabled]="isSubmitting()"
+      aria-label="Close editor"
+    >
+      ✕
+    </button>
+  </div>
+  <p class="supplier-add-dialog__editor-note">Add the supplier details to your collection.</p>
+  <form #editorForm="ngForm" (ngSubmit)="save(editorForm)" [attr.aria-busy]="isSubmitting()">
+    <fieldset class="supplier-add-dialog__fields" [disabled]="isSubmitting()">
+      <label
+        >Supplier name<input type="text" name="partnerNumber" [(ngModel)]="draft.name" required
+      /></label>
+      <fieldset
+        class="supplier-add-dialog__category-picker"
+        aria-describedby="supplier-category-hint"
+      >
+        <legend>Product types</legend>
+        <p id="supplier-category-hint">Select all product types this supplier provides.</p>
+        <div class="supplier-add-dialog__category-options">
+          @if (supplier) {
+            @for (category of productCategories; track category) {
+              <label class="supplier-add-dialog__category-option">
+                <input
+                  type="checkbox"
+                  [name]="'category-' + category"
+                  [ngModel]="draft.categories.has(category)"
+                  (ngModelChange)="toggleCategory(category, $event)"
+                />
+                <span>{{ human(category) }}</span>
+              </label>
+            }
+          } @else {
+            @for (category of availableProductCategories.value(); track category) {
+              <label class="supplier-add-dialog__category-option">
+                <input
+                  type="checkbox"
+                  [name]="'category-' + category"
+                  [ngModel]="draft.categories.has(category)"
+                  (ngModelChange)="toggleCategory(category, $event)"
+                />
+                <span>{{ human(category) }}</span>
+              </label>
+            }
+          }
+        </div>
+      </fieldset>
+      <label>City<input type="text" name="city" [(ngModel)]="draft['city']" required /></label>
+      <label
+        >Street<input type="text" name="street" [(ngModel)]="draft['street']" required
+      /></label>
+      <label
+        >Building number<input type="text" name="number" [(ngModel)]="draft['number']" required
+      /></label>
+    </fieldset>
+    @if (submissionError()) {
+      <p class="supplier-add-dialog__error" role="alert">{{ submissionError() }}</p>
+    }
+    <div class="supplier-add-dialog__form-actions">
+      <button
+        type="button"
+        class="supplier-add-dialog__button supplier-add-dialog__button--secondary"
+        (click)="close()"
+        [disabled]="isSubmitting()"
+      >
+        Cancel</button
+      ><button
+        type="submit"
+        [disabled]="isSubmitting()"
+        class="supplier-add-dialog__button supplier-add-dialog__button--primary"
+      >
+        {{ isSubmitting() ? 'Saving…' : 'Save supplier' }}
+      </button>
+    </div>
+  </form>
+</div>

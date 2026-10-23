@@ -1,0 +1,16 @@
+<fieldset class="border-0 p-0 m-0">
+  <legend class="visually-hidden">Supplier filters</legend>
+  <label for="suppliers-category" class="form-label">Product category</label>
+  <select id="suppliers-category" class="form-select" [(ngModel)]="selectedFilter" (change)="filter(selectedFilter())">
+    <option [ngValue]="undefined" selected>All categories</option>
+    @for (category of categories; track category) {
+      <option [value]="category">{{ capitalizeFirstLetter(category) }}</option>
+    }
+    <!-- <option value="">All categories</option>
+    <option value="TABLEWARE">Tableware</option>
+    <option value="GLASSWARE">Glassware</option>
+    <option value="FLORALS">Florals</option>
+    <option value="DECORATION">Decoration</option>
+    <option value="FOOD_INGREDIENT">Food ingredient</option> -->
+  </select>
+</fieldset>
