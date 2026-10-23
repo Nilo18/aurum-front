@@ -1,6 +1,7 @@
-@use '../shared/vehicle-controls';
+@use '../vehicles/vehicle-controls';
 
 @include vehicle-controls.styles;
+@include vehicle-controls.field('vehicle-sorting');
 
 .vehicle-sorting {
   display: grid;

@@ -1,4 +1,4 @@
-@use '../shared/vehicle-controls';
+@use '../vehicles/vehicle-controls';
 
 @include vehicle-controls.styles;
 
@@ -8,6 +8,40 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+
+  &__button {
+    min-width: 34px;
+    min-height: 34px;
+    padding: 7px 10px;
+    border: 1px solid #393329;
+    border-radius: 4px;
+    background: #0b0a08;
+    color: #bba16d;
+    font: inherit;
+    font-size: 10px;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: #292314;
+      color: #edcf91;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #d0ac62;
+      outline-offset: 3px;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &--active {
+      background: #c6a35e;
+      border-color: #b69550;
+      color: #16130e;
+    }
+  }
 
   &__summary {
     color: #9a8c76;
@@ -33,13 +67,5 @@
 
   &__size select {
     width: auto;
-  }
-}
-
-.active {
-  & .vehicle-controls__button {
-    background: #c6a35e;
-    border-color: #b69550;
-    color: #16130e;
   }
 }

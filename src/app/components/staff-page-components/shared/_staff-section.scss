@@ -312,3 +312,116 @@
     }
   }
 }
+
+// Shared theme for Bootstrap staff form controls and pagination.
+@mixin controls {
+  :host {
+    display: block;
+    color: #e9e3d8;
+  }
+
+  .form-label,
+  .form-text {
+    color: #b5aa98;
+    font-size: 0.75rem;
+  }
+
+  .form-control,
+  .form-select {
+    background-color: #191814;
+    border-color: #494132;
+    color: #e9e3d8;
+    color-scheme: dark;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #c7af7e;
+    box-shadow: 0 0 0 0.2rem #c7af7e25;
+  }
+
+  .form-control {
+    &::placeholder {
+      color: #a39782;
+    }
+  }
+
+  .page-link {
+    background: #191814;
+    color: #c7af7e;
+    border-color: #494132;
+    min-width: 2.5rem;
+    text-align: center;
+
+    &:focus-visible {
+      box-shadow: 0 0 0 0.2rem #c7af7e55;
+    }
+  }
+
+  .page-item {
+    &.active .page-link {
+      background: #c7af7e;
+      border-color: #c7af7e;
+      color: #191814;
+    }
+
+    &.disabled .page-link {
+      background: #222019;
+      border-color: #494132;
+      color: #857c6c;
+    }
+  }
+
+  fieldset {
+    min-width: 0;
+  }
+}
+
+// Standard sizing and interactions for collection controls.
+@mixin collection-controls {
+  @include controls;
+
+  .form-select,
+  .form-control {
+    min-height: 44px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+
+  .form-select {
+    --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23c7af7e' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  }
+
+  .form-select:disabled,
+  .form-control:disabled {
+    background-color: #222019;
+    color: #857c6c;
+  }
+
+  .btn-outline-warning {
+    --bs-btn-color: #c7af7e;
+    --bs-btn-border-color: #685333;
+    --bs-btn-hover-bg: #c7af7e;
+    --bs-btn-hover-color: #191814;
+    --bs-btn-hover-border-color: #c7af7e;
+    --bs-btn-disabled-color: #857c6c;
+    --bs-btn-disabled-border-color: #494132;
+    font-size: 0.8rem;
+  }
+
+  .page-link {
+    min-height: 40px;
+    display: grid;
+    place-items: center;
+
+    &:hover {
+      background: #30291c;
+      color: #edcf91;
+      border-color: #685333;
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+}

@@ -1,1 +1,3 @@
-@use '../shared/event-controls';
+@use '../shared/staff-section';
+
+@include staff-section.controls;

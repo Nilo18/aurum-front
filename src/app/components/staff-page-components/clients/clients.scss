@@ -1,6 +1,6 @@
 @use '../shared/staff-section';
 
-@use '../shared/client-controls';
+@include staff-section.collection-controls;
 
 @include staff-section.styles('clients');
 

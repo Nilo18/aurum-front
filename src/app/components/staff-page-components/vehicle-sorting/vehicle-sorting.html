@@ -1,6 +1,6 @@
 <fieldset class="vehicle-sorting" [disabled]="disabled()">
   <legend class="visually-hidden">Sort vehicles</legend>
-  <label class="vehicle-controls__field">
+  <label class="vehicle-sorting__field">
     Sort by
     <select
       [ngModel]="query().sortBy || ''"
@@ -12,7 +12,7 @@
       }
     </select>
   </label>
-  <label class="vehicle-controls__field">
+  <label class="vehicle-sorting__field">
     Direction
     <select
       [disabled]="disabled() || !query().sortBy"

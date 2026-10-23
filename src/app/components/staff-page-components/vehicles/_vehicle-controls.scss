@@ -9,14 +9,6 @@
     border: 0;
     min-width: 0;
   }
-  .vehicle-controls__field {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-    min-width: 0;
-    color: #bdb09a;
-    font-size: 10px;
-  }
   input,
   select {
     width: 100%;
@@ -34,33 +26,26 @@
     color: #776e5e;
   }
   input:focus-visible,
-  select:focus-visible,
-  button:focus-visible {
+  select:focus-visible {
     outline: 2px solid #d0ac62;
     outline-offset: 3px;
   }
-  button {
-    cursor: pointer;
-  }
-  button:disabled,
   input:disabled,
   select:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-  .vehicle-controls__button {
-    min-width: 34px;
-    min-height: 34px;
-    padding: 7px 10px;
-    border: 1px solid #393329;
-    border-radius: 4px;
-    background: #0b0a08;
-    color: #bba16d;
-    font: inherit;
-    font-size: 10px;
-  }
-  .vehicle-controls__button:hover:not(:disabled) {
-    background: #292314;
-    color: #edcf91;
+}
+
+@mixin field($block) {
+  .#{$block} {
+    &__field {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      min-width: 0;
+      color: #bdb09a;
+      font-size: 10px;
+    }
   }
 }

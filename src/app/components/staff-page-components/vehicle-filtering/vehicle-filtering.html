@@ -1,6 +1,6 @@
 <fieldset class="vehicle-filters" [disabled]="disabled()">
   <legend class="visually-hidden">Filter vehicles</legend>
-  <label class="vehicle-controls__field">
+  <label class="vehicle-filters__field">
     Vehicle type
     <select [ngModel]="query().type" (ngModelChange)="filterType($event)">
       <option [ngValue]="undefined">All vehicle types</option>
@@ -12,7 +12,7 @@
   <fieldset class="vehicle-filters__range">
     <legend>Passenger capacity</legend>
     <div class="vehicle-filters__range-inputs">
-      <label class="vehicle-controls__field">
+      <label class="vehicle-filters__field">
         <span class="visually-hidden">Minimum passenger capacity</span>
         <input
           type="number"
@@ -24,7 +24,7 @@
         />
       </label>
       <span aria-hidden="true">–</span>
-      <label class="vehicle-controls__field">
+      <label class="vehicle-filters__field">
         <span class="visually-hidden">Maximum passenger capacity</span>
         <input
           type="number"
@@ -40,7 +40,7 @@
   <fieldset class="vehicle-filters__range">
     <legend>Cargo limit (kg)</legend>
     <div class="vehicle-filters__range-inputs">
-      <label class="vehicle-controls__field">
+      <label class="vehicle-filters__field">
         <span class="visually-hidden">Minimum cargo limit (kg)</span>
         <input
           type="number"
@@ -52,7 +52,7 @@
         />
       </label>
       <span aria-hidden="true">–</span>
-      <label class="vehicle-controls__field">
+      <label class="vehicle-filters__field">
         <span class="visually-hidden">Maximum cargo limit (kg)</span>
         <input
           type="number"

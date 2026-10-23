@@ -1,6 +1,6 @@
 @use '../shared/staff-section';
 
-@use '../shared/event-controls';
+@include staff-section.controls;
 
 @include staff-section.styles('events');
 

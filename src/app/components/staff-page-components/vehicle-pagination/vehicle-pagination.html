@@ -6,7 +6,7 @@
     <ul class="vehicle-pagination__pages">
       <li class="page-item" [class.disabled]="disabled() || pageNumber() === 0">
         <button
-          class="vehicle-controls__button"
+          class="vehicle-pagination__button"
           [disabled]="disabled() || pageNumber() === 0"
           (click)="paginate(0)"
           aria-label="First page"
@@ -16,7 +16,7 @@
       </li>
       <li class="page-item" [class.disabled]="disabled() || pageNumber() === 0">
         <button
-          class="vehicle-controls__button"
+          class="vehicle-pagination__button"
           [disabled]="disabled() || pageNumber() === 0"
           (click)="paginate(pageNumber() - 1)"
         >
@@ -24,9 +24,10 @@
         </button>
       </li>
       @for (number of pages(); track number) {
-        <li class="page-item" [class.active]="number === pageNumber()">
+        <li class="page-item">
           <button
-            class="vehicle-controls__button"
+            class="vehicle-pagination__button"
+            [class.vehicle-pagination__button--active]="number === pageNumber()"
             [disabled]="disabled()"
             [attr.aria-current]="number === pageNumber() ? 'page' : null"
             [attr.aria-label]="'Page ' + (number + 1)"
@@ -38,7 +39,7 @@
       }
       <li class="page-item" [class.disabled]="disabled() || pageNumber() >= pageCount() - 1">
         <button
-          class="vehicle-controls__button"
+          class="vehicle-pagination__button"
           [disabled]="disabled() || pageNumber() >= pageCount() - 1"
           (click)="paginate(pageNumber() + 1)"
         >
@@ -47,7 +48,7 @@
       </li>
       <li class="page-item" [class.disabled]="disabled() || pageNumber() >= pageCount() - 1">
         <button
-          class="vehicle-controls__button"
+          class="vehicle-pagination__button"
           [disabled]="disabled() || pageNumber() >= pageCount() - 1"
           (click)="paginate(pageCount() - 1)"
           aria-label="Last page"
