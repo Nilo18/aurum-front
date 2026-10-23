@@ -1,13 +1,8 @@
-import { ClientType } from "../../../services/client-service";
+import { ClientType } from '../../../services/client-service';
 
 // export type ClientType = 'PERSON' | 'ORGANIZATION';
 export type EventStatus =
-  | 'REQUESTED'
-  | 'PLANNING'
-  | 'CONFIRMED'
-  | 'COMPLETED'
-  | 'REJECTED'
-  | 'CANCELLED';
+  'REQUESTED' | 'PLANNING' | 'CONFIRMED' | 'COMPLETED' | 'REJECTED' | 'CANCELLED';
 
 export interface Client {
   id: number;
@@ -37,5 +32,5 @@ export type NewEvent = Omit<Event, 'id' | 'clientId'>;
 export interface EventRequestDraft {
   client: NewClient;
   event: NewEvent;
-  menuItemIds: number[];
+  menuItemIds: string[];
 }

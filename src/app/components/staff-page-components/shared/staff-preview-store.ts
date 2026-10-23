@@ -3,10 +3,9 @@ import { Row } from './staff-row';
 import { vehiclesSeed } from '../vehicles/vehicles.data';
 import { productsSeed } from '../products/products.data';
 import { suppliersSeed } from '../suppliers/suppliers.data';
-import { menuSeed } from '../menu/menu.data';
 import { feedbackSeed } from '../feedback/feedback.data';
 
-export type StaffCollection = 'vehicles' | 'products' | 'suppliers' | 'menu' | 'feedback';
+export type StaffCollection = 'vehicles' | 'products' | 'suppliers' | 'feedback';
 
 /** In-memory preview records shared by staff routes for the current session. */
 @Injectable({ providedIn: 'root' })
@@ -15,7 +14,6 @@ export class StaffPreviewStore {
     vehicles: vehiclesSeed.map((row) => ({ ...row })),
     products: productsSeed.map((row) => ({ ...row })),
     suppliers: suppliersSeed.map((row) => ({ ...row })),
-    menu: menuSeed.map((row) => ({ ...row })),
     feedback: feedbackSeed.map((row) => ({ ...row })),
   });
   readonly data = this.records.asReadonly();

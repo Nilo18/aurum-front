@@ -27,18 +27,25 @@
   </div>
   <section class="suppliers__panel">
     <div class="suppliers__controls">
-      <div class="suppliers__search-field">
-        <label for="suppliers-search" class="suppliers__filter-label">Search suppliers</label>
-        <div class="suppliers__search">
-          <span aria-hidden="true">⌕</span
-          ><input
+      <form
+        class="suppliers__search-field"
+        (ngSubmit)="updateQuery({ search: supplierQuery().search })"
+      >
+        <label class="suppliers__search-label" for="suppliers-search">Search collection</label>
+        <div class="suppliers__search input-group">
+          <input
             id="suppliers-search"
-            placeholder="Search by name, city, street or number"
+            name="search"
+            class="form-control"
+            type="search"
+            placeholder="Search suppliers..."
             [ngModel]="supplierQuery().search"
             (ngModelChange)="updateQuery({ search: $event })"
+            [disabled]="deleting() !== undefined"
           />
+          <button class="btn btn-outline-warning" type="submit" [disabled]="busy()">Search</button>
         </div>
-      </div>
+      </form>
       <div class="suppliers__filters">
         <app-supplier-sorting
           [query]="supplierQuery()"

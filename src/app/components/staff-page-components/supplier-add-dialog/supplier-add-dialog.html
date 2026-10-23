@@ -14,11 +14,25 @@
     </button>
   </div>
   <p class="supplier-add-dialog__editor-note">Add the supplier details to your collection.</p>
-  <form #editorForm="ngForm" (ngSubmit)="save(editorForm)" [attr.aria-busy]="isSubmitting()">
+  <form [formGroup]="supplierForm" (ngSubmit)="save()" novalidate [attr.aria-busy]="isSubmitting()">
     <fieldset class="supplier-add-dialog__fields" [disabled]="isSubmitting()">
-      <label
-        >Supplier name<input type="text" name="partnerNumber" [(ngModel)]="draft.name" required
-      /></label>
+      @let nameError = formValidator.getRequiredError('name', supplierForm);
+      <label>
+        Supplier name
+        <input
+          type="text"
+          name="name"
+          formControlName="name"
+          required
+          [attr.aria-invalid]="!!nameError"
+          [attr.aria-describedby]="nameError ? 'supplier-name-error' : null"
+        />
+        @if (nameError) {
+          <span id="supplier-name-error" class="supplier-add-dialog__field-error" role="alert">{{
+            nameError
+          }}</span>
+        }
+      </label>
       <fieldset
         class="supplier-add-dialog__category-picker"
         aria-describedby="supplier-category-hint"
@@ -32,8 +46,8 @@
                 <input
                   type="checkbox"
                   [name]="'category-' + category"
-                  [ngModel]="draft.categories.has(category)"
-                  (ngModelChange)="toggleCategory(category, $event)"
+                  [checked]="supplierForm.controls.categories.value.has(category)"
+                  (change)="toggleCategory(category, $any($event.target).checked)"
                 />
                 <span>{{ human(category) }}</span>
               </label>
@@ -44,8 +58,8 @@
                 <input
                   type="checkbox"
                   [name]="'category-' + category"
-                  [ngModel]="draft.categories.has(category)"
-                  (ngModelChange)="toggleCategory(category, $event)"
+                  [checked]="supplierForm.controls.categories.value.has(category)"
+                  (change)="toggleCategory(category, $any($event.target).checked)"
                 />
                 <span>{{ human(category) }}</span>
               </label>
@@ -53,13 +67,57 @@
           }
         </div>
       </fieldset>
-      <label>City<input type="text" name="city" [(ngModel)]="draft['city']" required /></label>
-      <label
-        >Street<input type="text" name="street" [(ngModel)]="draft['street']" required
-      /></label>
-      <label
-        >Building number<input type="text" name="number" [(ngModel)]="draft['number']" required
-      /></label>
+      @let cityError = formValidator.getRequiredError('city', supplierForm);
+      <label>
+        City
+        <input
+          type="text"
+          name="city"
+          formControlName="city"
+          required
+          [attr.aria-invalid]="!!cityError"
+          [attr.aria-describedby]="cityError ? 'supplier-city-error' : null"
+        />
+        @if (cityError) {
+          <span id="supplier-city-error" class="supplier-add-dialog__field-error" role="alert">{{
+            cityError
+          }}</span>
+        }
+      </label>
+      @let streetError = formValidator.getRequiredError('street', supplierForm);
+      <label>
+        Street
+        <input
+          type="text"
+          name="street"
+          formControlName="street"
+          required
+          [attr.aria-invalid]="!!streetError"
+          [attr.aria-describedby]="streetError ? 'supplier-street-error' : null"
+        />
+        @if (streetError) {
+          <span id="supplier-street-error" class="supplier-add-dialog__field-error" role="alert">{{
+            streetError
+          }}</span>
+        }
+      </label>
+      @let numberError = formValidator.getRequiredError('number', supplierForm);
+      <label>
+        Building number
+        <input
+          type="text"
+          name="number"
+          formControlName="number"
+          required
+          [attr.aria-invalid]="!!numberError"
+          [attr.aria-describedby]="numberError ? 'supplier-number-error' : null"
+        />
+        @if (numberError) {
+          <span id="supplier-number-error" class="supplier-add-dialog__field-error" role="alert">{{
+            numberError
+          }}</span>
+        }
+      </label>
     </fieldset>
     @if (submissionError()) {
       <p class="supplier-add-dialog__error" role="alert">{{ submissionError() }}</p>

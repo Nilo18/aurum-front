@@ -1,0 +1,130 @@
+<div class="menu-add-dialog">
+  <div class="menu-add-dialog__panel-heading">
+    <h2 id="menu-editor-title">{{ menuItem ? 'Edit' : 'New' }} menu item</h2>
+    <button
+      class="menu-add-dialog__button menu-add-dialog__button--text menu-add-dialog__close-btn"
+      type="button"
+      (click)="close()"
+      [disabled]="isSubmitting()"
+      aria-label="Close editor"
+    >
+      ×
+    </button>
+  </div>
+  <form [formGroup]="menuForm" (ngSubmit)="save()" novalidate [attr.aria-busy]="isSubmitting()">
+    <fieldset class="menu-add-dialog__fields" [disabled]="isSubmitting()">
+      @let nameError =
+        formValidator.getFirstError(
+          formValidator.getRequiredError('name', menuForm),
+          formValidator.getMaxLengthError('name', menuForm),
+          formValidator.getPatternError(
+            'name',
+            menuForm,
+            'Name must contain a non-space character.'
+          )
+        );
+      <label
+        >Dish name
+        <input
+          type="text"
+          formControlName="name"
+          maxlength="150"
+          required
+          [attr.aria-invalid]="!!nameError"
+          [attr.aria-describedby]="nameError ? 'menu-name-error' : null"
+        />
+        @if (nameError) {
+          <span class="menu-add-dialog__field-error" id="menu-name-error" role="alert">{{
+            nameError
+          }}</span>
+        }
+      </label>
+      @let categoryError = formValidator.getRequiredError('category', menuForm);
+      <label
+        >Category
+        <select
+          formControlName="category"
+          required
+          [attr.aria-invalid]="!!categoryError"
+          [attr.aria-describedby]="categoryError ? 'menu-category-error' : null"
+        >
+          @for (option of categories; track option) {
+            <option [value]="option">{{ human(option) }}</option>
+          }
+        </select>
+        @if (categoryError) {
+          <span class="menu-add-dialog__field-error" id="menu-category-error" role="alert">{{
+            categoryError
+          }}</span>
+        }
+      </label>
+      @let typeError = formValidator.getRequiredError('type', menuForm);
+      <label
+        >Cuisine
+        <select
+          formControlName="type"
+          required
+          [attr.aria-invalid]="!!typeError"
+          [attr.aria-describedby]="typeError ? 'menu-type-error' : null"
+        >
+          @for (option of cuisines; track option) {
+            <option [value]="option">{{ human(option) }}</option>
+          }
+        </select>
+        @if (typeError) {
+          <span class="menu-add-dialog__field-error" id="menu-type-error" role="alert">{{
+            typeError
+          }}</span>
+        }
+      </label>
+      @let pricePerPersonError =
+        menuForm.controls.pricePerPerson.touched
+          ? formValidator.getFirstError(
+              formValidator.getRequiredAmountError('pricePerPerson', menuForm),
+              formValidator.getPatternError(
+                'pricePerPerson',
+                menuForm,
+                'Use at most two decimal places.'
+              )
+            )
+          : '';
+      <label
+        >Price per person (₾)
+        <input
+          type="number"
+          formControlName="pricePerPerson"
+          min="0"
+          max="99999999.99"
+          step="0.01"
+          required
+          [attr.aria-invalid]="!!pricePerPersonError"
+          [attr.aria-describedby]="pricePerPersonError ? 'menu-pricePerPerson-error' : null"
+        />
+        @if (pricePerPersonError) {
+          <span class="menu-add-dialog__field-error" id="menu-pricePerPerson-error" role="alert">{{
+            pricePerPersonError
+          }}</span>
+        }
+      </label>
+    </fieldset>
+    @if (submissionError()) {
+      <p class="menu-add-dialog__error" role="alert">{{ submissionError() }}</p>
+    }
+    <div class="menu-add-dialog__form-actions">
+      <button
+        type="button"
+        class="menu-add-dialog__button menu-add-dialog__button--secondary"
+        (click)="close()"
+        [disabled]="isSubmitting()"
+      >
+        Cancel</button
+      ><button
+        type="submit"
+        class="menu-add-dialog__button menu-add-dialog__button--primary"
+        [disabled]="isSubmitting()"
+      >
+        {{ isSubmitting() ? 'Saving…' : 'Save menu item' }}
+      </button>
+    </div>
+  </form>
+</div>

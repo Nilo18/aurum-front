@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, resource, signal } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormValidatorService } from '../../../services/form-validator-service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   CreateSupplierRequest,
@@ -12,74 +13,78 @@ import { human } from '../shared/staff-format';
 
 @Component({
   selector: 'app-supplier-add-dialog',
-  imports: [FormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './supplier-add-dialog.html',
   styleUrl: './supplier-add-dialog.scss',
 })
 export class SupplierAddDialog implements OnInit {
   readonly modal = inject(NgbActiveModal);
   private readonly supplierService = inject(SupplierService);
+  readonly formValidator = inject(FormValidatorService);
+  private readonly fb = inject(FormBuilder);
   readonly human = human;
   readonly productCategories = Object.values(ProductCategory);
   availableProductCategories = resource({
     loader: async () => {
       if (this.supplier) {
-        return
+        return;
       }
-      const res = await this.supplierService.getAvailableProductCategories()
-      return res
-    }
-  })
+      const res = await this.supplierService.getAvailableProductCategories();
+      return res;
+    },
+  });
   readonly isSubmitting = signal(false);
   readonly submissionError = signal('');
   supplier?: SupplierDTO;
-  draft: CreateSupplierRequest = {
-    name: '',
-    city: '',
-    street: '',
-    number: '',
-    categories: new Set<ProductCategory>(),
-  };
+  readonly supplierForm = this.fb.nonNullable.group({
+    name: ['', Validators.required],
+    city: ['', Validators.required],
+    street: ['', Validators.required],
+    number: ['', Validators.required],
+    categories: [new Set<ProductCategory>()],
+  });
 
   ngOnInit(): void {
     if (this.supplier) {
-      this.draft = {
+      this.supplierForm.patchValue({
         name: this.supplier.name,
         city: this.supplier.city,
         street: this.supplier.street,
         number: this.supplier.number,
         categories: new Set(this.supplier.categories),
-      };
+      });
     }
   }
 
   toggleCategory(category: ProductCategory, selected: boolean): void {
-    const categories = new Set(this.draft.categories);
+    const categories = new Set(this.supplierForm.controls.categories.value);
     if (selected) categories.add(category);
     else categories.delete(category);
-    this.draft = { ...this.draft, categories };
+    this.supplierForm.controls.categories.setValue(categories);
+    this.supplierForm.controls.categories.markAsDirty();
+    this.supplierForm.controls.categories.markAsTouched();
   }
 
   close(): void {
     if (!this.isSubmitting()) this.modal.dismiss();
   }
 
-  async save(form: NgForm): Promise<void> {
+  async save(): Promise<void> {
     if (this.isSubmitting()) return;
     this.submissionError.set('');
-    if (form.invalid) {
-      form.control.markAllAsTouched();
-      this.submissionError.set('Please fill in all required fields.');
+    if (this.supplierForm.invalid) {
+      this.supplierForm.markAllAsTouched();
       return;
     }
+    const request: CreateSupplierRequest = this.supplierForm.getRawValue();
     this.isSubmitting.set(true);
     try {
       const response = this.supplier
         ? await this.supplierService.updateSupplier({
-            ...this.draft,
+            ...request,
             publicId: this.supplier.publicId,
           })
-        : await this.supplierService.addSupplier(this.draft);
+        : await this.supplierService.addSupplier(request);
       if (!response?.publicId) {
         this.submissionError.set('The supplier could not be saved. Please try again.');
         return;

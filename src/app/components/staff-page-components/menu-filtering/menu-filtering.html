@@ -1,0 +1,55 @@
+<fieldset class="row g-2 border-0 p-0 m-0" [disabled]="disabled()">
+  <legend class="visually-hidden">Menu filters</legend>
+  <div class="col">
+    <label class="form-label" for="menu-category">Category</label
+    ><select
+      id="menu-category"
+      class="form-select"
+      [ngModel]="query().category"
+      (ngModelChange)="filter({ category: $event })"
+    >
+      <option [ngValue]="undefined">All categories</option>
+      @for (category of categories; track category) {
+        <option [ngValue]="category">{{ human(category) }}</option>
+      }
+    </select>
+  </div>
+  <div class="col">
+    <label class="form-label" for="menu-type">Cuisine</label
+    ><select
+      id="menu-type"
+      class="form-select"
+      [ngModel]="query().type"
+      (ngModelChange)="filter({ type: $event })"
+    >
+      <option [ngValue]="undefined">All cuisines</option>
+      @for (type of cuisines; track type) {
+        <option [ngValue]="type">{{ human(type) }}</option>
+      }
+    </select>
+  </div>
+  <div class="col">
+    <label class="form-label" for="menu-price-from">Minimum price</label
+    ><input
+      id="menu-price-from"
+      class="form-control"
+      type="number"
+      min="0"
+      step="0.01"
+      [ngModel]="query().priceFrom"
+      (ngModelChange)="filter({ priceFrom: $event ?? undefined })"
+    />
+  </div>
+  <div class="col">
+    <label class="form-label" for="menu-price-to">Maximum price</label
+    ><input
+      id="menu-price-to"
+      class="form-control"
+      type="number"
+      min="0"
+      step="0.01"
+      [ngModel]="query().priceTo"
+      (ngModelChange)="filter({ priceTo: $event ?? undefined })"
+    />
+  </div>
+</fieldset>

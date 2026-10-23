@@ -171,22 +171,25 @@
       gap: 12px;
       padding: 20px;
     }
-    &__search {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #090907;
-      border: 1px solid #322c22;
-      border-radius: 4px;
-      max-width: 360px;
-      flex: 1;
-      padding-left: 12px;
-      color: #b39a6c;
-    }
-    &__search input {
-      border: 0;
-      background: transparent;
-      width: 100%;
+    @if $block != 'menu' and $block != 'suppliers' {
+      &__search {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #090907;
+        border: 1px solid #322c22;
+        border-radius: 4px;
+        // max-width: 360px;
+        flex: 1;
+        padding-left: 12px;
+        color: #b39a6c;
+        width: 100%;
+      }
+      &__search input {
+        border: 0;
+        background: transparent;
+        width: 100%;
+      }
     }
     &__toolbar select {
       width: 190px;
@@ -428,9 +431,11 @@
       &__toolbar {
         flex-wrap: wrap;
       }
-      &__search {
-        flex-basis: 100%;
-        max-width: none;
+      @if $block != 'menu' and $block != 'suppliers' {
+        &__search {
+          flex-basis: 100%;
+          max-width: none;
+        }
       }
       &__toolbar select {
         width: 150px;

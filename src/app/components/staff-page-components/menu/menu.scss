@@ -1,3 +1,67 @@
 @use '../shared/staff-section';
 
 @include staff-section.styles('menu');
+
+.menu__controls {
+  display: grid;
+  gap: 20px;
+  padding: 20px;
+}
+.menu__pagination {
+  padding: 20px;
+}
+.menu__error {
+  color: #d39990;
+  padding: 16px;
+}
+
+.menu__search-field {
+  width: 100%;
+  max-width: 100%;
+}
+
+.menu__search-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #b5aa98;
+  font-size: 0.75rem;
+}
+
+.menu__search {
+  .form-control {
+    min-height: 44px;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid #494132;
+    border-radius: 4px 0 0 4px;
+    background-color: #191814;
+    color: #e9e3d8;
+    color-scheme: dark;
+    font-size: 0.8rem;
+
+    &::placeholder {
+      color: #a39782;
+    }
+
+    &:focus {
+      border-color: #c7af7e;
+      box-shadow: 0 0 0 0.2rem #c7af7e25;
+    }
+
+    &:disabled {
+      background-color: #222019;
+      color: #857c6c;
+    }
+  }
+
+  .btn-outline-warning {
+    --bs-btn-color: #c7af7e;
+    --bs-btn-border-color: #685333;
+    --bs-btn-hover-bg: #c7af7e;
+    --bs-btn-hover-color: #191814;
+    --bs-btn-hover-border-color: #c7af7e;
+    --bs-btn-disabled-color: #857c6c;
+    --bs-btn-disabled-border-color: #494132;
+    font-size: 0.8rem;
+  }
+}

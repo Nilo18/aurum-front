@@ -1,0 +1,74 @@
+<div class="menu-pagination d-flex flex-wrap align-items-center justify-content-between gap-3">
+  <div class="menu-pagination__summary form-text m-0" aria-live="polite">
+    {{ first() }}–{{ last() }} of {{ total() }} menu items
+  </div>
+  <nav aria-label="Menu pages">
+    <ul class="pagination pagination-sm flex-wrap mb-0">
+      <li class="page-item" [class.disabled]="disabled() || pageNumber() === 0">
+        <button
+          class="page-link"
+          [disabled]="disabled() || pageNumber() === 0"
+          (click)="paginate(0)"
+          aria-label="First page"
+        >
+          &laquo;
+        </button>
+      </li>
+      <li class="page-item" [class.disabled]="disabled() || pageNumber() === 0">
+        <button
+          class="page-link"
+          [disabled]="disabled() || pageNumber() === 0"
+          (click)="paginate(pageNumber() - 1)"
+        >
+          Prev
+        </button>
+      </li>
+      @for (page of pages(); track page) {
+        <li class="page-item" [class.active]="page === pageNumber()">
+          <button
+            class="page-link"
+            [disabled]="disabled()"
+            [attr.aria-current]="page === pageNumber() ? 'page' : null"
+            [attr.aria-label]="'Page ' + (page + 1)"
+            (click)="paginate(page)"
+          >
+            {{ page + 1 }}
+          </button>
+        </li>
+      }
+      <li class="page-item" [class.disabled]="disabled() || pageNumber() >= pageCount() - 1">
+        <button
+          class="page-link"
+          [disabled]="disabled() || pageNumber() >= pageCount() - 1"
+          (click)="paginate(pageNumber() + 1)"
+        >
+          Next
+        </button>
+      </li>
+      <li class="page-item" [class.disabled]="disabled() || pageNumber() >= pageCount() - 1">
+        <button
+          class="page-link"
+          [disabled]="disabled() || pageNumber() >= pageCount() - 1"
+          (click)="paginate(pageCount() - 1)"
+          aria-label="Last page"
+        >
+          &raquo;
+        </button>
+      </li>
+    </ul>
+  </nav>
+  <div class="menu-pagination__size d-flex align-items-center gap-2">
+    <label for="menu-size" class="form-label text-nowrap mb-0">Per page</label>
+    <select
+      id="menu-size"
+      class="form-select form-select-sm"
+      [value]="size()"
+      [disabled]="disabled()"
+      (change)="paginate(0, +$any($event.target).value)"
+    >
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+    </select>
+  </div>
+</div>

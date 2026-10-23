@@ -1,8 +1,19 @@
 import { Component, ElementRef, computed, inject, resource, signal } from '@angular/core';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CuisineType, MenuItem, MenuItemCategory, MenuService } from '../../../services/menu-service';
+import {
+  CuisineType,
+  MenuItemDTO,
+  MenuItemCategory,
+  MenuService,
+} from '../../../services/menu-service';
 import { isValidPhoneNumber } from 'libphonenumber-js';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventService, EventOrderRequest } from '../../../services/event-service';
@@ -16,9 +27,9 @@ function localToday(): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-const futureDate: ValidatorFn = control =>
+const futureDate: ValidatorFn = (control) =>
   control.value && control.value < localToday() ? { pastDate: true } : null;
-const phone: ValidatorFn = control =>
+const phone: ValidatorFn = (control) =>
   !control.value || isValidPhoneNumber(control.value) ? null : { phone: true };
 
 function createEventRequestForm(fb: FormBuilder) {
@@ -34,10 +45,13 @@ function createEventRequestForm(fb: FormBuilder) {
       eventType: fb.nonNullable.control('', requiredText),
       date: fb.nonNullable.control('', [Validators.required, futureDate]),
       totalCost: fb.control<number | null>(null, [
-        Validators.min(0), Validators.pattern(/^\d+(\.\d{1,2})?$/),
+        Validators.min(0),
+        Validators.pattern(/^\d+(\.\d{1,2})?$/),
       ]),
       guestCount: fb.control<number | null>(null, [
-        Validators.required, Validators.min(1), Validators.pattern(/^\d+$/),
+        Validators.required,
+        Validators.min(1),
+        Validators.pattern(/^\d+$/),
       ]),
       location: fb.nonNullable.control('', requiredText),
       notes: fb.nonNullable.control(''),
@@ -75,12 +89,28 @@ export class EventRequestForm {
   readonly event = this.form.controls.event.controls;
   readonly minDate = localToday();
   readonly eventTypes = [
-    'WEDDING', 'CORPORATE_EVENT', 'CONFERENCE', 'OFFICIAL_RECEPTION', 'ANNIVERSARY',
-    'BIRTHDAY', 'GALA_DINNER', 'PRODUCT_LAUNCH', 'PRIVATE_PARTY', 'OTHER',
+    'WEDDING',
+    'CORPORATE_EVENT',
+    'CONFERENCE',
+    'OFFICIAL_RECEPTION',
+    'ANNIVERSARY',
+    'BIRTHDAY',
+    'GALA_DINNER',
+    'PRODUCT_LAUNCH',
+    'PRIVATE_PARTY',
+    'OTHER',
   ];
   readonly locations = [
-    'AURUM_BANQUET_HALL', 'AURUM_CONFERENCE_HALL', 'PRIVATE_RESIDENCE', 'PARTNER_VENUE',
-    'HOTEL', 'RESTAURANT', 'OUTDOOR_VENUE', 'HISTORICAL_VENUE', 'CORPORATE_OFFICE', 'OTHER',
+    'AURUM_BANQUET_HALL',
+    'AURUM_CONFERENCE_HALL',
+    'PRIVATE_RESIDENCE',
+    'PARTNER_VENUE',
+    'HOTEL',
+    'RESTAURANT',
+    'OUTDOOR_VENUE',
+    'HISTORICAL_VENUE',
+    'CORPORATE_OFFICE',
+    'OTHER',
   ];
   readonly reviewed = signal(false);
   readonly attempted = signal(false);
@@ -92,7 +122,7 @@ export class EventRequestForm {
   ];
   readonly menuItems = resource({
     params: () => this.cuisineType(),
-    loader: ({ params }) => this.menuService.getMenuItems(params),
+    loader: ({ params }) => this.menuService.getMenuItemsForRequestEventPage(params),
   });
   readonly categories: { value: MenuItemCategory; label: string }[] = [
     { value: 'APPETIZER', label: 'Appetizers' },
@@ -102,17 +132,18 @@ export class EventRequestForm {
   ];
   readonly menuGroups = computed(() => {
     const items = this.menuItems.hasValue() ? this.menuItems.value() : [];
-    return this.categories.map(category => ({
-      ...category, items: items.filter(item => item.category === category.value),
+    return this.categories.map((category) => ({
+      ...category,
+      items: items.filter((item) => item.category === category.value),
     }));
   });
-  readonly selectedMenu = signal<number[]>([]);
+  readonly selectedMenu = signal<string[]>([]);
   // Display metadata is separate from the ID-only selection and request payload.
-  private readonly dishDetails = signal(new Map<number, MenuItem>());
+  private readonly dishDetails = signal(new Map<string, MenuItemDTO>());
   readonly selectedDishes = computed(() =>
     this.selectedMenu()
-      .map(id => this.dishDetails().get(id))
-      .filter((item): item is MenuItem => item !== undefined),
+      .map((publicId) => this.dishDetails().get(publicId))
+      .filter((item): item is MenuItemDTO => item !== undefined),
   );
   readonly menuLoading = computed(() => this.menuItems.isLoading());
   readonly menuError = computed(() => {
@@ -121,9 +152,12 @@ export class EventRequestForm {
     if (!error) return null;
     const cause = error instanceof Error && error.cause ? error.cause : error;
     if (cause instanceof HttpErrorResponse) {
-      if (cause.status === 0) return 'We couldn’t connect to the menu service. Check your connection and try again.';
-      if (cause.status === 401 || cause.status === 403) return 'The menu service denied access. Please try again later.';
-      if (cause.status >= 500) return 'The menu service is temporarily unavailable. Please try again.';
+      if (cause.status === 0)
+        return 'We couldn’t connect to the menu service. Check your connection and try again.';
+      if (cause.status === 401 || cause.status === 403)
+        return 'The menu service denied access. Please try again later.';
+      if (cause.status >= 500)
+        return 'The menu service is temporarily unavailable. Please try again.';
     }
     return 'We couldn’t load the menu. Please try again.';
   });
@@ -133,25 +167,25 @@ export class EventRequestForm {
   }
 
   setCuisine(value: string) {
-    const cuisine = this.cuisines.find(option => option.value === value);
+    const cuisine = this.cuisines.find((option) => option.value === value);
     if (cuisine) this.cuisineType.set(cuisine.value);
   }
 
-  isAdded(item: MenuItem) {
-    return this.selectedMenu().includes(item.id);
+  isAdded(item: MenuItemDTO) {
+    return this.selectedMenu().includes(item.publicId);
   }
 
-  addDish(item: MenuItem) {
+  addDish(item: MenuItemDTO) {
     if (this.menuLoading() || this.menuError() || this.isAdded(item)) return;
-    this.dishDetails.update(details => new Map(details).set(item.id, item));
-    this.selectedMenu.update(ids => [...ids, item.id]);
+    this.dishDetails.update((details) => new Map(details).set(item.publicId, item));
+    this.selectedMenu.update((ids) => [...ids, item.publicId]);
   }
 
-  removeDish(item: MenuItem) {
-    this.selectedMenu.update(ids => ids.filter(id => id !== item.id));
-    this.dishDetails.update(details => {
+  removeDish(item: MenuItemDTO) {
+    this.selectedMenu.update((ids) => ids.filter((id) => id !== item.publicId));
+    this.dishDetails.update((details) => {
       const updated = new Map(details);
-      updated.delete(item.id);
+      updated.delete(item.publicId);
       return updated;
     });
   }
@@ -173,11 +207,15 @@ export class EventRequestForm {
     this.attempted.set(true);
     this.form.markAllAsTouched();
     if (this.form.invalid) {
-      this.element.nativeElement.querySelector<HTMLElement>('input.ng-invalid, select.ng-invalid, textarea.ng-invalid')?.focus();
+      this.element.nativeElement
+        .querySelector<HTMLElement>('input.ng-invalid, select.ng-invalid, textarea.ng-invalid')
+        ?.focus();
       return;
     }
     this.reviewed.set(true);
-    setTimeout(() => this.element.nativeElement.querySelector<HTMLElement>('#review-title')?.focus());
+    setTimeout(() =>
+      this.element.nativeElement.querySelector<HTMLElement>('#review-title')?.focus(),
+    );
   }
 
   async orderEvent() {
@@ -187,7 +225,12 @@ export class EventRequestForm {
 
     const { client, event } = this.form.getRawValue();
     const request: Omit<EventOrderRequest, 'transactionKey' | 'otp'> = {
-      client: { clientType: client.type, name: client.name, email: client.email, phone: client.phone },
+      client: {
+        clientType: client.type,
+        name: client.name,
+        email: client.email,
+        phone: client.phone,
+      },
       event: { ...event, guestCount: event.guestCount!, totalCost: event.totalCost ?? undefined },
       menuItemIds: [...this.selectedMenu()],
     };
@@ -203,7 +246,10 @@ export class EventRequestForm {
         backdrop: 'static',
         keyboard: false,
       });
-      modalRef.componentInstance.eventInfo = { ...request, transactionKey: response.transactionKey };
+      modalRef.componentInstance.eventInfo = {
+        ...request,
+        transactionKey: response.transactionKey,
+      };
       this.verificationOpen = true;
       this.isVerifying.set(false);
       try {
@@ -218,7 +264,8 @@ export class EventRequestForm {
             ariaDescribedBy: 'success-message',
           });
           successRef.componentInstance.title = 'Your event request is in';
-          successRef.componentInstance.msg = 'Your email has been verified and your event request has been submitted successfully.';
+          successRef.componentInstance.msg =
+            'Your email has been verified and your event request has been submitted successfully.';
           void successRef.result.catch(() => {});
         }
       } catch {

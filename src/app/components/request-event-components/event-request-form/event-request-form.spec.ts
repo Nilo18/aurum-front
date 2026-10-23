@@ -5,16 +5,40 @@ import { EventService } from '../../../services/event-service';
 import { SuccessModal } from '../../general-components/success-modal/success-modal';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EventRequestForm } from './event-request-form';
-import { CuisineType, MenuItem, MenuService } from '../../../services/menu-service';
+import { CuisineType, MenuItemDTO, MenuService } from '../../../services/menu-service';
 
 describe('EventRequestForm', () => {
-  const dishes: MenuItem[] = [
-    { id: 1, name: 'Pkhali', category: 'APPETIZER', pricePerPerson: 12 },
-    { id: 2, name: 'Fish', category: 'MAIN_COURSE', pricePerPerson: 30 },
-    { id: 3, name: 'Baklava', category: 'DESSERT', pricePerPerson: 10 },
-    { id: 4, name: 'Lemonade', category: 'DRINK', pricePerPerson: 6 },
+  const dishes: MenuItemDTO[] = [
+    {
+      publicId: 'menu-1',
+      type: CuisineType.GENERAL,
+      name: 'Pkhali',
+      category: 'APPETIZER',
+      pricePerPerson: 12,
+    },
+    {
+      publicId: 'menu-2',
+      type: CuisineType.GENERAL,
+      name: 'Fish',
+      category: 'MAIN_COURSE',
+      pricePerPerson: 30,
+    },
+    {
+      publicId: 'menu-3',
+      type: CuisineType.GENERAL,
+      name: 'Baklava',
+      category: 'DESSERT',
+      pricePerPerson: 10,
+    },
+    {
+      publicId: 'menu-4',
+      type: CuisineType.GENERAL,
+      name: 'Lemonade',
+      category: 'DRINK',
+      pricePerPerson: 6,
+    },
   ];
-  const getMenuItems = vi.fn();
+  const getMenuItemsForRequestEventPage = vi.fn();
 
   const verifyCreateEventRequest = vi.fn();
   const open = vi.fn();
@@ -24,10 +48,10 @@ describe('EventRequestForm', () => {
     open
       .mockReset()
       .mockReturnValue({ componentInstance: {}, result: Promise.resolve('verified') });
-    getMenuItems.mockReset().mockResolvedValue(dishes);
+    getMenuItemsForRequestEventPage.mockReset().mockResolvedValue(dishes);
     TestBed.configureTestingModule({
       providers: [
-        { provide: MenuService, useValue: { getMenuItems } },
+        { provide: MenuService, useValue: { getMenuItemsForRequestEventPage } },
         { provide: EventService, useValue: { verifyCreateEventRequest } },
         { provide: NgbModal, useValue: { open } },
       ],
@@ -43,14 +67,14 @@ describe('EventRequestForm', () => {
 
   it('loads backend cuisines and renders each dish once under its category', async () => {
     const fixture = await setup();
-    expect(getMenuItems).toHaveBeenCalledWith(CuisineType.GENERAL);
+    expect(getMenuItemsForRequestEventPage).toHaveBeenCalledWith(CuisineType.GENERAL);
     expect(fixture.nativeElement.querySelectorAll('.request-layout__menu-item').length).toBe(4);
     const select: HTMLSelectElement = fixture.nativeElement.querySelector('#cuisineType');
     for (const cuisine of [CuisineType.GEORGIAN, CuisineType.MEDITERRANEAN, CuisineType.GENERAL]) {
       select.value = cuisine;
       select.dispatchEvent(new Event('change'));
       await fixture.whenStable();
-      expect(getMenuItems).toHaveBeenLastCalledWith(cuisine);
+      expect(getMenuItemsForRequestEventPage).toHaveBeenLastCalledWith(cuisine);
     }
   });
 
@@ -59,8 +83,8 @@ describe('EventRequestForm', () => {
     const component = fixture.componentInstance;
     fixture.nativeElement.querySelector('.request-layout__menu-item button').click();
     component.addDish({ ...dishes[0] });
-    expect(component.selectedMenu()).toEqual([1]);
-    getMenuItems.mockResolvedValueOnce([dishes[1]]);
+    expect(component.selectedMenu()).toEqual(['menu-1']);
+    getMenuItemsForRequestEventPage.mockResolvedValueOnce([dishes[1]]);
     component.setCuisine(CuisineType.MEDITERRANEAN);
     await fixture.whenStable();
     component.form.patchValue({
@@ -81,9 +105,9 @@ describe('EventRequestForm', () => {
     component.review();
     fixture.detectChanges();
     expect(component.reviewed()).toBe(true);
-    expect(component.request.menuItemIds).toEqual([1]);
-    component.request.menuItemIds.push(99);
-    expect(component.selectedMenu()).toEqual([1]);
+    expect(component.request.menuItemIds).toEqual(['menu-1']);
+    component.request.menuItemIds.push('menu-99');
+    expect(component.selectedMenu()).toEqual(['menu-1']);
     expect(component.request.client.type).toBe(ClientType.ORGANIZATION);
     expect(component.request.event).toEqual({
       eventType: 'GALA DINNER',
@@ -127,7 +151,7 @@ describe('EventRequestForm', () => {
 
   it('shows loading, handles a failed fetch and retries with an empty menu', async () => {
     let reject!: (reason: Error) => void;
-    getMenuItems.mockImplementationOnce(
+    getMenuItemsForRequestEventPage.mockImplementationOnce(
       () =>
         new Promise((_, fail) => {
           reject = fail;
@@ -149,7 +173,7 @@ describe('EventRequestForm', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('We couldn’t load the menu');
     expect(fixture.nativeElement.querySelector('.skeleton')).toBeNull();
-    getMenuItems.mockResolvedValueOnce([]);
+    getMenuItemsForRequestEventPage.mockResolvedValueOnce([]);
     fixture.nativeElement.querySelector('.request-layout__menu button').click();
     await fixture.whenStable();
     fixture.detectChanges();
@@ -165,17 +189,19 @@ describe('EventRequestForm', () => {
     const fixture = await setup();
     const component = fixture.componentInstance;
     component.addDish(dishes[0]);
-    getMenuItems.mockRejectedValueOnce(new HttpErrorResponse({ status: Number(status) }));
+    getMenuItemsForRequestEventPage.mockRejectedValueOnce(
+      new HttpErrorResponse({ status: Number(status) }),
+    );
     component.setCuisine(CuisineType.GEORGIAN);
     await fixture.whenStable();
     fixture.detectChanges();
     expect(component.menuError()).toContain(message);
-    expect(component.selectedMenu()).toEqual([1]);
+    expect(component.selectedMenu()).toEqual(['menu-1']);
     expect(fixture.nativeElement.querySelector('.request-layout__summary').textContent).toContain(
       'Pkhali',
     );
     component.addDish(dishes[1]);
-    expect(component.selectedMenu()).toEqual([1]);
+    expect(component.selectedMenu()).toEqual(['menu-1']);
     component.retryMenu();
     await fixture.whenStable();
     fixture.detectChanges();
@@ -218,7 +244,7 @@ describe('EventRequestForm', () => {
         notes: 'Vegetarian',
         totalCost: undefined,
       },
-      menuItemIds: [1],
+      menuItemIds: ['menu-1'],
       transactionKey: 'key',
     });
     expect(component.submitted()).toBe(true);

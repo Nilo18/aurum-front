@@ -1,73 +1,94 @@
-import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { StaffPreviewStore } from '../shared/staff-preview-store';
-import { Row } from '../shared/staff-row';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MenuAddDialog } from '../menu-add-dialog/menu-add-dialog';
 import { human, currency } from '../shared/staff-format';
+import { MenuItemDTO, MenuItemQuery, MenuService } from '../../../services/menu-service';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { MenuSorting } from '../menu-sorting/menu-sorting';
+import { MenuFiltering } from '../menu-filtering/menu-filtering';
+import { MenuPagination } from '../menu-pagination/menu-pagination';
+import { getRequestErrorMessage } from '../../../services/request-error';
 
 @Component({
   selector: 'app-menu',
-  imports: [FormsModule],
+  imports: [FormsModule, MenuSorting, MenuFiltering, MenuPagination],
   templateUrl: './menu.html',
   styleUrl: './menu.scss',
 })
 export class Menu {
-  readonly store = inject(StaffPreviewStore);
+  private readonly modal = inject(NgbModal);
+  private menuService = inject(MenuService);
+  readonly menuQuery = signal<MenuItemQuery>({
+    page: 0,
+    size: 10,
+    search: '',
+    sortBy: '',
+    sortDirection: '',
+  });
+  readonly menu = rxResource({
+    params: () => this.menuQuery(),
+    stream: ({ params }) => this.menuService.getMenuItems(params),
+  });
+
+  readonly menuPage = computed(() => (this.menu.hasValue() ? this.menu.value() : undefined));
   readonly human = human;
   readonly currency = currency;
-  readonly search = signal('');
-  readonly filter = signal('');
-  readonly editor = signal(false);
+  readonly busy = computed(() => this.menu.isLoading() || this.deleting() !== undefined);
+  readonly deleting = signal<string | undefined>(undefined);
   readonly notice = signal('');
-  readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('editorDialog');
-  readonly rows = computed(() => this.store.data().menu);
-  readonly filters = computed(() =>
-    Array.from(new Set(this.rows().map((row) => String(row['category'])))),
-  );
-  readonly filtered = computed(() =>
-    this.rows().filter(
-      (row) =>
-        (!this.filter() || String(row['category']) === this.filter()) &&
-        Object.entries(row).some(([key, value]) =>
-          this.searchValue(key, value).toLowerCase().includes(this.search().toLowerCase()),
-        ),
-    ),
-  );
-  editing?: Row;
-  draft: Row = {};
+  readonly deleteError = signal('');
 
-  constructor() {
-    effect(() => {
-      const dialog = this.dialog()?.nativeElement;
-      if (dialog && !dialog.open) dialog.showModal();
+  updateQuery(changes: Partial<MenuItemQuery>, resetPage = true) {
+    this.menuQuery.update((query) => ({
+      ...query,
+      ...changes,
+      ...(resetPage ? { page: 0 } : {}),
+    }));
+  }
+
+  open(menuItem?: MenuItemDTO): void {
+    if (this.busy()) return;
+    const modalRef = this.modal.open(MenuAddDialog, {
+      centered: true,
+      ariaLabelledBy: 'menu-editor-title',
+      windowClass: 'aurum-menu-modal',
+      beforeDismiss: () => !modalRef.componentInstance.isSubmitting(),
     });
+    modalRef.componentInstance.menuItem = menuItem;
+    void modalRef.result.then(
+      (message: string) => {
+        this.notice.set(message);
+        this.menu.reload();
+      },
+      () => {},
+    );
   }
 
-  private searchValue(key: string, value: unknown): string {
-    if (key === 'pricePerPerson') return this.currency(value);
-    return human(value);
-  }
-
-  open(row?: Row): void {
-    this.editing = row;
-    this.draft = row
-      ? { ...row }
-      : {
-          name: '',
-          category: 'APPETIZER',
-          pricePerPerson: '',
-        };
-    this.editor.set(true);
-  }
-
-  close(): void {
-    this.editor.set(false);
-  }
-
-  save(): void {
-    const row = { ...this.draft };
-    row['pricePerPerson'] = Number(row['pricePerPerson']);
-    this.store.save('menu', row, this.editing);
-    this.close();
-    this.notice.set('Menu item saved in this preview session.');
+  async deleteMenuItem(publicId: string): Promise<void> {
+    if (this.busy()) return;
+    this.deleting.set(publicId);
+    this.deleteError.set('');
+    this.notice.set('');
+    try {
+      const response = await this.menuService.deleteMenuItem(publicId);
+      if (response.status < 200 || response.status >= 300) {
+        this.deleteError.set(response.message || 'Unable to delete menu item. Please try again.');
+        return;
+      }
+      this.notice.set('Menu item deleted.');
+      const page = this.menu.value();
+      if (page?.content.length === 1 && page.pageNumber > 0) {
+        this.updateQuery({ page: page.pageNumber - 1 }, false);
+      } else {
+        this.menu.reload();
+      }
+    } catch (error) {
+      this.deleteError.set(
+        getRequestErrorMessage(error, 'Unable to delete menu item. Please try again.'),
+      );
+    } finally {
+      this.deleting.set(undefined);
+    }
   }
 }
