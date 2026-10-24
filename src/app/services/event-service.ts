@@ -19,7 +19,7 @@ export interface EventCreationRequest {
 export interface EventOrderRequest {
   client: ClientDTO;
   event: EventCreationRequest;
-  menuItemIds: string[];
+  menuItemPublicIds: string[];
   transactionKey: string;
   otp: string;
 }

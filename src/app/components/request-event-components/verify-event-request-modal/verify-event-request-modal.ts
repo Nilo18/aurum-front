@@ -50,6 +50,7 @@ export class VerifyEventRequestModal {
     this.submissionError.set('')
 
     try {
+      console.log({ ...this.eventInfo, otp: this.verificationModal.value.otp })
       await this.eventService.createEvent({ ...this.eventInfo, otp: this.verificationModal.value.otp })
       this.modal.close('verified')
     } catch {

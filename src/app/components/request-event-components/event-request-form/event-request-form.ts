@@ -232,7 +232,7 @@ export class EventRequestForm {
         phone: client.phone,
       },
       event: { ...event, guestCount: event.guestCount!, totalCost: event.totalCost ?? undefined },
-      menuItemIds: [...this.selectedMenu()],
+      menuItemPublicIds: [...this.selectedMenu()],
     };
     this.isVerifying.set(true);
     this.submissionError.set('');
