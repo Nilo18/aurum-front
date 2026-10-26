@@ -1,0 +1,162 @@
+<div class="edit-event-dialog">
+  <div class="edit-event-dialog__panel-heading">
+    <div>
+      <p class="edit-event-dialog__eyebrow">THE DETAILS</p>
+      <h2 id="event-editor-title">Edit event</h2>
+    </div>
+    <button
+      type="button"
+      class="edit-event-dialog__button edit-event-dialog__button--text"
+      (click)="close()"
+      [disabled]="isSubmitting()"
+      aria-label="Close editor"
+    >
+      ✕
+    </button>
+  </div>
+  <p class="edit-event-dialog__editor-note">Update the event details in your collection.</p>
+  <form [formGroup]="eventForm" (ngSubmit)="save()" novalidate [attr.aria-busy]="isSubmitting()">
+    <fieldset class="edit-event-dialog__fields" [disabled]="isSubmitting()">
+      @let eventTypeError = formValidator.getRequiredError('eventType', eventForm);
+      <label>
+        Event type
+        <select
+          name="eventType"
+          formControlName="eventType"
+          required
+          [attr.aria-invalid]="!!eventTypeError"
+          [attr.aria-describedby]="eventTypeError ? 'event-eventType-error' : null"
+        >
+          @for (value of eventTypes; track value) {
+            <option [value]="value">{{ stringFormatter.human(value) }}</option>
+          }
+        </select>
+        @if (eventTypeError) {
+          <span id="event-eventType-error" class="edit-event-dialog__field-error" role="alert">{{
+            eventTypeError
+          }}</span>
+        }
+      </label>
+
+      @let dateError = formValidator.getDateError('date', eventForm);
+      <label>
+        Event date
+        <input
+          type="date"
+          name="date"
+          formControlName="date"
+          required
+          [attr.aria-invalid]="!!dateError"
+          [attr.aria-describedby]="dateError ? 'event-date-error' : null"
+        />
+        @if (dateError) {
+          <span id="event-date-error" class="edit-event-dialog__field-error" role="alert">{{
+            dateError
+          }}</span>
+        }
+      </label>
+
+      @let totalCostError = formValidator.getNumberError('totalCost', eventForm);
+      <label>
+        Total cost (GEL)
+        <input
+          type="number"
+          name="totalCost"
+          formControlName="totalCost"
+          min="0"
+          step="0.01"
+          required
+          [attr.aria-invalid]="!!totalCostError"
+          [attr.aria-describedby]="totalCostError ? 'event-totalCost-error' : null"
+        />
+        @if (totalCostError) {
+          <span id="event-totalCost-error" class="edit-event-dialog__field-error" role="alert">{{
+            totalCostError
+          }}</span>
+        }
+      </label>
+
+      @let guestCountError = formValidator.getNumberError('guestCount', eventForm);
+      <label>
+        Guests
+        <input
+          type="number"
+          name="guestCount"
+          formControlName="guestCount"
+          min="1"
+          step="1"
+          required
+          [attr.aria-invalid]="!!guestCountError"
+          [attr.aria-describedby]="guestCountError ? 'event-guestCount-error' : null"
+        />
+        @if (guestCountError) {
+          <span id="event-guestCount-error" class="edit-event-dialog__field-error" role="alert">{{
+            guestCountError
+          }}</span>
+        }
+      </label>
+
+      @let locationError = formValidator.getRequiredError('location', eventForm);
+      <label>
+        Location
+        <select
+          name="location"
+          formControlName="location"
+          required
+          [attr.aria-invalid]="!!locationError"
+          [attr.aria-describedby]="locationError ? 'event-location-error' : null"
+        >
+          @for (value of locations; track value) {
+            <option [value]="value">{{ stringFormatter.human(value) }}</option>
+          }
+        </select>
+        @if (locationError) {
+          <span id="event-location-error" class="edit-event-dialog__field-error" role="alert">{{
+            locationError
+          }}</span>
+        }
+      </label>
+
+      @let statusError = formValidator.getRequiredError('status', eventForm);
+      <label>
+        Status
+        <select
+          name="status"
+          formControlName="status"
+          required
+          [attr.aria-invalid]="!!statusError"
+          [attr.aria-describedby]="statusError ? 'event-status-error' : null"
+        >
+          @for (value of statuses; track value) {
+            <option [value]="value">{{ stringFormatter.human(value) }}</option>
+          }
+        </select>
+        @if (statusError) {
+          <span id="event-status-error" class="edit-event-dialog__field-error" role="alert">{{
+            statusError
+          }}</span>
+        }
+      </label>
+    </fieldset>
+    @if (submissionError()) {
+      <p class="edit-event-dialog__error" role="alert">{{ submissionError() }}</p>
+    }
+    <div class="edit-event-dialog__form-actions">
+      <button
+        type="button"
+        class="edit-event-dialog__button edit-event-dialog__button--secondary"
+        (click)="close()"
+        [disabled]="isSubmitting()"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="edit-event-dialog__button edit-event-dialog__button--primary"
+        [disabled]="isSubmitting() || !hasChanges()"
+      >
+        {{ isSubmitting() ? 'Saving…' : 'Save event' }}
+      </button>
+    </div>
+  </form>
+</div>

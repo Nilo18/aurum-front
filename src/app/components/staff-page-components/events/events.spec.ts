@@ -122,7 +122,7 @@ describe('Events API controls', () => {
         ...page,
         content: [
           {
-            id: 1,
+            publicId: 'evt-wedding-1',
             clientName: 'Nino',
             eventType: EventType.WEDDING,
             date: '2026-10-06',
@@ -137,6 +137,36 @@ describe('Events API controls', () => {
     return fixture;
   }
 
+  it('opens the event editor, guards dismissal while saving and refreshes after saving', async () => {
+    const fixture = await loadedEvents();
+    let resolve!: (message: string) => void;
+    const instance = {
+      isSubmitting: vi.fn().mockReturnValue(false),
+      event: undefined as EventDTO | undefined,
+    };
+    open.mockReturnValue({
+      componentInstance: instance,
+      result: new Promise((done) => {
+        resolve = done;
+      }),
+    });
+    const row = fixture.componentInstance.rows()[0];
+    const edit = fixture.nativeElement.querySelector('[aria-label="Edit event for Nino"]');
+    edit.click();
+    expect(instance.event).toEqual(row);
+    expect(instance.event).not.toBe(row);
+    const options = open.mock.calls[0][1];
+    expect(options.windowClass).toBe('aurum-event-modal');
+    expect(options.beforeDismiss()).toBe(true);
+    instance.isSubmitting.mockReturnValue(true);
+    expect(options.beforeDismiss()).toBe(false);
+    resolve('Event saved.');
+    await Promise.resolve();
+    fixture.detectChanges();
+    http.expectOne((request) => request.method === 'GET').flush(page);
+    await fixture.whenStable();
+    expect(fixture.componentInstance.notice()).toBe('Event saved.');
+  });
   it('waits for confirmation, prevents duplicate deletes, and refreshes after success', async () => {
     const fixture = await loadedEvents();
     let confirm!: (value: boolean) => void;
@@ -147,16 +177,16 @@ describe('Events API controls', () => {
       }),
     });
     const component = fixture.componentInstance;
-    const deleting = component.delete(1);
+    const deleting = component.delete('evt-wedding-1');
     http.expectNone((request) => request.method === 'DELETE');
     expect(component.busy()).toBe(true);
-    await component.delete(1);
+    await component.delete('evt-wedding-1');
     expect(open).toHaveBeenCalledTimes(1);
     confirm(true);
     await Promise.resolve();
-    expect(component.deleting()).toBe(1);
+    expect(component.deleting()).toBe('evt-wedding-1');
     const request = http.expectOne((request) => request.method === 'DELETE');
-    expect(request.request.url).toContain('/api/event/1');
+    expect(request.request.url).toContain('/api/event/evt-wedding-1');
     request.flush({ status: 200, message: 'Deleted' });
     await Promise.resolve();
     await Promise.resolve();
@@ -172,7 +202,7 @@ describe('Events API controls', () => {
   it('does not delete when the modal is dismissed', async () => {
     const fixture = await loadedEvents();
     open.mockReturnValue({ componentInstance: {}, result: Promise.reject('cancel') });
-    await fixture.componentInstance.delete(1);
+    await fixture.componentInstance.delete('evt-wedding-1');
     http.expectNone((request) => request.method === 'DELETE');
     expect(fixture.componentInstance.busy()).toBe(false);
     expect(fixture.componentInstance.rows()).toHaveLength(1);
@@ -181,7 +211,7 @@ describe('Events API controls', () => {
   it('shows backend errors and releases loading state without removing the event', async () => {
     const fixture = await loadedEvents();
     open.mockReturnValue({ componentInstance: {}, result: Promise.resolve(true) });
-    const deleting = fixture.componentInstance.delete(1);
+    const deleting = fixture.componentInstance.delete('evt-wedding-1');
     await Promise.resolve();
     fixture.detectChanges();
     http
@@ -199,7 +229,7 @@ describe('Events API controls', () => {
   it('reports refresh failure separately after a successful deletion', async () => {
     const fixture = await loadedEvents();
     open.mockReturnValue({ componentInstance: {}, result: Promise.resolve(true) });
-    const deleting = fixture.componentInstance.delete(1);
+    const deleting = fixture.componentInstance.delete('evt-wedding-1');
     await Promise.resolve();
     fixture.detectChanges();
     http.expectOne((request) => request.method === 'DELETE').flush({ status: 200 });

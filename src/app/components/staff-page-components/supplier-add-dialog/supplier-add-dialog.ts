@@ -1,3 +1,5 @@
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import { StringFormatterService } from '../../../services/string-formatter-service';
 import { Component, inject, OnInit, resource, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -44,6 +46,25 @@ export class SupplierAddDialog implements OnInit {
     categories: [new Set<ProductCategory>()],
   });
 
+  private readonly formValues = toSignal(
+    this.supplierForm.valueChanges.pipe(map(() => this.supplierForm.getRawValue())),
+    { initialValue: this.supplierForm.getRawValue() },
+  );
+
+  hasChanges(): boolean {
+    const original = this.supplier;
+    if (!original) return true;
+    const values = this.formValues();
+    return (Object.keys(values) as (keyof typeof values)[]).some((field) => {
+      if (field === 'categories') {
+        return (
+          values.categories.size !== original.categories.size ||
+          [...values.categories].some((category) => !original.categories.has(category))
+        );
+      }
+      return values[field] !== original[field];
+    });
+  }
   ngOnInit(): void {
     if (this.supplier) {
       this.supplierForm.patchValue({
@@ -70,7 +91,7 @@ export class SupplierAddDialog implements OnInit {
   }
 
   async save(): Promise<void> {
-    if (this.isSubmitting()) return;
+    if (this.isSubmitting() || !this.hasChanges()) return;
     this.submissionError.set('');
     if (this.supplierForm.invalid) {
       this.supplierForm.markAllAsTouched();

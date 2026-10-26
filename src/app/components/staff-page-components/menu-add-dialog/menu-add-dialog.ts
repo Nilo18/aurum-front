@@ -1,3 +1,5 @@
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import { StringFormatterService } from '../../../services/string-formatter-service';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -44,6 +46,19 @@ export class MenuAddDialog implements OnInit {
     ],
   });
 
+  private readonly formValues = toSignal(
+    this.menuForm.valueChanges.pipe(map(() => this.menuForm.getRawValue())),
+    { initialValue: this.menuForm.getRawValue() },
+  );
+
+  hasChanges(): boolean {
+    const original = this.menuItem;
+    if (!original) return true;
+    const values = this.formValues();
+    return (Object.keys(values) as (keyof typeof values)[]).some(
+      (field) => values[field] !== original[field],
+    );
+  }
   ngOnInit(): void {
     if (this.menuItem) {
       this.menuForm.patchValue({
@@ -60,7 +75,7 @@ export class MenuAddDialog implements OnInit {
   }
 
   async save(): Promise<void> {
-    if (this.isSubmitting()) return;
+    if (this.isSubmitting() || !this.hasChanges()) return;
     this.submissionError.set('');
     if (this.menuForm.invalid) {
       this.menuForm.markAllAsTouched();

@@ -23,6 +23,27 @@ describe('MenuAddDialog', () => {
       ],
     });
   });
+  it('blocks unchanged edits and disables saving after reverting values', async () => {
+    const fixture = TestBed.createComponent(MenuAddDialog);
+    const component = fixture.componentInstance;
+    component.menuItem = item;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const saveButton = () =>
+      fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(saveButton().disabled).toBe(true);
+    await component.save();
+    expect(updateMenuItem).not.toHaveBeenCalled();
+    component.menuForm.patchValue({ pricePerPerson: 20 });
+    fixture.detectChanges();
+    expect(saveButton().disabled).toBe(false);
+    component.menuForm.patchValue({ pricePerPerson: item.pricePerPerson });
+    component.menuForm.markAsDirty();
+    fixture.detectChanges();
+    expect(saveButton().disabled).toBe(true);
+    await component.save();
+    expect(updateMenuItem).not.toHaveBeenCalled();
+  });
   it('validates required fields, name limits, and price precision', async () => {
     const fixture = TestBed.createComponent(MenuAddDialog);
     fixture.detectChanges();
@@ -46,6 +67,7 @@ describe('MenuAddDialog', () => {
     const component = fixture.componentInstance;
     component.menuItem = item;
     fixture.detectChanges();
+    component.menuForm.patchValue({ pricePerPerson: 20 });
     updateMenuItem.mockRejectedValue(new Error('Failed'));
     await component.save();
     expect(component.submissionError()).toBeTruthy();
@@ -53,7 +75,7 @@ describe('MenuAddDialog', () => {
     expect(component.isSubmitting()).toBe(false);
     updateMenuItem.mockResolvedValue(item);
     await component.save();
-    expect(updateMenuItem).toHaveBeenLastCalledWith(item);
+    expect(updateMenuItem).toHaveBeenLastCalledWith({ ...item, pricePerPerson: 20 });
     expect(close).toHaveBeenCalled();
   });
 });

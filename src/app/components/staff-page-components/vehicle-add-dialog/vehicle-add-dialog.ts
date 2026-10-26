@@ -1,3 +1,5 @@
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import { FormValidatorService } from '../../../services/form-validator-service';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -36,6 +38,19 @@ export class VehicleAddDialog implements OnInit {
   });
   vehicle?: VehicleDTO;
 
+  private readonly formValues = toSignal(
+    this.vehicleForm.valueChanges.pipe(map(() => this.vehicleForm.getRawValue())),
+    { initialValue: this.vehicleForm.getRawValue() },
+  );
+
+  hasChanges(): boolean {
+    const original = this.vehicle;
+    if (!original) return true;
+    const values = this.formValues();
+    return (Object.keys(values) as (keyof typeof values)[]).some(
+      (field) => values[field] !== original[field],
+    );
+  }
   ngOnInit(): void {
     if (this.vehicle) {
       this.vehicleForm.patchValue({
@@ -51,7 +66,7 @@ export class VehicleAddDialog implements OnInit {
   }
 
   async save(): Promise<void> {
-    if (this.isSubmitting()) return;
+    if (this.isSubmitting() || !this.hasChanges()) return;
     this.submissionError.set('');
     if (this.vehicleForm.invalid) {
       this.vehicleForm.markAllAsTouched();

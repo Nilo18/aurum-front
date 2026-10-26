@@ -27,6 +27,34 @@ describe('ProductAddDialog', () => {
     });
   });
 
+  it('blocks unchanged edits and disables saving after reverting values', async () => {
+    const fixture = TestBed.createComponent(ProductAddDialog);
+    const component = fixture.componentInstance;
+    component.product = {
+      publicId: 'p-1',
+      productName: 'Plate',
+      category: ProductCategory.TABLEWARE,
+      price: 10,
+      supplierId: 'supplier-7',
+      quantity: 1,
+    };
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const saveButton = () =>
+      fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(saveButton().disabled).toBe(true);
+    await component.save();
+    expect(updateProduct).not.toHaveBeenCalled();
+    component.productForm.patchValue({ price: 20 });
+    fixture.detectChanges();
+    expect(saveButton().disabled).toBe(false);
+    component.productForm.patchValue({ price: 10 });
+    component.productForm.markAsDirty();
+    fixture.detectChanges();
+    expect(saveButton().disabled).toBe(true);
+    await component.save();
+    expect(updateProduct).not.toHaveBeenCalled();
+  });
   it('populates edits on initialization and saves the original publicId with edited values', async () => {
     const fixture = TestBed.createComponent(ProductAddDialog);
     const component = fixture.componentInstance;

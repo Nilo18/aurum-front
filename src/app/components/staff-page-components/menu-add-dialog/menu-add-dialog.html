@@ -121,7 +121,7 @@
       ><button
         type="submit"
         class="menu-add-dialog__button menu-add-dialog__button--primary"
-        [disabled]="isSubmitting()"
+        [disabled]="isSubmitting() || !hasChanges()"
       >
         {{ isSubmitting() ? 'Saving…' : 'Save menu item' }}
       </button>

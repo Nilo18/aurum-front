@@ -8,137 +8,155 @@ import parsePhoneNumberFromString, { CountryCode } from 'libphonenumber-js';
 export class FormValidatorService {
   phoneValidator(defaultCountry: CountryCode = 'GE'): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const value = control.value
+      const value = control.value;
 
       if (!value) {
-        return null
+        return null;
       }
 
       try {
-        const phoneNumber = parsePhoneNumberFromString(value, defaultCountry)
+        const phoneNumber = parsePhoneNumberFromString(value, defaultCountry);
 
         if (phoneNumber && phoneNumber.isValid()) {
-          return null
+          return null;
         }
-      } catch (error) {
-        
-      }
+      } catch (error) {}
 
-      return { invalidPhone: true }
-    }
+      return { invalidPhone: true };
+    };
   }
 
   formatLabel(field: string): string {
     return field
       .replace(/([A-Z])/g, ' $1')
       .toLowerCase()
-      .replace(/^\w/, c => c.toUpperCase())
+      .replace(/^\w/, (c) => c.toUpperCase())
       .trim();
   }
 
   getRequiredError(label: string, form: FormGroup): string {
-    const control = form.get(label)
+    const control = form.get(label);
 
-    if (!control || !control.touched) return ''
+    if (!control || !control.touched) return '';
 
-    return control.hasError('required') ? `${this.formatLabel(label)} is required` : ''
+    return control.hasError('required') ? `${this.formatLabel(label)} is required` : '';
   }
 
+  getDateError(field: string, form: FormGroup): string {
+    const control = form.get(field);
+    if (!control?.touched) return '';
+    return this.getFirstError(
+      this.getRequiredError(field, form),
+      control.hasError('invalidDate') ? 'Enter a valid date.' : '',
+    );
+  }
+
+  getNumberError(field: string, form: FormGroup): string {
+    const control = form.get(field);
+    if (!control?.touched) return '';
+    return this.getFirstError(
+      this.getRequiredAmountError(field, form),
+      control.hasError('invalidNumber') ? `${this.formatLabel(field)} must be a finite number` : '',
+      this.getPatternError(field, form, `${this.formatLabel(field)} must be a whole number`),
+    );
+  }
   getEmailError(field: string, form: FormGroup): string {
-    const control = form.get(field)
+    const control = form.get(field);
 
-    if (!control || !control.touched) return ''
+    if (!control || !control.touched) return '';
 
-    return control.hasError('email') ? 'Invalid email address.' : ''
+    return control.hasError('email') ? 'Invalid email address.' : '';
   }
 
   getMinLengthError(field: string, form: FormGroup, label = this.formatLabel(field)): string {
-    const control = form.get(field)
+    const control = form.get(field);
 
-    if (!control || !control.touched || !control.hasError('minlength')) return ''
+    if (!control || !control.touched || !control.hasError('minlength')) return '';
 
-    const minLengthError = control.getError('minlength') as { requiredLength: number }
+    const minLengthError = control.getError('minlength') as { requiredLength: number };
 
-    return `${label} must be at least ${minLengthError.requiredLength} characters long`
+    return `${label} must be at least ${minLengthError.requiredLength} characters long`;
   }
 
   getMaxLengthError(field: string, form: FormGroup): string {
-    const control = form.get(field)
+    const control = form.get(field);
 
-    if (!control || !control.touched || !control.hasError('maxlength')) return ''
+    if (!control || !control.touched || !control.hasError('maxlength')) return '';
 
-    const maxLengthError = control.getError('maxlength') as { requiredLength: number }
+    const maxLengthError = control.getError('maxlength') as { requiredLength: number };
 
-    return `${this.formatLabel(field)} must be at most ${maxLengthError.requiredLength} characters long`
+    return `${this.formatLabel(field)} must be at most ${maxLengthError.requiredLength} characters long`;
   }
 
   getPatternError(field: string, form: FormGroup, message = 'Pattern mismatch'): string {
-    const control = form.get(field)
+    const control = form.get(field);
 
-    if (!control || !control.touched) return ''
+    if (!control || !control.touched) return '';
 
-    return control.hasError('pattern') ? message : ''
+    return control.hasError('pattern') ? message : '';
   }
 
   getPasswordMismatchError(field: string, form: FormGroup): string {
-    const control = form.get(field)
+    const control = form.get(field);
 
-    if (!control || !control.touched) return ''
+    if (!control || !control.touched) return '';
 
-    return form.hasError('passwordMismatch') ? 'Passwords do not match' : ''
+    return form.hasError('passwordMismatch') ? 'Passwords do not match' : '';
   }
 
   getFirstError(...errors: string[]): string {
-    return errors.find(Boolean) ?? ''
+    return errors.find(Boolean) ?? '';
   }
 
   getMinAmountError(field: string, form: FormGroup, label = this.formatLabel(field)): string {
-    const control = form.get(field)
+    const control = form.get(field);
 
-    if (!control || !control.hasError('min')) return ''
+    if (!control || !control.hasError('min')) return '';
 
-    const minAmountError = control.getError('min') as { min: number; actual: number }
+    const minAmountError = control.getError('min') as { min: number; actual: number };
 
-    return `${label} must be at least ${minAmountError.min}`
+    return `${label} must be at least ${minAmountError.min}`;
   }
 
   getMaxAmountError(field: string, form: FormGroup, label = this.formatLabel(field)): string {
-    const control = form.get(field)
+    const control = form.get(field);
 
-    if (!control || !control.hasError('max')) return ''
+    if (!control || !control.hasError('max')) return '';
 
-    const maxAmountError = control.getError('max') as { max: number; actual: number }
+    const maxAmountError = control.getError('max') as { max: number; actual: number };
 
-    return `${label} must be at most ${maxAmountError.max}`
+    return `${label} must be at most ${maxAmountError.max}`;
   }
 
   getRequiredAmountError(field: string, form: FormGroup, label = this.formatLabel(field)): string {
     return this.getFirstError(
       this.getRequiredError(field, form),
       this.getMinAmountError(field, form, label),
-      this.getMaxAmountError(field, form, label)
-    )
+      this.getMaxAmountError(field, form, label),
+    );
   }
 
-  getRequiredMaxAmountError(field: string, form: FormGroup, label = this.formatLabel(field)): string {
+  getRequiredMaxAmountError(
+    field: string,
+    form: FormGroup,
+    label = this.formatLabel(field),
+  ): string {
     return this.getFirstError(
       this.getRequiredError(field, form),
-      this.getMaxAmountError(field, form, label)
-    )
+      this.getMaxAmountError(field, form, label),
+    );
   }
 
   getRequiredEmailError(field: string, form: FormGroup, label = this.formatLabel(field)): string {
-    return this.getFirstError(
-      this.getRequiredError(field, form),
-      this.getEmailError(field, form)
-    )
+    return this.getFirstError(this.getRequiredError(field, form), this.getEmailError(field, form));
   }
 
-  getRequiredPhoneNumberError(field: string, form: FormGroup, label = this.formatLabel(field)): string {
-    return this.getFirstError(
-      this.getRequiredError(field, form),
-      this.getPhoneError(field, form)
-    )
+  getRequiredPhoneNumberError(
+    field: string,
+    form: FormGroup,
+    label = this.formatLabel(field),
+  ): string {
+    return this.getFirstError(this.getRequiredError(field, form), this.getPhoneError(field, form));
   }
 
   getPhoneError(field: string, form: FormGroup): string {
@@ -159,32 +177,32 @@ export class FormValidatorService {
   }
 
   nonWhitespaceValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value
+    const value = control.value;
     return typeof value === 'string' && value.length > 0 && value.trim().length === 0
       ? { whitespace: true }
-      : null
-  }
+      : null;
+  };
 
   finiteNumberValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value
+    const value = control.value;
     return value === '' || value === null || (typeof value === 'number' && Number.isFinite(value))
       ? null
-      : { invalidNumber: true }
-  }
+      : { invalidNumber: true };
+  };
 
   validDateValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value
-    if (!value) return null
+    const value = control.value;
+    if (!value) return null;
     if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-      return { invalidDate: true }
+      return { invalidDate: true };
     }
 
-    const [year, month, day] = value.split('-').map(Number)
-    const date = new Date(Date.UTC(year, month - 1, day))
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
     return date.getUTCFullYear() === year &&
       date.getUTCMonth() === month - 1 &&
       date.getUTCDate() === day
       ? null
-      : { invalidDate: true }
-  }
+      : { invalidDate: true };
+  };
 }

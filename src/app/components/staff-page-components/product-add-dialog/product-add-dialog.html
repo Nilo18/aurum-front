@@ -163,7 +163,7 @@
       <button
         type="submit"
         class="product-add-dialog__button product-add-dialog__button--primary"
-        [disabled]="isSubmitting()"
+        [disabled]="isSubmitting() || !hasChanges()"
       >
         {{ isSubmitting() ? 'Saving...' : 'Save product' }}
       </button>

@@ -1,3 +1,4 @@
+import { EditEventDialog } from '../edit-event-dialog/edit-event-dialog';
 import { StringFormatterService } from '../../../services/string-formatter-service';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -5,7 +6,7 @@ import { ConfirmActionModal } from '../../general-components/confirm-action-moda
 import { getRequestErrorMessage } from '../../../services/request-error';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { EventService, EventQuery } from '../../../services/event-service';
+import { EventService, EventQuery, EventDTO } from '../../../services/event-service';
 import { EventFiltering } from '../event-filtering/event-filtering';
 import { EventSorting } from '../event-sorting/event-sorting';
 import { EventPagination } from '../event-pagination/event-pagination';
@@ -20,7 +21,7 @@ export class Events {
   private readonly service = inject(EventService);
   private readonly modal = inject(NgbModal);
   readonly confirming = signal(false);
-  readonly deleting = signal<number | undefined>(undefined);
+  readonly deleting = signal<string | undefined>(undefined);
   readonly deleteError = signal('');
   readonly notice = signal('');
   private readonly eventQuery = signal<EventQuery>({
@@ -70,7 +71,25 @@ export class Events {
     this.events.reload();
   }
 
-  async delete(id: number): Promise<void> {
+  open(event: EventDTO): void {
+    if (this.busy()) return;
+    const modalRef = this.modal.open(EditEventDialog, {
+      centered: true,
+      ariaLabelledBy: 'event-editor-title',
+      windowClass: 'aurum-event-modal',
+      beforeDismiss: () => !modalRef.componentInstance.isSubmitting(),
+    });
+    modalRef.componentInstance.event = { ...event };
+    void modalRef.result.then(
+      (message: string) => {
+        this.refreshingAfterDelete.set(false);
+        this.notice.set(message);
+        this.events.reload();
+      },
+      () => {},
+    );
+  }
+  async delete(publicId: string): Promise<void> {
     if (this.busy()) return;
     this.confirming.set(true);
     const confirmation = this.modal.open(ConfirmActionModal, {
@@ -80,7 +99,7 @@ export class Events {
       ariaDescribedBy: 'confirm-action-message',
     });
     confirmation.componentInstance.title = 'Delete event?';
-    confirmation.componentInstance.msg = `Delete #${id} from the event collection? This action cannot be undone.`;
+    confirmation.componentInstance.msg = `Delete #${publicId} from the event collection? This action cannot be undone.`;
     try {
       if ((await confirmation.result) !== true) return;
     } catch {
@@ -89,11 +108,11 @@ export class Events {
       this.confirming.set(false);
     }
 
-    this.deleting.set(id);
+    this.deleting.set(publicId);
     this.deleteError.set('');
     this.notice.set('');
     try {
-      const response = await this.service.deleteEvent(id);
+      const response = await this.service.deleteEvent(publicId);
       if (response.status < 200 || response.status >= 300) {
         this.deleteError.set(response.message || 'Unable to delete event. Please try again.');
         return;
@@ -104,7 +123,7 @@ export class Events {
       if (current) {
         this.events.set({
           ...current,
-          content: current.content.filter((event) => event.id !== id),
+          content: current.content.filter((event) => event.publicId !== publicId),
           totalElements: Math.max(0, current.totalElements - 1),
         });
       }

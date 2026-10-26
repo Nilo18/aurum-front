@@ -79,7 +79,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (row of rows(); track $index) {
+          @for (row of rows(); track row.publicId) {
             <tr>
               <td>{{ row.clientName }}</td>
               <td class="events__event-type">{{ stringFormatter.human(row.eventType) }}</td>
@@ -103,11 +103,20 @@
                 <button
                   type="button"
                   class="events__button events__button--text"
-                  (click)="delete(row.id)"
+                  (click)="open(row)"
+                  [disabled]="busy()"
+                  [attr.aria-label]="'Edit event for ' + row.clientName"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="events__button events__button--text"
+                  (click)="delete(row.publicId)"
                   [disabled]="busy()"
                   [attr.aria-label]="'Delete event for ' + row.clientName"
                 >
-                  {{ deleting() === row.id ? 'Deleting...' : 'Delete' }}
+                  {{ deleting() === row.publicId ? 'Deleting...' : 'Delete' }}
                 </button>
               </td>
             </tr>

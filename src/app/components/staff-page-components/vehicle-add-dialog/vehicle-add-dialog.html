@@ -113,7 +113,7 @@
       ><button
         type="submit"
         class="vehicle-add-dialog__button vehicle-add-dialog__button--primary"
-        [disabled]="isSubmitting()"
+        [disabled]="isSubmitting() || !hasChanges()"
       >
         @if (isSubmitting()) {
           <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span> Saving…

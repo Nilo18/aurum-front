@@ -46,6 +46,40 @@ describe('SupplierAddDialog', () => {
     return { fixture, component: fixture.componentInstance, form };
   }
 
+  it('compares category selections by membership and allows reverted selections to remain unchanged', async () => {
+    const { component, fixture } = await setup(true);
+    expect(component.hasChanges()).toBe(false);
+    component.toggleCategory(ProductCategory.TABLEWARE, true);
+    expect(component.hasChanges()).toBe(true);
+    component.toggleCategory(ProductCategory.FLORALS, false);
+    component.toggleCategory(ProductCategory.FLORALS, true);
+    component.toggleCategory(ProductCategory.TABLEWARE, false);
+    fixture.detectChanges();
+    expect(component.hasChanges()).toBe(false);
+    await component.save();
+    expect(updateSupplier).not.toHaveBeenCalled();
+  });
+  it('blocks unchanged edits and disables saving after reverting values', async () => {
+    const fixture = TestBed.createComponent(SupplierAddDialog);
+    const component = fixture.componentInstance;
+    component.supplier = supplier;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const saveButton = () =>
+      fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(saveButton().disabled).toBe(true);
+    await component.save();
+    expect(updateSupplier).not.toHaveBeenCalled();
+    component.supplierForm.patchValue({ city: 'Batumi' });
+    fixture.detectChanges();
+    expect(saveButton().disabled).toBe(false);
+    component.supplierForm.patchValue({ city: supplier.city });
+    component.supplierForm.markAsDirty();
+    fixture.detectChanges();
+    expect(saveButton().disabled).toBe(true);
+    await component.save();
+    expect(updateSupplier).not.toHaveBeenCalled();
+  });
   it('blocks empty forms', async () => {
     const { fixture, component, form } = await setup();
     await component.save();
@@ -86,6 +120,7 @@ describe('SupplierAddDialog', () => {
 
   it('prevents duplicate saves and dismissals while saving and retains failed edits', async () => {
     const { component } = await setup(true);
+    component.supplierForm.patchValue({ city: 'Batumi' });
     let reject!: (error: Error) => void;
     updateSupplier.mockReturnValue(
       new Promise((_, rejectRequest) => {

@@ -28,6 +28,32 @@ describe('VehicleAddDialog request states', () => {
     fixture.detectChanges();
     return fixture;
   }
+  it('blocks unchanged edits and disables saving after reverting values', async () => {
+    const fixture = TestBed.createComponent(VehicleAddDialog);
+    const component = fixture.componentInstance;
+    component.vehicle = {
+      publicId: 'v-1',
+      type: VehicleType.TRUCK,
+      passengerCapacity: 2,
+      cargoWeightLimit: 100,
+    };
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const saveButton = () =>
+      fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(saveButton().disabled).toBe(true);
+    await component.save();
+    expect(updateVehicle).not.toHaveBeenCalled();
+    component.vehicleForm.patchValue({ passengerCapacity: 3 });
+    fixture.detectChanges();
+    expect(saveButton().disabled).toBe(false);
+    component.vehicleForm.patchValue({ passengerCapacity: 2 });
+    component.vehicleForm.markAsDirty();
+    fixture.detectChanges();
+    expect(saveButton().disabled).toBe(true);
+    await component.save();
+    expect(updateVehicle).not.toHaveBeenCalled();
+  });
   it('blocks invalid forms and preserves zero when initializing edits', async () => {
     const fixture = TestBed.createComponent(VehicleAddDialog);
     const component = fixture.componentInstance;

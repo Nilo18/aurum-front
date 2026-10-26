@@ -132,7 +132,7 @@
         Cancel</button
       ><button
         type="submit"
-        [disabled]="isSubmitting()"
+        [disabled]="isSubmitting() || !hasChanges()"
         class="supplier-add-dialog__button supplier-add-dialog__button--primary"
       >
         {{ isSubmitting() ? 'Saving…' : 'Save supplier' }}

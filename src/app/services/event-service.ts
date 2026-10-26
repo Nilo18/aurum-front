@@ -67,7 +67,7 @@ export enum EventLocation {
 }
 
 export interface EventDTO {
-  id: number;
+  publicId: string;
   clientName: string;
   eventType: EventType;
   date: string;
@@ -92,6 +92,17 @@ export interface EventQuery {
   sortBy?: string;
   sortDirection?: string;
   search?: string;
+}
+
+export interface UpdateEventRequest {
+  publicId: string;
+  eventType: EventType;
+  date: string; // Represented as an ISO string (yyyy-MM-dd)
+  totalCost: number;
+  guestCount: number;
+  location: EventLocation;
+  status: EventStatus;
+  // menuItemPublicIds?: string[];
 }
 
 export type EventFilterKey = Exclude<
@@ -134,16 +145,29 @@ export class EventService {
     }
   }
 
+  async updateEvent(request: UpdateEventRequest) {
+    try {
+      const res = await firstValueFrom(
+        this.http.put<EventDTO>(`${this.baseUrl}/api/event`, request),
+      );
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.log("Couldn't update event: ", error);
+      throw error;
+    }
+  }
+
   getEvents(query: EventQuery) {
     const cleanedQuery = this.queryFormatter.removeEmptyProperties(query);
     const params = new HttpParams({ fromObject: cleanedQuery });
     return this.http.get<PageResponse<EventDTO>>(`${this.baseUrl}/api/event`, { params });
   }
 
-  async deleteEvent(id: number) {
+  async deleteEvent(publicId: string) {
     try {
       const res = await firstValueFrom(
-        this.http.delete<GenericResponse>(`${this.baseUrl}/api/event/${id}`),
+        this.http.delete<GenericResponse>(`${this.baseUrl}/api/event/${publicId}`),
       );
       console.log(res);
       return res;
