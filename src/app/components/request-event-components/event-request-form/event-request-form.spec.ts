@@ -244,7 +244,7 @@ describe('EventRequestForm', () => {
         notes: 'Vegetarian',
         totalCost: undefined,
       },
-      menuItemIds: ['menu-1'],
+      menuItemPublicIds: ['menu-1'],
       transactionKey: 'key',
     });
     expect(component.submitted()).toBe(true);

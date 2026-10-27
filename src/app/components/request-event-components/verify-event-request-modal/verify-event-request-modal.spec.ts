@@ -28,7 +28,7 @@ describe('VerifyEventRequestModal', () => {
         phone: '+14155552671',
       },
       event: { eventType: 'WEDDING', date: '2027-01-01', guestCount: 10, location: 'HOTEL' },
-      menuItemIds: ['menu-1', 'menu-2'],
+      menuItemPublicIds: ['menu-1', 'menu-2'],
       transactionKey: 'transaction',
     };
     await fixture.whenStable();
