@@ -1,0 +1,111 @@
+<div class="feedback">
+  <section class="feedback__story" aria-labelledby="feedback-story-title">
+    <div>
+      <p class="feedback__eyebrow">The details make the difference</p>
+      <h1 id="feedback-story-title">Your experience.<br /><em>Our inspiration.</em></h1>
+      <p class="feedback__description">
+        Tell us about your time with AURUM. Your thoughts help us create even more memorable
+        experiences.
+      </p>
+      <p class="feedback__signature">Every moment matters. So does your voice.</p>
+    </div>
+  </section>
+  <section class="feedback__panel" aria-labelledby="feedback-title">
+    <div class="feedback__form-wrap">
+      <p class="feedback__eyebrow">
+        Guest feedback <span class="feedback__verified">✓ Invitation verified</span>
+      </p>
+      <h2 id="feedback-title">How was your experience?</h2>
+      <p class="feedback__intro">
+        We’d love to hear what made it special, and where we can do better. All fields are required.
+      </p>
+      <form
+        class="feedback__form"
+        [formGroup]="feedbackForm"
+        (submit)="$event.preventDefault()"
+        novalidate
+      >
+        <div>
+          <label for="feedback-author">Your name</label>
+          <input
+            id="feedback-author"
+            name="author"
+            type="text"
+            autocomplete="name"
+            placeholder="Enter your full name"
+            formControlName="author"
+            required
+            maxlength="255"
+            [attr.aria-invalid]="fieldInvalid('author')"
+            aria-describedby="author-error"
+          />
+          <p id="author-error" class="feedback__field-error">
+            @if (fieldInvalid('author')) {
+              Please enter your name (up to 255 characters).
+            }
+          </p>
+        </div>
+        <div>
+          <label for="feedback-date">Comment date</label>
+          <input
+            id="feedback-date"
+            name="comment_date"
+            type="date"
+            formControlName="comment_date"
+            required
+            [attr.aria-invalid]="fieldInvalid('comment_date')"
+            aria-describedby="date-error"
+          />
+          <p id="date-error" class="feedback__field-error">
+            @if (fieldInvalid('comment_date')) {
+              Please choose a comment date.
+            }
+          </p>
+        </div>
+        <fieldset class="feedback__rating" aria-describedby="rating-error">
+          <legend>Your rating</legend>
+          <div class="feedback__rating-options">
+            @for (rating of [1, 2, 3, 4, 5]; track rating) {
+              <label class="feedback__rating-option">
+                <input
+                  type="radio"
+                  name="rating"
+                  formControlName="rating"
+                  [value]="rating.toString()"
+                  required
+                  [attr.aria-label]="rating + (rating === 1 ? ' star' : ' stars')"
+                />
+                <span><span aria-hidden="true">★</span> {{ rating }}</span>
+              </label>
+            }
+          </div>
+          <p class="feedback__rating-hint">1 — Poor <span>5 — Excellent</span></p>
+          <p id="rating-error" class="feedback__field-error">
+            @if (fieldInvalid('rating')) {
+              Please select a rating from 1 to 5.
+            }
+          </p>
+        </fieldset>
+        <div>
+          <label for="feedback-description">Your experience</label>
+          <textarea
+            id="feedback-description"
+            name="description"
+            rows="5"
+            placeholder="Share your highlights and suggestions…"
+            formControlName="description"
+            required
+            [attr.aria-invalid]="fieldInvalid('description')"
+            aria-describedby="description-error"
+          ></textarea>
+          <p id="description-error" class="feedback__field-error">
+            @if (fieldInvalid('description')) {
+              Please tell us about your experience.
+            }
+          </p>
+        </div>
+      </form>
+      <p class="feedback__help">Thank you for helping us make every experience exceptional.</p>
+    </div>
+  </section>
+</div>

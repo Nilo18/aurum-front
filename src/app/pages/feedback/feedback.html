@@ -1,0 +1,41 @@
+<div class="feedback-page">
+  <header class="feedback-page__header">
+    <a class="feedback-page__logo" href="/" aria-label="AURUM home">AURUM</a>
+    <a class="feedback-page__back" href="/"
+      ><span aria-hidden="true">&larr;</span> Back to website</a
+    >
+  </header>
+  <main class="feedback-page__main">
+    @if (validating()) {
+      <app-loader-component />
+    } @else if (validationFailed()) {
+      <section class="feedback-error" aria-labelledby="feedback-error-title">
+        <div class="feedback-error__card">
+          <div class="feedback-error__icon" aria-hidden="true">!</div>
+          <p class="feedback-error__eyebrow">Your experience matters</p>
+          <h1 id="feedback-error-title">We couldn’t verify<br />your invitation.</h1>
+          <p class="feedback-error__intro">We’re unable to open your feedback form.</p>
+          <div class="feedback-error__detail" role="alert">
+            <span>Invitation verification failed</span>
+            <p>{{ validationErrorMsg() }}</p>
+          </div>
+          <p class="feedback-error__help">
+            Try again, or contact your event organizer for a new feedback invitation.
+          </p>
+          @if (token) {
+            <button class="feedback-error__action" type="button" (click)="validateInvitation()">
+              Try again <span aria-hidden="true">&rarr;</span>
+            </button>
+          }
+          <a class="feedback-error__home" href="/">Return to AURUM</a>
+        </div>
+      </section>
+    } @else {
+      <app-feedback-form />
+    }
+  </main>
+  <footer class="feedback-page__footer">
+    <span>AURUM &middot; Event Management</span>
+    <span>Exceptional experiences, shaped by you</span>
+  </footer>
+</div>

@@ -5,6 +5,7 @@ import { Login } from './pages/login/login';
 import { Register } from './pages/register/register';
 import { Staff } from './pages/staff/staff';
 import { DemoLoginLoadingPage } from './pages/demo-login-loading-page/demo-login-loading-page';
+import { Feedback } from './pages/feedback/feedback';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -12,6 +13,7 @@ export const routes: Routes = [
   { path: 'staff-login', component: Login },
   { path: 'staff-register', component: Register },
   { path: 'demo', component: DemoLoginLoadingPage },
+  { path: 'feedback', component: Feedback },
   {
     path: 'staff',
     component: Staff,
