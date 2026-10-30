@@ -5,6 +5,22 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { GenericResponse } from './home-service';
 
+export interface CreateFeedbackRequest {
+  tokenHash: string;
+  author: string;
+  // commentDate: string;
+  rating: number;
+  description: string;
+}
+
+export interface FeedbackDTO {
+  publicId: string;
+  author: string;
+  commentDate: string;
+  rating: number;
+  description: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -24,6 +40,17 @@ export class FeedbackService {
     } catch (error) {
       console.log("Couldn't validate invitation: ", error);
       throw error;
+    }
+  }
+
+  async createFeedback(request: CreateFeedbackRequest) {
+    try {
+      const res = await firstValueFrom(this.http.post<FeedbackDTO>(`${this.baseUrl}/api/feedback`, request))
+      console.log(res)
+      return res
+    } catch (error) {
+      console.log("Couldn't create feedback: ", error)
+      throw error
     }
   }
 }

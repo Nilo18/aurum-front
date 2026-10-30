@@ -22,88 +22,104 @@
       <form
         class="feedback__form"
         [formGroup]="feedbackForm"
-        (submit)="$event.preventDefault()"
+        (ngSubmit)="createFeedback()"
+        [attr.aria-busy]="isSubmitting()"
         novalidate
       >
-        <div>
-          <label for="feedback-author">Your name</label>
-          <input
-            id="feedback-author"
-            name="author"
-            type="text"
-            autocomplete="name"
-            placeholder="Enter your full name"
-            formControlName="author"
-            required
-            maxlength="255"
-            [attr.aria-invalid]="fieldInvalid('author')"
-            aria-describedby="author-error"
-          />
-          <p id="author-error" class="feedback__field-error">
-            @if (fieldInvalid('author')) {
-              Please enter your name (up to 255 characters).
-            }
-          </p>
-        </div>
-        <div>
-          <label for="feedback-date">Comment date</label>
-          <input
-            id="feedback-date"
-            name="comment_date"
-            type="date"
-            formControlName="comment_date"
-            required
-            [attr.aria-invalid]="fieldInvalid('comment_date')"
-            aria-describedby="date-error"
-          />
-          <p id="date-error" class="feedback__field-error">
-            @if (fieldInvalid('comment_date')) {
-              Please choose a comment date.
-            }
-          </p>
-        </div>
-        <fieldset class="feedback__rating" aria-describedby="rating-error">
-          <legend>Your rating</legend>
-          <div class="feedback__rating-options">
-            @for (rating of [1, 2, 3, 4, 5]; track rating) {
-              <label class="feedback__rating-option">
-                <input
-                  type="radio"
-                  name="rating"
-                  formControlName="rating"
-                  [value]="rating.toString()"
-                  required
-                  [attr.aria-label]="rating + (rating === 1 ? ' star' : ' stars')"
-                />
-                <span><span aria-hidden="true">★</span> {{ rating }}</span>
-              </label>
-            }
+        <fieldset class="feedback__fields" [disabled]="isSubmitting() || submitted()">
+          <div>
+            <label for="feedback-author">Your name</label>
+            <input
+              id="feedback-author"
+              name="author"
+              type="text"
+              autocomplete="name"
+              placeholder="Enter your full name"
+              formControlName="author"
+              required
+              maxlength="255"
+              [attr.aria-invalid]="fieldInvalid('author')"
+              aria-describedby="author-error"
+            />
+            <p id="author-error" class="feedback__field-error">
+              @if (fieldInvalid('author')) {
+                Please enter your name (up to 255 characters).
+              }
+            </p>
           </div>
-          <p class="feedback__rating-hint">1 — Poor <span>5 — Excellent</span></p>
-          <p id="rating-error" class="feedback__field-error">
-            @if (fieldInvalid('rating')) {
-              Please select a rating from 1 to 5.
-            }
-          </p>
+          <!-- <div>
+            <label for="feedback-date">Comment date</label>
+            <input
+              id="feedback-date"
+              name="comment_date"
+              type="date"
+              formControlName="commentDate"
+              required
+              [attr.aria-invalid]="fieldInvalid('commentDate')"
+              aria-describedby="date-error"
+            />
+            <p id="date-error" class="feedback__field-error">
+              @if (fieldInvalid('commentDate')) {
+                Please choose a comment date.
+              }
+            </p>
+          </div> -->
+          <fieldset class="feedback__rating" aria-describedby="rating-error">
+            <legend>Your rating</legend>
+            <div class="feedback__rating-options">
+              @for (rating of [1, 2, 3, 4, 5]; track rating) {
+                <label class="feedback__rating-option">
+                  <input
+                    type="radio"
+                    name="rating"
+                    formControlName="rating"
+                    [value]="rating.toString()"
+                    required
+                    [attr.aria-label]="rating + (rating === 1 ? ' star' : ' stars')"
+                  />
+                  <span><span aria-hidden="true">★</span> {{ rating }}</span>
+                </label>
+              }
+            </div>
+            <p class="feedback__rating-hint">1 — Poor <span>5 — Excellent</span></p>
+            <p id="rating-error" class="feedback__field-error">
+              @if (fieldInvalid('rating')) {
+                Please select a rating from 1 to 5.
+              }
+            </p>
+          </fieldset>
+          <div>
+            <label for="feedback-description">Your experience</label>
+            <textarea
+              id="feedback-description"
+              name="description"
+              rows="5"
+              placeholder="Share your highlights and suggestions…"
+              formControlName="description"
+              required
+              [attr.aria-invalid]="fieldInvalid('description')"
+              aria-describedby="description-error"
+            ></textarea>
+            <p id="description-error" class="feedback__field-error">
+              @if (fieldInvalid('description')) {
+                Please tell us about your experience.
+              }
+            </p>
+          </div>
         </fieldset>
-        <div>
-          <label for="feedback-description">Your experience</label>
-          <textarea
-            id="feedback-description"
-            name="description"
-            rows="5"
-            placeholder="Share your highlights and suggestions…"
-            formControlName="description"
-            required
-            [attr.aria-invalid]="fieldInvalid('description')"
-            aria-describedby="description-error"
-          ></textarea>
-          <p id="description-error" class="feedback__field-error">
-            @if (fieldInvalid('description')) {
-              Please tell us about your experience.
-            }
+        @if (errorMessage()) {
+          <p class="feedback__feedback feedback__feedback--error" role="alert">
+            {{ errorMessage() }}
           </p>
-        </div>
+        }
+        @if (submitted()) {
+          <p class="feedback__feedback" role="status">
+            Your feedback has been sent. Thank you for sharing your experience.
+          </p>
+        }
+        <button class="feedback__submit" type="submit" [disabled]="isSubmitting() || submitted()">
+          {{ isSubmitting() ? 'Sending…' : submitted() ? 'Request sent' : 'Send feedback' }}
+        </button>
       </form>
       <p class="feedback__help">Thank you for helping us make every experience exceptional.</p>
     </div>

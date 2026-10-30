@@ -105,4 +105,29 @@ describe('EditEventDialog', () => {
     component.close();
     expect(dismiss).toHaveBeenCalledOnce();
   });
+  it.each([EventStatus.COMPLETED, EventStatus.CANCELLED, EventStatus.REJECTED])(
+    'blocks saving an event already marked %s even when its form status changes',
+    async (status) => {
+      const { component, fixture } = await setup();
+      component.event = { ...event, status };
+      component.eventForm.patchValue({ guestCount: 20, status: EventStatus.CONFIRMED });
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('button[type="submit"]').disabled).toBe(true);
+      await component.save();
+      expect(updateEvent).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([EventStatus.COMPLETED, EventStatus.CANCELLED, EventStatus.REJECTED])(
+    'allows an active event to transition to %s',
+    async (status) => {
+      const { component, fixture } = await setup();
+      component.eventForm.patchValue({ status });
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('button[type="submit"]').disabled).toBe(false);
+      updateEvent.mockResolvedValue({ ...event, status });
+      await component.save();
+      expect(updateEvent).toHaveBeenCalledOnce();
+    },
+  );
 });

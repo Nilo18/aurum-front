@@ -61,6 +61,12 @@ export class EditEventDialog implements OnInit {
     this.eventForm.patchValue(this.event);
   }
 
+  isEventClosed(): boolean {
+    return [EventStatus.COMPLETED, EventStatus.CANCELLED, EventStatus.REJECTED].includes(
+      this.event.status,
+    );
+  }
+
   hasChanges(): boolean {
     const values = this.formValues();
     return (Object.keys(values) as (keyof typeof values)[]).some(
@@ -73,7 +79,7 @@ export class EditEventDialog implements OnInit {
   }
 
   async save(): Promise<void> {
-    if (this.isSubmitting() || !this.hasChanges()) return;
+    if (this.isSubmitting() || this.isEventClosed() || !this.hasChanges()) return;
     this.submissionError.set('');
     if (this.eventForm.invalid) {
       this.eventForm.markAllAsTouched();

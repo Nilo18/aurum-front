@@ -153,7 +153,7 @@
       <button
         type="submit"
         class="edit-event-dialog__button edit-event-dialog__button--primary"
-        [disabled]="isSubmitting() || !hasChanges()"
+        [disabled]="isSubmitting() || isEventClosed() || !hasChanges()"
       >
         {{ isSubmitting() ? 'Saving…' : 'Save event' }}
       </button>
