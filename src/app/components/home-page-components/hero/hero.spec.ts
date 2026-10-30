@@ -1,23 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { Hero } from './hero';
-
 describe('Hero', () => {
-  let component: Hero;
-  let fixture: ComponentFixture<Hero>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Hero]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(Hero);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [Hero], providers: [provideRouter([])] });
   });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('renders its content and child sections', async () => {
+    const fixture = TestBed.createComponent(Hero);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toContain('PREMIUM EVENT MANAGEMENT');
   });
 });

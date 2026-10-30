@@ -78,4 +78,16 @@ describe('MenuAddDialog', () => {
     expect(updateMenuItem).toHaveBeenLastCalledWith({ ...item, pricePerPerson: 20 });
     expect(close).toHaveBeenCalled();
   });
+
+  it('keeps the editor open during submission and permits dismissal afterwards', () => {
+    const fixture = TestBed.createComponent(MenuAddDialog);
+    const component = fixture.componentInstance;
+    const dismissModal = vi.spyOn(TestBed.inject(NgbActiveModal), 'dismiss');
+    component.isSubmitting.set(true);
+    component.close();
+    expect(dismissModal).not.toHaveBeenCalled();
+    component.isSubmitting.set(false);
+    component.close();
+    expect(dismissModal).toHaveBeenCalledOnce();
+  });
 });

@@ -24,7 +24,6 @@ describe('FeedbackForm', () => {
   function fillForm() {
     component.feedbackForm.patchValue({
       author: 'Guest',
-      commentDate: '2026-10-30',
       rating: '5',
       description: 'Wonderful experience',
     });
@@ -54,7 +53,6 @@ describe('FeedbackForm', () => {
     expect(createFeedback).toHaveBeenCalledWith({
       tokenHash: 'invitation',
       author: 'Guest',
-      commentDate: '2026-10-30',
       rating: 5,
       description: 'Wonderful experience',
     });
@@ -90,5 +88,15 @@ describe('FeedbackForm', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
     expect(component.submitted()).toBe(true);
+  });
+
+  it('takes the invitation token from the input before sending feedback', async () => {
+    fillForm();
+    createFeedback.mockResolvedValue({});
+    await component.createFeedback();
+    expect(createFeedback).toHaveBeenCalledWith(
+      expect.objectContaining({ tokenHash: 'invitation' }),
+    );
+    expect(createFeedback.mock.calls[0][0]).not.toHaveProperty('commentDate');
   });
 });

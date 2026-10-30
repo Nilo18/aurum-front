@@ -1,25 +1,20 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { Login } from './login';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
-
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { Login } from './login';
 describe('Login', () => {
-  let component: Login;
-  let fixture: ComponentFixture<Login>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
       imports: [Login],
-      providers: [provideHttpClient()]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(Login);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+    });
   });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('renders its content and child sections', async () => {
+    const fixture = TestBed.createComponent(Login);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('app-login-hero')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-login-form')).not.toBeNull();
   });
 });

@@ -118,4 +118,16 @@ describe('ProductAddDialog', () => {
     await component.save();
     expect(close).toHaveBeenCalledWith('Product saved.');
   });
+
+  it('keeps the editor open during submission and permits dismissal afterwards', () => {
+    const fixture = TestBed.createComponent(ProductAddDialog);
+    const component = fixture.componentInstance;
+    const dismissModal = vi.spyOn(TestBed.inject(NgbActiveModal), 'dismiss');
+    component.isSubmitting.set(true);
+    component.close();
+    expect(dismissModal).not.toHaveBeenCalled();
+    component.isSubmitting.set(false);
+    component.close();
+    expect(dismissModal).toHaveBeenCalledOnce();
+  });
 });

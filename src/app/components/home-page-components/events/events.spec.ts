@@ -1,23 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { Events } from './events';
-
 describe('Events', () => {
-  let component: Events;
-  let fixture: ComponentFixture<Events>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Events]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(Events);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [Events], providers: [provideRouter([])] });
   });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('renders its content and child sections', async () => {
+    const fixture = TestBed.createComponent(Events);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toContain('Event portfolio');
   });
 });

@@ -1,23 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { About } from './about';
-
 describe('About', () => {
-  let component: About;
-  let fixture: ComponentFixture<About>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [About]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(About);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [About], providers: [provideRouter([])] });
   });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('renders its content and child sections', async () => {
+    const fixture = TestBed.createComponent(About);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toContain('About Aurumi');
   });
 });

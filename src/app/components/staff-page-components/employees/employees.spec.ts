@@ -1,3 +1,4 @@
+import { of as emptyPageResult } from 'rxjs';
 import { of } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -105,5 +106,38 @@ describe('Employees reactive list query', () => {
     component.retry();
     await fixture.whenStable();
     expect(getEmployees).toHaveBeenCalledTimes(count + 1);
+  });
+});
+
+describe('Employees query state', () => {
+  it('resets pagination for new criteria and preserves criteria during paging', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: EmployeeService,
+          useValue: {
+            getEmployees: () =>
+              emptyPageResult({ content: [], pageNumber: 0, pageSize: 10, totalElements: 0 }),
+          },
+        },
+      ],
+    });
+    const fixture = TestBed.createComponent(Employees);
+    const component = fixture.componentInstance;
+    component.updateQuery({ page: 3, size: 25 }, false);
+    component.updateQuery({ sortBy: 'name', sortDirection: 'ASC' });
+    expect(component.query()).toMatchObject({
+      page: 0,
+      size: 25,
+      sortBy: 'name',
+      sortDirection: 'ASC',
+    });
+    component.updateQuery({ page: 2 }, false);
+    expect(component.query()).toMatchObject({
+      page: 2,
+      size: 25,
+      sortBy: 'name',
+      sortDirection: 'ASC',
+    });
   });
 });

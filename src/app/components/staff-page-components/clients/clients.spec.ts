@@ -1,3 +1,5 @@
+import { ClientService } from '../../../services/client-service';
+import { of as emptyPageResult } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
@@ -251,5 +253,38 @@ describe('Clients API controls', () => {
     expect(fixture.componentInstance.rows()).toEqual([]);
     expect(fixture.componentInstance.error()).toContain('Client deleted');
     expect(fixture.componentInstance.busy()).toBe(false);
+  });
+});
+
+describe('Clients query state', () => {
+  it('resets pagination for new criteria and preserves criteria during paging', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: ClientService,
+          useValue: {
+            getClients: () =>
+              emptyPageResult({ content: [], pageNumber: 0, pageSize: 10, totalElements: 0 }),
+          },
+        },
+      ],
+    });
+    const fixture = TestBed.createComponent(Clients);
+    const component = fixture.componentInstance;
+    component.updateQuery({ page: 3, size: 25 }, false);
+    component.updateQuery({ sortBy: 'name', sortDirection: 'ASC' });
+    expect(component.query()).toMatchObject({
+      page: 0,
+      size: 25,
+      sortBy: 'name',
+      sortDirection: 'ASC',
+    });
+    component.updateQuery({ page: 2 }, false);
+    expect(component.query()).toMatchObject({
+      page: 2,
+      size: 25,
+      sortBy: 'name',
+      sortDirection: 'ASC',
+    });
   });
 });

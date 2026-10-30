@@ -97,4 +97,14 @@ describe('LoginVerificationModal', () => {
     expect(component.submissionError()).toBe('');
     expect(modal.close).toHaveBeenCalledWith('verified');
   });
+
+  it('does not call login when the verification transaction is missing', async () => {
+    const { component } = setup();
+    component.loginInfo.transactionKey = '';
+    component.verificationForm.patchValue({ otp: '123456' });
+    await component.onSubmit();
+    expect(auth.login).not.toHaveBeenCalled();
+    expect(component.submissionError()).toContain('verification session is missing');
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
 });

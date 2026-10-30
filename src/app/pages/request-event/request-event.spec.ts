@@ -1,25 +1,20 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { RequestEvent } from './request-event';
+import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { MenuService } from '../../services/menu-service';
-
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { RequestEvent } from './request-event';
 describe('RequestEvent', () => {
-  let component: RequestEvent;
-  let fixture: ComponentFixture<RequestEvent>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [RequestEvent], providers: [provideRouter([]), { provide: MenuService, useValue: { getMenuItems: async () => [] } }]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(RequestEvent);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [RequestEvent],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+    });
   });
+  it('renders its content and child sections', async () => {
+    const fixture = TestBed.createComponent(RequestEvent);
+    fixture.detectChanges();
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('app-request-event-intro')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-event-request-form')).not.toBeNull();
   });
 });

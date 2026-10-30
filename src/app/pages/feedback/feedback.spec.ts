@@ -88,4 +88,14 @@ describe('Feedback invitation validation', () => {
     expect(fixture.componentInstance.validationFailed()).toBe(true);
     expect(fixture.componentInstance.validationErrorMsg()).toContain('Please try again');
   });
+
+  it('treats a whitespace-only invitation as missing', async () => {
+    params.next(convertToParamMap({ token: '   ' }));
+    const fixture = TestBed.createComponent(Feedback);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(calls).toBe(0);
+    expect(fixture.componentInstance.validationFailed()).toBe(true);
+    expect(fixture.componentInstance.validationErrorMsg()).toContain('invitation link is missing');
+  });
 });

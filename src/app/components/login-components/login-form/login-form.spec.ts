@@ -38,9 +38,17 @@ describe('LoginForm', () => {
 
   it('blocks duplicate submissions and passes credentials and the transaction key to the modal', async () => {
     const { fixture, component } = setup();
-    component.loginForm.setValue({ email: 'staff@example.com', password: 'test-password', role: EmployeeRole.OWNER });
+    component.loginForm.setValue({
+      email: 'staff@example.com',
+      password: 'test-password',
+      role: EmployeeRole.OWNER,
+    });
     let resolve!: (value: { transactionKey: string }) => void;
-    auth.verifyLoginRequest.mockReturnValueOnce(new Promise(r => { resolve = r; }));
+    auth.verifyLoginRequest.mockReturnValueOnce(
+      new Promise((r) => {
+        resolve = r;
+      }),
+    );
     const pending = component.onSubmit();
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('button[type="submit"]').disabled).toBe(true);
@@ -48,24 +56,53 @@ describe('LoginForm', () => {
     expect(auth.verifyLoginRequest).toHaveBeenCalledTimes(1);
     resolve({ transactionKey: 'transaction-123' });
     await pending;
-    expect(modalRef.componentInstance).toEqual({ loginInfo: {
-      email: 'staff@example.com', password: 'test-password', role: EmployeeRole.OWNER, transactionKey: 'transaction-123',
-    } });
+    expect(modalRef.componentInstance).toEqual({
+      loginInfo: {
+        email: 'staff@example.com',
+        password: 'test-password',
+        role: EmployeeRole.OWNER,
+        transactionKey: 'transaction-123',
+      },
+    });
     expect(component.isSubmitting()).toBe(false);
   });
 
   it('shows backend errors and resets loading so the user can retry', async () => {
     const { fixture, component } = setup();
-    component.loginForm.setValue({ email: 'staff@example.com', password: 'test-password', role: EmployeeRole.STAFF });
-    auth.verifyLoginRequest.mockRejectedValueOnce(new HttpErrorResponse({ status: 400, error: { message: 'Email verification is unavailable.' } }));
+    component.loginForm.setValue({
+      email: 'staff@example.com',
+      password: 'test-password',
+      role: EmployeeRole.STAFF,
+    });
+    auth.verifyLoginRequest.mockRejectedValueOnce(
+      new HttpErrorResponse({
+        status: 400,
+        error: { message: 'Email verification is unavailable.' },
+      }),
+    );
     await component.onSubmit();
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain('Email verification is unavailable.');
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(
+      'Email verification is unavailable.',
+    );
     expect(component.isSubmitting()).toBe(false);
     expect(modal.open).not.toHaveBeenCalled();
     auth.verifyLoginRequest.mockResolvedValueOnce({ transactionKey: 'retry-key' });
     await component.onSubmit();
     expect(component.submissionError()).toBe('');
     expect(modal.open).toHaveBeenCalledTimes(1);
+  });
+
+  it('rejects malformed email addresses even when other fields are filled', async () => {
+    const { component } = setup();
+    component.loginForm.setValue({
+      email: 'invalid-address',
+      password: 'secret',
+      role: EmployeeRole.STAFF,
+    });
+    await component.onSubmit();
+    expect(component.loginForm.controls.email.hasError('email')).toBe(true);
+    expect(auth.verifyLoginRequest).not.toHaveBeenCalled();
+    expect(modal.open).not.toHaveBeenCalled();
   });
 });

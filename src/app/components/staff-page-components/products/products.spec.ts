@@ -1,3 +1,4 @@
+import { of as emptyPageResult } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ReplaySubject } from 'rxjs';
@@ -148,5 +149,38 @@ describe('Products backend collection', () => {
     expect(fixture.componentInstance.deleteError()).toBe('Product is in use.');
     expect(fixture.componentInstance.busy()).toBe(false);
     expect(getProducts).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Products query state', () => {
+  it('resets pagination for new criteria and preserves criteria during paging', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: ProductService,
+          useValue: {
+            getProducts: () =>
+              emptyPageResult({ content: [], pageNumber: 0, pageSize: 10, totalElements: 0 }),
+          },
+        },
+      ],
+    });
+    const fixture = TestBed.createComponent(Products);
+    const component = fixture.componentInstance;
+    component.updateQuery({ page: 3, size: 25 }, false);
+    component.updateQuery({ sortBy: 'name', sortDirection: 'ASC' });
+    expect(component.query()).toMatchObject({
+      page: 0,
+      size: 25,
+      sortBy: 'name',
+      sortDirection: 'ASC',
+    });
+    component.updateQuery({ page: 2 }, false);
+    expect(component.query()).toMatchObject({
+      page: 2,
+      size: 25,
+      sortBy: 'name',
+      sortDirection: 'ASC',
+    });
   });
 });

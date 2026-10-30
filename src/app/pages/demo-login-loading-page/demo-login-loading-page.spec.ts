@@ -112,4 +112,15 @@ describe('DemoLoginLoadingPage', () => {
     expect(saveToken).not.toHaveBeenCalled();
     expect(navigate).not.toHaveBeenCalled();
   });
+
+  it('does not start another demo login after the page has been destroyed', async () => {
+    fixture.destroy();
+    const initialCalls = loginAsDemo.mock.calls.length;
+    await component.login();
+    expect(loginAsDemo).toHaveBeenCalledTimes(initialCalls);
+    resolveLogin({ status: 200, token: 'late-session' });
+    await Promise.resolve();
+    expect(saveToken).not.toHaveBeenCalled();
+    expect(navigate).not.toHaveBeenCalled();
+  });
 });

@@ -141,4 +141,16 @@ describe('SupplierAddDialog', () => {
     component.close();
     expect(dismiss).toHaveBeenCalledOnce();
   });
+
+  it('keeps the editor open during submission and permits dismissal afterwards', () => {
+    const fixture = TestBed.createComponent(SupplierAddDialog);
+    const component = fixture.componentInstance;
+    const dismissModal = vi.spyOn(TestBed.inject(NgbActiveModal), 'dismiss');
+    component.isSubmitting.set(true);
+    component.close();
+    expect(dismissModal).not.toHaveBeenCalled();
+    component.isSubmitting.set(false);
+    component.close();
+    expect(dismissModal).toHaveBeenCalledOnce();
+  });
 });

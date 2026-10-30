@@ -168,4 +168,16 @@ describe('VehicleAddDialog request states', () => {
     expect(component.isSubmitting()).toBe(false);
     expect(close).toHaveBeenCalledWith('Vehicle saved.');
   });
+
+  it('keeps the editor open during submission and permits dismissal afterwards', () => {
+    const fixture = TestBed.createComponent(VehicleAddDialog);
+    const component = fixture.componentInstance;
+    const dismissModal = vi.spyOn(TestBed.inject(NgbActiveModal), 'dismiss');
+    component.isSubmitting.set(true);
+    component.close();
+    expect(dismissModal).not.toHaveBeenCalled();
+    component.isSubmitting.set(false);
+    component.close();
+    expect(dismissModal).toHaveBeenCalledOnce();
+  });
 });

@@ -68,4 +68,12 @@ describe('RegistrationForm request states', () => {
     expect(component.requestSent()).toBe(false);
     expect(navigate).not.toHaveBeenCalled();
   });
+
+  it('rejects a missing invitation token before submitting registration', async () => {
+    component.registerForm.patchValue({ token: '' });
+    await component.onSubmit();
+    expect(component.registerForm.get('token')?.hasError('required')).toBe(true);
+    expect(completeRegistration).not.toHaveBeenCalled();
+    expect(navigate).not.toHaveBeenCalled();
+  });
 });

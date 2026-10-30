@@ -1,23 +1,13 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { SupplierSorting } from './supplier-sorting';
-
 describe('SupplierSorting', () => {
-  let component: SupplierSorting;
-  let fixture: ComponentFixture<SupplierSorting>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [SupplierSorting]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(SupplierSorting);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('emits the selected sort and clears direction when sorting is reset', () => {
+    const fixture = TestBed.createComponent(SupplierSorting);
+    const changed = vi.fn();
+    fixture.componentInstance.changed.subscribe(changed);
+    fixture.componentInstance.sort('name', 'ASC');
+    expect(changed).toHaveBeenLastCalledWith({ sortBy: 'name', sortDirection: 'ASC' });
+    fixture.componentInstance.sort('', 'DESC');
+    expect(changed).toHaveBeenLastCalledWith({ sortBy: '', sortDirection: '' });
   });
 });

@@ -1,26 +1,19 @@
+import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { Staff } from './staff';
-
 describe('Staff', () => {
-  let component: Staff;
-  let fixture: ComponentFixture<Staff>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
       imports: [Staff],
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(Staff);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
+    });
   });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('renders its content and child sections', async () => {
+    const fixture = TestBed.createComponent(Staff);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('app-sidebar')).not.toBeNull();
   });
 });

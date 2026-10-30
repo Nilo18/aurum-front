@@ -1,16 +1,22 @@
-import { TestBed } from '@angular/core/testing';
-
 import { StringFormatterService } from './string-formatter-service';
-
 describe('StringFormatterService', () => {
-  let service: StringFormatterService;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(StringFormatterService);
+  const service = new StringFormatterService();
+  it.each([
+    ['FOOD_INGREDIENT', 'Food ingredient'],
+    ['STAFF', 'Staff'],
+    ['Guest name', 'Guest name'],
+    [null, ''],
+    [undefined, ''],
+    [123, '123'],
+  ])('humanizes %s', (value, expected) => {
+    expect(service.human(value)).toBe(expected);
   });
-
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  it.each([
+    [1234.5, '₾ 1,234.50'],
+    [0, '₾ 0.00'],
+    [-10, '₾ -10.00'],
+    ['12.3', '₾ 12.30'],
+  ])('formats currency %s', (value, expected) => {
+    expect(service.currency(value)).toBe(expected);
   });
 });

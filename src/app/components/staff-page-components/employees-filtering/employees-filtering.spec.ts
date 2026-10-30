@@ -18,8 +18,16 @@ describe('EmployeesFiltering', () => {
     await fixture.whenStable();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('clears enum filters and blocks changes while disabled', () => {
+    const changed = vi.fn();
+    component.changed.subscribe(changed);
+    component.filter('type', 'CHEF');
+    expect(changed).toHaveBeenLastCalledWith({ type: 'CHEF' });
+    component.filter('role', '');
+    expect(changed).toHaveBeenLastCalledWith({ role: undefined });
+    fixture.componentRef.setInput('disabled', true);
+    component.filter('status', 'PENDING');
+    expect(changed).toHaveBeenCalledTimes(2);
   });
   it('debounces salary changes and preserves zero, decimals, and clearing', () => {
     vi.useFakeTimers();

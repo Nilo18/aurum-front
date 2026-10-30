@@ -34,4 +34,18 @@ describe('request error messages', () => {
       ),
     ).toBe('Client has active events.');
   });
+
+  it('trims messages and replaces blank or non-text backend errors with the fallback', () => {
+    expect(
+      getRequestErrorMessage(
+        new HttpErrorResponse({ status: 400, error: '  Invalid code  ' }),
+        'Fallback',
+      ),
+    ).toBe('Invalid code');
+    for (const error of ['   ', { message: {} }, null]) {
+      expect(
+        getRequestErrorMessage(new HttpErrorResponse({ status: 400, error }), 'Fallback'),
+      ).toBe('Fallback');
+    }
+  });
 });

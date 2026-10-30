@@ -263,4 +263,15 @@ describe('EventRequestForm', () => {
     expect(verifyCreateEventRequest).not.toHaveBeenCalled();
     expect(open).not.toHaveBeenCalled();
   });
+
+  it('marks missing request fields for review without sending a verification request', async () => {
+    const fixture = TestBed.createComponent(EventRequestForm);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await fixture.componentInstance.orderEvent();
+    expect(fixture.componentInstance.attempted()).toBe(true);
+    expect(fixture.componentInstance.form.invalid).toBe(true);
+    expect(verifyCreateEventRequest).not.toHaveBeenCalled();
+    expect(open).not.toHaveBeenCalled();
+  });
 });

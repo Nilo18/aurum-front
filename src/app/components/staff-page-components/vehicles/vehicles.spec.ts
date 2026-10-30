@@ -1,3 +1,4 @@
+import { of as emptyPageResult } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { VehicleAddDialog } from '../vehicle-add-dialog/vehicle-add-dialog';
@@ -170,5 +171,38 @@ describe('Vehicles reactive query', () => {
     expect(component.deleteError()).toBe('');
     expect(component.loadError()).toContain('Vehicle deleted');
     expect(component.busy()).toBe(false);
+  });
+});
+
+describe('Vehicles query state', () => {
+  it('resets pagination for new criteria and preserves criteria during paging', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: VehicleService,
+          useValue: {
+            getVehicles: () =>
+              emptyPageResult({ content: [], pageNumber: 0, pageSize: 10, totalElements: 0 }),
+          },
+        },
+      ],
+    });
+    const fixture = TestBed.createComponent(Vehicles);
+    const component = fixture.componentInstance;
+    component.updateQuery({ page: 3, size: 25 }, false);
+    component.updateQuery({ sortBy: 'name', sortDirection: 'ASC' });
+    expect(component.query()).toMatchObject({
+      page: 0,
+      size: 25,
+      sortBy: 'name',
+      sortDirection: 'ASC',
+    });
+    component.updateQuery({ page: 2 }, false);
+    expect(component.query()).toMatchObject({
+      page: 2,
+      size: 25,
+      sortBy: 'name',
+      sortDirection: 'ASC',
+    });
   });
 });

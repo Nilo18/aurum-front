@@ -1,3 +1,4 @@
+import { of as emptyPageResult } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
@@ -136,5 +137,38 @@ describe('Suppliers deletion', () => {
     expect(component.notice()).toBe('');
     expect(component.deleting()).toBeUndefined();
     expect(reload).not.toHaveBeenCalled();
+  });
+});
+
+describe('Suppliers query state', () => {
+  it('resets pagination for new criteria and preserves criteria during paging', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: SupplierService,
+          useValue: {
+            getSuppliers: () =>
+              emptyPageResult({ content: [], pageNumber: 0, pageSize: 10, totalElements: 0 }),
+          },
+        },
+      ],
+    });
+    const fixture = TestBed.createComponent(Suppliers);
+    const component = fixture.componentInstance;
+    component.updateQuery({ page: 3, size: 25 }, false);
+    component.updateQuery({ sortBy: 'name', sortDirection: 'ASC' });
+    expect(component.supplierQuery()).toMatchObject({
+      page: 0,
+      size: 25,
+      sortBy: 'name',
+      sortDirection: 'ASC',
+    });
+    component.updateQuery({ page: 2 }, false);
+    expect(component.supplierQuery()).toMatchObject({
+      page: 2,
+      size: 25,
+      sortBy: 'name',
+      sortDirection: 'ASC',
+    });
   });
 });

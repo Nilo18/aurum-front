@@ -1,3 +1,4 @@
+import { VehicleType } from '../../../services/vehicle-service';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { VehicleFiltering } from './vehicle-filtering';
 
@@ -63,5 +64,14 @@ describe('VehicleFiltering', () => {
     fixture.destroy();
     vi.advanceTimersByTime(400);
     expect(changed).not.toHaveBeenCalled();
+  });
+
+  it('emits type selection and clearing without debounce', () => {
+    const changed = vi.fn();
+    component.changed.subscribe(changed);
+    component.filterType(VehicleType.TRUCK);
+    expect(changed).toHaveBeenLastCalledWith({ type: 'TRUCK' });
+    component.filterType(undefined);
+    expect(changed).toHaveBeenLastCalledWith({ type: undefined });
   });
 });

@@ -1,23 +1,17 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ProductCategory } from '../../../services/supplier-service';
+import { TestBed } from '@angular/core/testing';
 import { SupplierFiltering } from './supplier-filtering';
-
 describe('SupplierFiltering', () => {
-  let component: SupplierFiltering;
-  let fixture: ComponentFixture<SupplierFiltering>;
+  it('emits normalized filter changes and preserves valid values', () => {
+    const fixture = TestBed.createComponent(SupplierFiltering);
+    const component = fixture.componentInstance;
+    const changed = vi.fn();
+    component.changed.subscribe(changed);
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [SupplierFiltering]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(SupplierFiltering);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    component.filter(ProductCategory.FLORALS);
+    expect(changed).toHaveBeenLastCalledWith({ productType: 'FLORALS' });
+    component.filter(undefined);
+    expect(changed).toHaveBeenLastCalledWith({ productType: undefined });
+    expect(component.capitalizeFirstLetter('FOOD_INGREDIENT')).toBe('Food ingredient');
   });
 });

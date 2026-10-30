@@ -97,4 +97,16 @@ describe('Dashboard', () => {
     expect(fixture.nativeElement.textContent).toContain('No events are currently in preparation.');
     expect(fixture.nativeElement.querySelector('.dashboard__stats')).not.toBeNull();
   });
+
+  it('links each quick action to the corresponding staff section', async () => {
+    request.next(response);
+    request.complete();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    for (const link of fixture.componentInstance.links) {
+      expect(
+        fixture.nativeElement.querySelector('a[href="/staff/' + link.path + '"]'),
+      ).not.toBeNull();
+    }
+  });
 });

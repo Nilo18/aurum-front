@@ -1,22 +1,26 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ProductCategory } from '../../../services/product-service';
+import { TestBed } from '@angular/core/testing';
 import { ProductsFiltering } from './products-filtering';
-
 describe('ProductsFiltering', () => {
-  let component: ProductsFiltering;
-  let fixture: ComponentFixture<ProductsFiltering>;
+  it('emits normalized filter changes and preserves valid values', () => {
+    const fixture = TestBed.createComponent(ProductsFiltering);
+    const component = fixture.componentInstance;
+    const changed = vi.fn();
+    component.changed.subscribe(changed);
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ProductsFiltering],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(ProductsFiltering);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    component.filterCategory(ProductCategory.TABLEWARE);
+    expect(changed).toHaveBeenLastCalledWith({ productCategory: 'TABLEWARE' });
+    component.filterCategory('');
+    expect(changed).toHaveBeenLastCalledWith({ productCategory: undefined });
+    component.filterNumber('quantityFrom', 0);
+    expect(changed).toHaveBeenLastCalledWith({ quantityFrom: 0 });
+    component.filterNumber('priceTo', null);
+    expect(changed).toHaveBeenLastCalledWith({ priceTo: undefined });
+    component.filterNumber('priceFrom', -1);
+    component.filterNumber('priceFrom', NaN);
+    fixture.componentRef.setInput('disabled', true);
+    component.filterCategory(ProductCategory.TABLEWARE);
+    component.filterNumber('priceFrom', 10);
+    expect(changed).toHaveBeenCalledTimes(4);
   });
 });

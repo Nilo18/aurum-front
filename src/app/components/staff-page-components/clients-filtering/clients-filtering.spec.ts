@@ -1,24 +1,19 @@
-import { provideHttpClient } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ClientType } from '../../../services/client-service';
+import { TestBed } from '@angular/core/testing';
 import { ClientsFiltering } from './clients-filtering';
-
 describe('ClientsFiltering', () => {
-  let component: ClientsFiltering;
-  let fixture: ComponentFixture<ClientsFiltering>;
+  it('emits normalized filter changes and preserves valid values', () => {
+    const fixture = TestBed.createComponent(ClientsFiltering);
+    const component = fixture.componentInstance;
+    const changed = vi.fn();
+    component.changed.subscribe(changed);
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      providers: [provideHttpClient()],
-      imports: [ClientsFiltering],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(ClientsFiltering);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    component.filter(ClientType.PERSON);
+    expect(changed).toHaveBeenLastCalledWith({ type: 'PERSON' });
+    component.filter(undefined);
+    expect(changed).toHaveBeenLastCalledWith({ type: undefined });
+    fixture.componentRef.setInput('disabled', true);
+    component.filter(ClientType.PERSON);
+    expect(changed).toHaveBeenCalledTimes(2);
   });
 });

@@ -1,33 +1,37 @@
-import { Header } from '../../components/home-page-components/header/header';
-import { vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { Home } from './home';
-
 describe('Home', () => {
-  let component: Home;
-  let fixture: ComponentFixture<Home>;
-
-  beforeEach(async () => {
-    vi.spyOn(Header.prototype, 'ngAfterViewInit').mockImplementation(() => {});
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        observe = vi.fn();
+        disconnect = vi.fn();
+      },
+    );
+    TestBed.configureTestingModule({
       imports: [Home],
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(Home);
-    component = fixture.componentInstance;
+    });
+  });
+  afterEach(() => vi.unstubAllGlobals());
+  it('renders its content and child sections', async () => {
+    const fixture = TestBed.createComponent(Home);
+    fixture.detectChanges();
     await fixture.whenStable();
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('app-header')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-hero')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-services')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-about')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-events')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-request-event-cta')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-process')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-team')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-locations')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-contact-us')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-footer')).not.toBeNull();
   });
 });

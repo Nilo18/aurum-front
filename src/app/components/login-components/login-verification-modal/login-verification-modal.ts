@@ -3,6 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService, getAuthErrorMessage, LoginRequest } from '../../../services/auth-service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TokenService } from '../../../services/token-service';
 
 @Component({
   selector: 'app-login-verification-modal',
@@ -14,6 +15,7 @@ export class LoginVerificationModal {
   private modal = inject(NgbActiveModal);
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private tokenService = inject(TokenService)
   private router = inject(Router);
   loginInfo!: Omit<LoginRequest, 'otp'>;
   readonly isSubmitting = signal(false);
@@ -49,7 +51,7 @@ export class LoginVerificationModal {
     try {
       const response = await this.authService.login({ ...this.loginInfo, ...this.verificationForm.getRawValue() });
       if (!response?.token) throw new Error('Missing login response');
-      localStorage.setItem('aurum_token', response.token)
+      this.tokenService.saveToken(response.token)
       const navigated = await this.router.navigate(['/staff']);
       if (!navigated) throw new Error('Navigation failed');
       this.modal.close('verified');

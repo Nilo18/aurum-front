@@ -18,8 +18,14 @@ describe('ConfirmActionModal', () => {
     await fixture.whenStable();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('renders the action-specific title and message', () => {
+    fixture = TestBed.createComponent(ConfirmActionModal);
+    component = fixture.componentInstance;
+    component.title = 'Delete event?';
+    component.msg = 'This action cannot be undone.';
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Delete event?');
+    expect(fixture.nativeElement.textContent).toContain('This action cannot be undone.');
   });
 
   it('dismisses on Cancel and returns true on Confirm', () => {

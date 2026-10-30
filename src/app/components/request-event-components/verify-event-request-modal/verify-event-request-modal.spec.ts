@@ -57,4 +57,13 @@ describe('VerifyEventRequestModal', () => {
     await component.submitForm();
     expect(close).toHaveBeenCalledWith('verified');
   });
+
+  it('preserves a leading zero in the six-digit verification code', async () => {
+    const component = await setup();
+    component.verificationModal.patchValue({ otp: '000001' });
+    await component.submitForm();
+    expect(createEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ otp: '000001', transactionKey: 'transaction' }),
+    );
+  });
 });

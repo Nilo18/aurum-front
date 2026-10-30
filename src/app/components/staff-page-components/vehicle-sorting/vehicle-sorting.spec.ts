@@ -1,33 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { VehicleSorting } from './vehicle-sorting';
-
 describe('VehicleSorting', () => {
-  let component: VehicleSorting;
-  let fixture: ComponentFixture<VehicleSorting>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [VehicleSorting],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(VehicleSorting);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-  it('emits values and respects disabled controls', () => {
+  it('emits the selected sort and clears direction when sorting is reset', () => {
+    const fixture = TestBed.createComponent(VehicleSorting);
     const changed = vi.fn();
-    component.changed.subscribe(changed);
-    component.sort('cargoWeightLimit', 'desc');
-    expect(changed).toHaveBeenLastCalledWith({ sortBy: 'cargoWeightLimit', sortDirection: 'desc' });
-    component.sort('', 'desc');
+    fixture.componentInstance.changed.subscribe(changed);
+    fixture.componentInstance.sort('name', 'ASC');
+    expect(changed).toHaveBeenLastCalledWith({ sortBy: 'name', sortDirection: 'ASC' });
+    fixture.componentInstance.sort('', 'DESC');
     expect(changed).toHaveBeenLastCalledWith({ sortBy: '', sortDirection: '' });
     fixture.componentRef.setInput('disabled', true);
-    component.sort('publicId', 'asc');
+    fixture.componentInstance.sort('name', 'DESC');
     expect(changed).toHaveBeenCalledTimes(2);
   });
 });
