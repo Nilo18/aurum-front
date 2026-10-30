@@ -5,7 +5,6 @@ import { BackendUrlHolderService } from './backend-url-holder-service';
 
 export interface OtpResponse {
   transactionKey: string,
-  otp: string
 }
 
 export interface ContactRequest {

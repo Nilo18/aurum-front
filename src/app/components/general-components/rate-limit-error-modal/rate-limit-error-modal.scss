@@ -1,0 +1,114 @@
+:host {
+  display: block;
+}
+
+.rate-limit {
+  position: relative;
+  padding: 40px 32px 32px;
+  border: 1px solid #514126;
+  border-radius: 6px;
+  background: radial-gradient(ellipse at top, #292314, transparent 70%), #100f0c;
+  color: #e9e3d8;
+  text-align: center;
+
+  &__close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    background: transparent;
+    color: #bdb09b;
+    font-size: 28px;
+  }
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 24px;
+    border: 1px solid #514126;
+    border-radius: 50%;
+    color: #c6a35e;
+
+    svg {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  &__eyebrow {
+    margin: 0 0 12px;
+    color: #b69b65;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+  }
+
+  h2 {
+    margin: 0 0 16px;
+    font-family: Georgia, serif;
+    font-size: 32px;
+    font-weight: 400;
+  }
+
+  &__message,
+  &__status {
+    color: #bdb09b;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  &__countdown {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 24px 0 16px;
+    padding: 20px;
+    border: 1px solid #393020;
+    border-radius: 4px;
+    background: #c6a35e08;
+    color: #bdb09b;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  &__seconds {
+    color: #dfbd79;
+    font-size: 40px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+
+  &__button {
+    width: 100%;
+    margin-top: 12px;
+    padding: 14px 20px;
+    border: 1px solid #b69550;
+    border-radius: 4px;
+    background: #c6a35e;
+    color: #16130e;
+    font-size: 12px;
+    font-weight: 600;
+
+    &:hover:enabled {
+      background: #dfbd79;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
+  }
+
+  button:focus-visible {
+    outline: 2px solid #d0ac62;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 400px) {
+    padding: 36px 20px 24px;
+  }
+}
