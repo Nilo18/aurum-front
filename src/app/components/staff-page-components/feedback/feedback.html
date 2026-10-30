@@ -1,0 +1,171 @@
+<div class="feedback">
+  <div class="feedback__topline">
+    <span>AURUM / WORKSPACE</span><span>FEEDBACK COLLECTION</span>
+  </div>
+  <header>
+    <div>
+      <p class="feedback__eyebrow">THE AURUM COLLECTION</p>
+      <h1>Feedback</h1>
+      <p>Guest experiences, thoughtfully heard.</p>
+    </div>
+  </header>
+  <div class="feedback__summary">
+    @if (feedbacks.isLoading()) {
+      <span
+        class="feedback__summary-number feedback__summary-number--loading skeleton"
+        aria-hidden="true"
+      ></span>
+      <span class="visually-hidden" role="status">Loading total…</span>
+    } @else {
+      <span class="feedback__summary-number">{{ page()?.totalElements ?? '' }}</span>
+    }
+    <div>
+      <strong>Guest feedback</strong>
+      <p>Every experience helps shape the next.</p>
+    </div>
+  </div>
+  <section class="feedback__panel" [attr.aria-busy]="busy()">
+    <div class="feedback__controls">
+      <form
+        class="feedback__search-field"
+        (ngSubmit)="updateQuery({ search: feedbackQuery().search })"
+      >
+        <label class="feedback__search-label" for="feedback-search">Search collection</label>
+        <div class="feedback__search input-group">
+          <input
+            id="feedback-search"
+            name="search"
+            class="feedback__search-input form-control"
+            type="search"
+            placeholder="Search feedback..."
+            [ngModel]="feedbackQuery().search"
+            (ngModelChange)="updateQuery({ search: $event })"
+            [disabled]="deleting() !== undefined"
+          /><button
+            class="feedback__search-button btn btn-outline-warning"
+            type="submit"
+            [disabled]="busy()"
+          >
+            Search
+          </button>
+        </div>
+      </form>
+      <div class="feedback__filters">
+        <app-feedback-sorting
+          [query]="feedbackQuery()"
+          [disabled]="deleting() !== undefined"
+          (changed)="updateQuery($event)"
+        /><app-feedback-filtering
+          [query]="feedbackQuery()"
+          [disabled]="deleting() !== undefined"
+          (changed)="updateQuery($event)"
+        />
+      </div>
+    </div>
+    @if (deleteError()) {
+      <div class="feedback__load-error" role="alert">{{ deleteError() }}</div>
+    }
+    @if (feedbacks.isLoading()) {
+      <div class="feedback__loading" role="status">
+        <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
+        feedback
+      </div>
+    } @else if (loadError()) {
+      <div class="feedback__load-error" role="alert">
+        {{ loadError() }}
+        <button
+          type="button"
+          class="feedback__button feedback__button--text"
+          (click)="feedbacks.reload()"
+        >
+          Try again
+        </button>
+      </div>
+    } @else {
+      <div class="feedback__table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Author</th>
+              <th scope="col">Comment date</th>
+              <th scope="col">Rating</th>
+              <th scope="col">Description</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of page()?.content; track item.publicId) {
+              <tr>
+                <td>#{{ item.publicId }}</td>
+                <td class="feedback__name">{{ item.author }}</td>
+                <td>{{ item.commentDate | date: 'mediumDate' }}</td>
+                <td>{{ item.rating }} / 5</td>
+                <td class="feedback__description">
+                  {{ item.description.slice(0, 50) }}{{ item.description.length > 50 ? '…' : '' }}
+                </td>
+                <td>
+                  <div class="feedback__actions">
+                    <button
+                      type="button"
+                      class="feedback__button feedback__button--text"
+                      (click)="open(item)"
+                      [disabled]="busy()"
+                      [attr.aria-label]="'View details for feedback ' + item.publicId"
+                    >
+                      View Details
+                    </button>
+                    <button
+                      type="button"
+                      class="feedback__delete-btn"
+                      (click)="deleteFeedback(item.publicId)"
+                      [disabled]="busy()"
+                      [attr.aria-label]="'Delete feedback ' + item.publicId"
+                    >
+                      @if (deleting() === item.publicId) {
+                        <span
+                          class="spinner-border spinner-border-sm me-2"
+                          aria-hidden="true"
+                        ></span
+                        ><span role="status">Deletingâ€¦</span>
+                      } @else {
+                        Delete
+                      }
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (!page()?.content?.length) {
+        <div class="feedback__empty">
+          <h2>No records found</h2>
+          <p>Try another search or adjust your filters.</p>
+          <button
+            type="button"
+            class="feedback__button feedback__button--text"
+            (click)="clearFilters()"
+          >
+            Clear filters
+          </button>
+        </div>
+      }
+    }
+    <div class="feedback__pagination">
+      <app-feedback-pagination
+        [query]="feedbackQuery()"
+        [page]="page()"
+        [disabled]="busy() || !!loadError()"
+        (changed)="updateQuery($event, false)"
+      />
+    </div>
+  </section>
+  @if (notice()) {
+    <p class="feedback__notice" role="status">
+      {{ notice() }}
+      <button type="button" (click)="notice.set('')" aria-label="Dismiss message">Ã—</button>
+    </p>
+  }
+</div>

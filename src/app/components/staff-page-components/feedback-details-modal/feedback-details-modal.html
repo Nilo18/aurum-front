@@ -1,0 +1,27 @@
+<div class="feedback-details">
+  <div class="modal-header">
+    <h2 id="feedback-details-title">Feedback details</h2>
+    <button type="button" class="close-button" aria-label="Close details" (click)="modal.dismiss()">
+      ×
+    </button>
+  </div>
+  @if (feedback; as item) {
+    <div class="modal-body">
+      <dl>
+        <dt>ID</dt>
+        <dd>{{ item.publicId }}</dd>
+        <dt>Author</dt>
+        <dd>{{ item.author }}</dd>
+        <dt>Comment date</dt>
+        <dd>{{ item.commentDate | date: 'medium' }}</dd>
+        <dt>Rating</dt>
+        <dd>{{ item.rating }} / 5</dd>
+        <dt>Description</dt>
+        <dd class="description">{{ item.description }}</dd>
+      </dl>
+    </div>
+  }
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-warning" (click)="modal.close()">Close</button>
+  </div>
+</div>

@@ -10,7 +10,15 @@
     </div>
   </header>
   <div class="events__summary">
-    <span class="events__summary-number">{{ page()?.totalElements ?? 0 }}</span>
+    @if (events.isLoading()) {
+      <span
+        class="events__summary-number events__summary-number--loading skeleton"
+        aria-hidden="true"
+      ></span>
+      <span class="visually-hidden" role="status">Loading total…</span>
+    } @else {
+      <span class="events__summary-number">{{ page()?.totalElements ?? 0 }}</span>
+    }
     <div>
       <strong>Matching events</strong>
       <p>Considered details. Confident decisions.</p>

@@ -19,7 +19,15 @@
     </button>
   </header>
   <div class="suppliers__summary">
-    <span class="suppliers__summary-number">{{ suppliers.value()?.totalElements }}</span>
+    @if (suppliers.isLoading()) {
+      <span
+        class="suppliers__summary-number suppliers__summary-number--loading skeleton"
+        aria-hidden="true"
+      ></span>
+      <span class="visually-hidden" role="status">Loading total…</span>
+    } @else {
+      <span class="suppliers__summary-number">{{ suppliers.value()?.totalElements }}</span>
+    }
     <div>
       <strong>Suppliers in your collection</strong>
       <p>Considered details. Confident decisions.</p>

@@ -1,0 +1,146 @@
+@use '../shared/staff-section';
+
+@include staff-section.styles('feedback');
+
+.feedback {
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  &__delete-btn {
+    padding: 6px;
+    border: 0;
+    background: transparent;
+    color: #bbad93;
+    font-size: 10px;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+      color: #edcf91;
+    }
+  }
+
+  &__button:disabled,
+  &__delete-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  &__load-error {
+    padding: 18px 24px;
+    color: #d39990;
+    font-size: 12px;
+  }
+
+  &__controls {
+    padding: 24px;
+  }
+
+  &__filters {
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) minmax(600px, 2fr);
+    align-items: end;
+    gap: 24px;
+  }
+
+  &__search-field {
+    min-width: 0;
+    margin-bottom: 24px;
+  }
+
+  &__pagination {
+    padding: 20px 24px;
+    border-top: 1px solid #2b271f;
+  }
+
+  &__categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 140px;
+    max-width: 280px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    white-space: normal;
+  }
+
+  &__categories-empty {
+    color: #9c907c;
+    font-size: 11px;
+  }
+
+  &__search-field {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  &__search-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #b5aa98;
+    font-size: 0.75rem;
+  }
+
+  &__search-input {
+    min-height: 44px;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid #494132;
+    border-radius: 4px 0 0 4px;
+    background-color: #191814;
+    color: #e9e3d8;
+    color-scheme: dark;
+    font-size: 0.8rem;
+
+    &::placeholder {
+      color: #a39782;
+    }
+
+    &:focus {
+      border-color: #c7af7e;
+      box-shadow: 0 0 0 0.2rem #c7af7e25;
+    }
+
+    &:disabled {
+      background-color: #222019;
+      color: #857c6c;
+    }
+  }
+
+  &__search-button {
+    --bs-btn-color: #c7af7e;
+    --bs-btn-border-color: #685333;
+    --bs-btn-hover-bg: #c7af7e;
+    --bs-btn-hover-color: #191814;
+    --bs-btn-hover-border-color: #c7af7e;
+    --bs-btn-disabled-color: #857c6c;
+    --bs-btn-disabled-border-color: #494132;
+    font-size: 0.8rem;
+  }
+
+  &__name {
+    color: #eee4d4;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 1200px) {
+  .feedback {
+    &__filters {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+  }
+}
+
+.feedback__description {
+  white-space: nowrap;
+}
+.feedback__loading {
+  padding: 24px;
+  color: #bbad93;
+}

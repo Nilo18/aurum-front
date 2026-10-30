@@ -1,0 +1,30 @@
+<fieldset class="row g-2 align-items-end border-0 p-0 m-0" [disabled]="disabled()">
+  <legend class="visually-hidden">Feedback sorting</legend>
+  <div class="col-7">
+    <label for="feedback-sort" class="form-label">Sort by</label>
+    <select
+      id="feedback-sort"
+      class="form-select"
+      [ngModel]="query().sortBy || ''"
+      (ngModelChange)="sort($event, query().sortDirection || 'ASC')"
+    >
+      <option value="">Default order</option>
+      <option value="author">Author</option>
+      <option value="commentDate">Comment date</option>
+      <option value="rating">Rating</option>
+    </select>
+  </div>
+  <div class="col-5">
+    <label for="feedback-direction" class="form-label">Direction</label>
+    <select
+      id="feedback-direction"
+      class="form-select"
+      [disabled]="!query().sortBy"
+      [ngModel]="query().sortDirection || 'ASC'"
+      (ngModelChange)="sort(query().sortBy || '', $event)"
+    >
+      <option value="ASC">Ascending</option>
+      <option value="DESC">Descending</option>
+    </select>
+  </div>
+</fieldset>

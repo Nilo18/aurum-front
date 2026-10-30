@@ -1,0 +1,18 @@
+@use '../shared/staff-section';
+@include staff-section.collection-controls;
+
+.feedback-filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  align-items: end;
+  gap: 12px;
+  overflow-x: auto;
+
+  &__field {
+    min-width: 0;
+  }
+
+  .form-label {
+    white-space: nowrap;
+  }
+}

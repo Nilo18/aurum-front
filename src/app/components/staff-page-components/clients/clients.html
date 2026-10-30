@@ -11,7 +11,15 @@
     </div>
   </header>
   <div class="clients__summary">
-    <span class="clients__summary-number">{{ page()?.totalElements ?? 0 }}</span>
+    @if (clients.isLoading()) {
+      <span
+        class="clients__summary-number clients__summary-number--loading skeleton"
+        aria-hidden="true"
+      ></span>
+      <span class="visually-hidden" role="status">Loading total…</span>
+    } @else {
+      <span class="clients__summary-number">{{ page()?.totalElements ?? 0 }}</span>
+    }
     <div>
       <strong>Matching clients</strong>
       <p>Considered details. Confident decisions.</p>

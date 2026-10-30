@@ -1,0 +1,46 @@
+@use '../shared/staff-section';
+@include staff-section.collection-controls;
+.feedback-details {
+  background: #100f0c;
+  color: #e9e3d8;
+  border: 1px solid #494132;
+  border-radius: 6px;
+}
+h2 {
+  font:
+    24px Georgia,
+    serif;
+  margin: 0;
+}
+.modal-header,
+.modal-footer {
+  border-color: #494132;
+}
+dt {
+  color: #bbad93;
+  font-size: 12px;
+}
+dd {
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
+.description {
+  white-space: pre-wrap;
+}
+.close-button {
+  background: transparent;
+  border: 0;
+  color: #bbad93;
+  font-size: 24px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.close-button {
+  flex-shrink: 0;
+}

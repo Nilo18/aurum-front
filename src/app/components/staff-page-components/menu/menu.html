@@ -11,8 +11,16 @@
     </button>
   </header>
   <div class="menu__summary">
-    <span class="menu__summary-number">{{ menuPage()?.totalElements ?? 0 }}</span
-    ><strong>Menu items in your collection</strong>
+    @if (menu.isLoading()) {
+      <span
+        class="menu__summary-number menu__summary-number--loading skeleton"
+        aria-hidden="true"
+      ></span>
+      <span class="visually-hidden" role="status">Loading total…</span>
+    } @else {
+      <span class="menu__summary-number">{{ menuPage()?.totalElements ?? 0 }}</span>
+    }
+    <strong>Menu items in your collection</strong>
   </div>
   <section class="menu__panel" [attr.aria-busy]="menu.isLoading()">
     <div class="menu__controls">

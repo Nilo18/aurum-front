@@ -1,0 +1,51 @@
+<fieldset class="feedback-filters border-0 p-0 m-0" [disabled]="disabled()">
+  <legend class="visually-hidden">Feedback filters</legend>
+  <div class="feedback-filters__field">
+    <label for="feedback-ratingFrom" class="form-label">Minimum rating</label
+    ><select
+      id="feedback-ratingFrom"
+      class="form-select"
+      [ngModel]="query().ratingFrom"
+      (ngModelChange)="changed.emit({ ratingFrom: $event })"
+    >
+      <option [ngValue]="undefined">Any rating</option>
+      @for (rating of ratings; track rating) {
+        <option [ngValue]="rating">{{ rating }}</option>
+      }
+    </select>
+  </div>
+  <div class="feedback-filters__field">
+    <label for="feedback-ratingTo" class="form-label">Maximum rating</label
+    ><select
+      id="feedback-ratingTo"
+      class="form-select"
+      [ngModel]="query().ratingTo"
+      (ngModelChange)="changed.emit({ ratingTo: $event })"
+    >
+      <option [ngValue]="undefined">Any rating</option>
+      @for (rating of ratings; track rating) {
+        <option [ngValue]="rating">{{ rating }}</option>
+      }
+    </select>
+  </div>
+  <div class="feedback-filters__field">
+    <label for="feedback-commentFrom" class="form-label">From date</label
+    ><input
+      id="feedback-commentFrom"
+      class="form-control"
+      type="date"
+      [ngModel]="query().commentFrom"
+      (ngModelChange)="changed.emit({ commentFrom: $event })"
+    />
+  </div>
+  <div class="feedback-filters__field">
+    <label for="feedback-commentTo" class="form-label">To date</label
+    ><input
+      id="feedback-commentTo"
+      class="form-control"
+      type="date"
+      [ngModel]="query().commentTo"
+      (ngModelChange)="changed.emit({ commentTo: $event })"
+    />
+  </div>
+</fieldset>

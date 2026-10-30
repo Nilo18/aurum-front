@@ -18,7 +18,15 @@
     </button>
   </header>
   <div class="employees__summary">
-    <span class="employees__summary-number">{{ page()?.totalElements ?? 0 }}</span>
+    @if (employees.isLoading()) {
+      <span
+        class="employees__summary-number employees__summary-number--loading skeleton"
+        aria-hidden="true"
+      ></span>
+      <span class="visually-hidden" role="status">Loading total…</span>
+    } @else {
+      <span class="employees__summary-number">{{ page()?.totalElements ?? 0 }}</span>
+    }
     <div>
       <strong>Matching employees</strong>
       <p>Considered details. Confident decisions.</p>

@@ -154,6 +154,12 @@
       margin-left: 20px;
     }
 
+    &__summary-number--loading {
+      --skeleton-width: 3rem;
+      --skeleton-height: 41px;
+      flex-shrink: 0;
+    }
+
     &__summary-number {
       font:
         36px Georgia,

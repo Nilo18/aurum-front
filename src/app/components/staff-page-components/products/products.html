@@ -15,7 +15,15 @@
     </button>
   </header>
   <div class="products__summary">
-    <span class="products__summary-number">{{ page()?.totalElements ?? 0 }}</span>
+    @if (products.isLoading()) {
+      <span
+        class="products__summary-number products__summary-number--loading skeleton"
+        aria-hidden="true"
+      ></span>
+      <span class="visually-hidden" role="status">Loading total…</span>
+    } @else {
+      <span class="products__summary-number">{{ page()?.totalElements ?? 0 }}</span>
+    }
     <div>
       <strong>Products in your collection</strong>
       <p>Considered details. Confident decisions.</p>

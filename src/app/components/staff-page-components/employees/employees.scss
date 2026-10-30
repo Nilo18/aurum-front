@@ -133,6 +133,12 @@
     border-radius: 6px;
   }
 
+  &__summary-number--loading {
+    --skeleton-width: 3rem;
+    --skeleton-height: 41px;
+    flex: 0 0 3rem;
+  }
+
   &__summary strong {
     font-size: 12px;
     font-weight: 500;
