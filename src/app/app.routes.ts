@@ -12,13 +12,11 @@ import { homeGuard } from './guards/home-guard';
 export const routes: Routes = [
   {
     path: 'privacy-policy',
-    title: 'Privacy Policy | AURUM',
     loadComponent: () =>
       import('./pages/privacy-policy/privacy-policy').then((module) => module.PrivacyPolicy),
   },
   {
     path: 'terms-and-conditions',
-    title: 'Terms and Conditions | AURUM',
     loadComponent: () =>
       import('./pages/terms-and-conditions/terms-and-conditions').then(
         (module) => module.TermsAndConditions,
