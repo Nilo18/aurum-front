@@ -1,0 +1,109 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #050504;
+  color: #f0eadf;
+}
+
+.legal {
+  width: min(100% - 48px, 800px);
+  margin: 0 auto;
+  padding: 72px 0;
+
+  &__header,
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 26px max(24px, calc((100% - 1240px) / 2));
+    font-size: 12px;
+  }
+
+  &__header {
+    border-bottom: 1px solid #c6921d30;
+  }
+
+  &__footer {
+    border-top: 1px solid #c6921d30;
+    color: #a39887;
+  }
+
+  &__header a,
+  &__footer a,
+  a {
+    color: #d4ab52;
+    text-underline-offset: 4px;
+
+    &:hover {
+      color: #f0d69c;
+    }
+  }
+
+  &__header &__brand {
+    color: #c79625;
+    font:
+      32px Georgia,
+      serif;
+    letter-spacing: 0.16em;
+    text-decoration: none;
+  }
+
+  &__eyebrow {
+    color: #c79625;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 20px 0;
+    font-family: 'Bodoni 72', Didot, Georgia, serif;
+    font-size: clamp(38px, 7vw, 64px);
+    font-weight: 400;
+  }
+
+  &__updated {
+    color: #a39887;
+    font-size: 12px;
+  }
+
+  &__intro {
+    margin-top: 32px;
+    color: #ded3c2;
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  section {
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid #c6921d25;
+
+    h2 {
+      margin-bottom: 14px;
+      font-family: Georgia, serif;
+      font-size: 24px;
+      font-weight: 400;
+    }
+
+    p {
+      color: #b8ad9c;
+      font-size: 14px;
+      line-height: 1.9;
+      overflow-wrap: anywhere;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .legal {
+    padding: 48px 0;
+
+    &__footer {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+}

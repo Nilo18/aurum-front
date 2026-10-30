@@ -102,7 +102,9 @@
       }
 
       <p class="contact__privacy">
-        By submitting, you agree to our confidential consultation policy.
+        By submitting, you agree to our
+        <a routerLink="/terms-and-conditions">Terms and Conditions</a> and acknowledge our
+        <a routerLink="/privacy-policy">Privacy Policy</a>.
       </p>
       @if (submitted()) {
         <p class="contact__success" role="status">Thank you. We’ll be in touch within 24 hours.</p>

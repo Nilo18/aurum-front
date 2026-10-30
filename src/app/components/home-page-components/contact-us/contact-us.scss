@@ -251,6 +251,11 @@
 
   &__privacy {
     color: #4f4437;
+
+    a {
+      color: #bdb29f;
+      text-underline-offset: 3px;
+    }
   }
 
   &__success {

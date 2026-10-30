@@ -5,6 +5,7 @@ import { HomeService } from '../../../services/home-service';
 import { ContactUsVerificationModal } from '../contact-us-verification-modal/contact-us-verification-modal';
 import { ContactUs } from './contact-us';
 import { SuccessModal } from '../../general-components/success-modal/success-modal';
+import { provideRouter } from '@angular/router';
 describe('ContactUs', () => {
   function setup() {
     const verifyContactRequest = vi.fn().mockResolvedValue({ transactionKey: 'key' });
@@ -20,6 +21,7 @@ describe('ContactUs', () => {
     const open = vi.fn().mockReturnValue(ref);
     TestBed.configureTestingModule({
       providers: [
+        provideRouter([]),
         { provide: HomeService, useValue: { verifyContactRequest } },
         { provide: NgbModal, useValue: { open } },
       ],

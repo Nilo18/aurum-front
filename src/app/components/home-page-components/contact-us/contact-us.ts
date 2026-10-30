@@ -6,10 +6,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContactUsVerificationModal } from '../contact-us-verification-modal/contact-us-verification-modal';
 import { getRequestErrorMessage } from '../../../services/request-error';
 import { SuccessModal } from '../../general-components/success-modal/success-modal';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-contact-us',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './contact-us.html',
   styleUrl: './contact-us.scss',
 })
