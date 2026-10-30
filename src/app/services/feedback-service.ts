@@ -71,12 +71,17 @@ export class FeedbackService {
     }
   }
 
-  deleteFeedback(publicId: string) {
-    return firstValueFrom(
-      this.http.delete<GenericResponse>(
-        `${this.baseUrl}/api/feedback/${encodeURIComponent(publicId)}`,
-      ),
-    );
+  async deleteFeedback(publicId: string) {
+    try {
+      const res = await firstValueFrom(this.http.delete<GenericResponse>(
+          `${this.baseUrl}/api/feedback/${publicId}`,
+      ))
+      console.log(res)
+      return res
+    } catch (error) {
+      console.log("Couldn't delete feedback: ", error)
+      throw error
+    }
   }
 
   getAllFeedback(query: FeedbackQuery) {

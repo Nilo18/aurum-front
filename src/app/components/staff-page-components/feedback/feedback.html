@@ -127,7 +127,7 @@
                           class="spinner-border spinner-border-sm me-2"
                           aria-hidden="true"
                         ></span
-                        ><span role="status">Deletingâ€¦</span>
+                        ><span role="status">Deleting...</span>
                       } @else {
                         Delete
                       }
@@ -165,7 +165,7 @@
   @if (notice()) {
     <p class="feedback__notice" role="status">
       {{ notice() }}
-      <button type="button" (click)="notice.set('')" aria-label="Dismiss message">Ã—</button>
+      <button type="button" (click)="notice.set('')" aria-label="Dismiss message">x</button>
     </p>
   }
 </div>
