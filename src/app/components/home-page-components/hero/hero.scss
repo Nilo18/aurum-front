@@ -58,9 +58,8 @@
       to right,
       #050504 0%,
       #050504 1%,
-      /* Keeps it completely solid behind the text */ rgba(5, 5, 4, 0.8) 35%,
-      /* Begins dropping opacity rapidly */ rgba(5, 5, 4, 0) 200%
-        /* Reaches 100% transparency just past the halfway mark */
+      rgba(5, 5, 4, 0.8) 35%,
+      rgba(5, 5, 4, 0) 200%
     );
   }
 

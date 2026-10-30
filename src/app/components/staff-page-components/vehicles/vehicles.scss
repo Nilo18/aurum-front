@@ -56,10 +56,6 @@ td {
     color: #bbad93;
     font-size: 10px;
     white-space: nowrap;
-
-    // display: flex;
-    // justify-content: center;
-    // align-items: center;
     &:hover:not(:disabled) {
       color: #edcf91;
     }

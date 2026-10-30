@@ -127,14 +127,7 @@
               <p class="request-layout__error" id="guestCount-error">{{ message }}</p>
             }
           </div>
-          <!-- <div class="request-layout__field">
-            <label class="request-layout__label" for="totalCost">Proposed total cost (optional)</label>
-            <input class="request-layout__control" id="totalCost" type="number" formControlName="totalCost" min="0" step="0.01"
-              [attr.aria-invalid]="!!error(event.totalCost)" [attr.aria-describedby]="error(event.totalCost) ? 'totalCost-error' : null">
-            @if (error(event.totalCost); as message) {
-              <p class="request-layout__error" id="totalCost-error">{{ message }}</p>
-            }
-          </div> -->
+
           <div class="request-layout__field">
             <label class="request-layout__label" for="location">Event location *</label>
             <select
@@ -298,7 +291,7 @@
           <dt>Number of guests</dt>
           <dd>{{ request.event.guestCount }}</dd>
         </div>
-        <!-- <div class="request-layout__detail"><dt>Proposed total cost</dt><dd>{{ request.event.totalCost ?? 'To be discussed' }}</dd></div> -->
+
         <div class="request-layout__detail">
           <dt>Event location</dt>
           <dd>{{ request.event.location }}</dd>

@@ -20,7 +20,6 @@ export class ProductsFiltering {
     { field: 'priceTo', label: 'Price to (₾)' },
     { field: 'quantityFrom', label: 'Quantity from' },
     { field: 'quantityTo', label: 'Quantity to' },
-    // { field: 'supplierId', label: 'Supplier ID' },
   ] as const;
 
   filterCategory(value: ProductCategory | ''): void {

@@ -81,10 +81,9 @@ export class ProductService {
       const res = await firstValueFrom(
         this.http.post<ProductDTO>(`${this.baseUrl}/api/product`, request),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't add a new product: ", error);
       throw error;
     }
   }
@@ -94,10 +93,9 @@ export class ProductService {
       const res = await firstValueFrom(
         this.http.put<ProductDTO>(`${this.baseUrl}/api/product`, request),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't update the product: ", error);
       throw error;
     }
   }
@@ -107,10 +105,9 @@ export class ProductService {
       const res = await firstValueFrom(
         this.http.delete<GenericResponse>(`${this.baseUrl}/api/product/${publicId}`),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't delete the product", error);
       throw error;
     }
   }

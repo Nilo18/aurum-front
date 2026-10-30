@@ -58,10 +58,9 @@ export class VehicleService {
       const res = await firstValueFrom(
         this.http.post<VehicleDTO>(`${this.baseUrl}/api/vehicle`, request),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't add a new vehicle: ", error);
       throw error;
     }
   }
@@ -71,10 +70,9 @@ export class VehicleService {
       const res = await firstValueFrom(
         this.http.put<VehicleDTO>(`${this.baseUrl}/api/vehicle`, request),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't update the vehicle: ", error);
       throw error;
     }
   }
@@ -84,10 +82,9 @@ export class VehicleService {
       const res = await firstValueFrom(
         this.http.delete<GenericResponse>(`${this.baseUrl}/api/vehicle/${publicId}`),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't delete the vehicle", error);
       throw error;
     }
   }

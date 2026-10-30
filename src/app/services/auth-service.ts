@@ -80,7 +80,6 @@ export class AuthService {
       );
       return res;
     } catch (error) {
-      console.log("Couldn't login: ", error);
       throw error;
     }
   }
@@ -95,10 +94,9 @@ export class AuthService {
       const res = await firstValueFrom(
         this.http.get<AuthResponse>(`${this.baseUrl}/api/auth/demo`),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't login as demo: ", error);
       throw error;
     }
   }

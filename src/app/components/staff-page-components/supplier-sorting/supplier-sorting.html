@@ -2,24 +2,26 @@
   <legend class="visually-hidden">Supplier sorting</legend>
   <div class="col-7">
     <label for="suppliers-sort" class="form-label">Sort by</label>
-    <select id="suppliers-sort" class="form-select" [ngModel]="query().sortBy || ''"
-    (ngModelChange)="sort($event, query().sortDirection || 'asc')">
+    <select
+      id="suppliers-sort"
+      class="form-select"
+      [ngModel]="query().sortBy || ''"
+      (ngModelChange)="sort($event, query().sortDirection || 'asc')"
+    >
       <option value="">Default order</option>
       @for (field of fields; track field) {
         <option [value]="field">{{ label(field) }}</option>
       }
-      <!-- <option value="">Default order</option>
-      <option value="name">Name</option>
-      <option value="categories">Categories</option>
-      <option value="city">City</option>
-      <option value="publicId">Supplier ID</option>
-      <option value="number">Building number</option> -->
     </select>
   </div>
   <div class="col-5">
     <label for="suppliers-direction" class="form-label">Direction</label>
-    <select id="suppliers-direction" class="form-select" [ngModel]="query().sortDirection || 'asc'"
-    (ngModelChange)="sort($event, query().sortDirection || 'asc')">
+    <select
+      id="suppliers-direction"
+      class="form-select"
+      [ngModel]="query().sortDirection || 'asc'"
+      (ngModelChange)="sort($event, query().sortDirection || 'asc')"
+    >
       <option value="asc">Ascending</option>
       <option value="desc">Descending</option>
     </select>

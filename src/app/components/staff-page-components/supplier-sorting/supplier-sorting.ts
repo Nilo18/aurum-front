@@ -20,9 +20,6 @@ export class SupplierSorting {
       .replace(/^./, (character) => character.toUpperCase());
 
   sort(field: string, direction: string) {
-    console.log(
-      `Field ${field} changed, direction ${direction} changed, outputting to main suppliers section`,
-    );
     this.changed.emit({ sortBy: field, sortDirection: field ? direction : '' });
   }
 }

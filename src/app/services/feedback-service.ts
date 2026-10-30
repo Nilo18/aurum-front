@@ -9,7 +9,6 @@ import { PageResponse } from './event-service';
 export interface CreateFeedbackRequest {
   tokenHash: string;
   author: string;
-  // commentDate: string;
   rating: number;
   description: string;
 }
@@ -50,10 +49,9 @@ export class FeedbackService {
           token,
         }),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't validate invitation: ", error);
       throw error;
     }
   }
@@ -63,24 +61,22 @@ export class FeedbackService {
       const res = await firstValueFrom(
         this.http.post<FeedbackDTO>(`${this.baseUrl}/api/feedback`, request),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't create feedback: ", error);
       throw error;
     }
   }
 
   async deleteFeedback(publicId: string) {
     try {
-      const res = await firstValueFrom(this.http.delete<GenericResponse>(
-          `${this.baseUrl}/api/feedback/${publicId}`,
-      ))
-      console.log(res)
-      return res
+      const res = await firstValueFrom(
+        this.http.delete<GenericResponse>(`${this.baseUrl}/api/feedback/${publicId}`),
+      );
+
+      return res;
     } catch (error) {
-      console.log("Couldn't delete feedback: ", error)
-      throw error
+      throw error;
     }
   }
 

@@ -19,7 +19,6 @@ export class FeedbackForm {
   readonly feedbackForm = this.formBuilder.nonNullable.group({
     tokenHash: ['', [Validators.required]],
     author: ['', [Validators.required, Validators.maxLength(255), Validators.pattern(/\S/)]],
-    // commentDate: ['', Validators.required],
     rating: ['', [Validators.required, Validators.pattern(/^[1-5]$/)]],
     description: ['', [Validators.required, Validators.pattern(/\S/)]],
   });

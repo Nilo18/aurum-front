@@ -24,7 +24,6 @@ export class Register {
     this.route.queryParamMap.subscribe((params) => {
       const token = params.get('token');
       if (!token) {
-        console.log('Token is missing.');
         this.validationErrorMsg.set(
           'Your invitation link is missing. Please open the complete registration link from your invitation email, or contact your administrator for a new invitation.',
         );
@@ -34,7 +33,6 @@ export class Register {
       }
 
       this.token = token;
-      console.log('Token detected: ', this.token);
     });
 
     if (this.token) {
@@ -42,11 +40,6 @@ export class Register {
         const res = await this.employeeService.validateInvitation(this.token);
         if (res.status === 200) {
           this.validating.set(false);
-          // this.router.navigate([], {
-          //   relativeTo: this.route,
-          //   queryParams: {},
-          //   queryParamsHandling: null
-          // })
         }
       } catch (error: any) {
         this.validationFailed.set(true);

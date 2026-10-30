@@ -26,9 +26,8 @@
             [attr.aria-invalid]="!!emailError"
             [attr.aria-describedby]="emailError ? 'staff-email-error' : null"
           />
-          <!-- @if (emailError) { -->
+
           <p class="staff-login__field-error" id="staff-email-error">{{ emailError }}</p>
-          <!-- } -->
         </div>
 
         <div class="staff-login__field">
@@ -57,9 +56,8 @@
               {{ passwordVisible() ? 'Hide' : 'Show' }}
             </button>
           </div>
-          <!-- @if (passwordError) { -->
+
           <p class="staff-login__field-error" id="staff-password-error">{{ passwordError }}</p>
-          <!-- } -->
         </div>
 
         <div class="staff-login__field">
@@ -78,9 +76,8 @@
             <option [ngValue]="roles.ADMIN">Admin</option>
             <option [ngValue]="roles.STAFF">Staff</option>
           </select>
-          <!-- @if (roleError) { -->
+
           <p class="staff-login__field-error" id="staff-role-error">{{ roleError }}</p>
-          <!-- } -->
         </div>
       </fieldset>
       @if (submissionError()) {

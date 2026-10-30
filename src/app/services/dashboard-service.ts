@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { BackendUrlHolderService } from './backend-url-holder-service';
 
 export interface DashboardEventDTO {
-  eventType: string; // or a union/enum type matching Event.EventType
+  eventType: string;
   date: string; // ISO date string, e.g. "2026-09-08"
   guestCount: number;
   clientName: string;

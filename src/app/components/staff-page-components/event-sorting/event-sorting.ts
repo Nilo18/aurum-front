@@ -14,15 +14,7 @@ export class EventSorting {
   readonly disabled = input(false);
   readonly changed = output<Pick<EventQuery, 'sortBy' | 'sortDirection'>>();
 
-  readonly fields = [
-    'clientName',
-    // 'eventType',
-    'date',
-    'totalCost',
-    'guestCount',
-    // 'location',
-    // 'status',
-  ];
+  readonly fields = ['clientName', 'date', 'totalCost', 'guestCount'];
   readonly label = (field: string) =>
     this.stringFormatter
       .human(field.replace(/([A-Z])/g, ' $1'))

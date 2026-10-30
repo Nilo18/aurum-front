@@ -11,7 +11,7 @@ export enum EmployeeRole {
   OWNER,
   ADMIN,
   STAFF,
-  DEMO
+  DEMO,
 }
 
 export enum EmployeeType {
@@ -79,10 +79,9 @@ export class EmployeeService {
       const res = await firstValueFrom(
         this.http.post<GenericResponse>(`${this.baseUrl}/api/employee/invite`, request),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't invite employee: ", error);
       throw error;
     }
   }
@@ -92,10 +91,9 @@ export class EmployeeService {
       const res = await firstValueFrom(
         this.http.post<GenericResponse>(`${this.baseUrl}/api/employee/validate-invite`, { token }),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't validate invitation: ", error);
       throw error;
     }
   }
@@ -105,10 +103,9 @@ export class EmployeeService {
       const res = await firstValueFrom(
         this.http.post<AuthResponse>(`${this.baseUrl}/api/employee/register`, request),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't complete registration: ", error);
       throw error;
     }
   }
@@ -128,10 +125,9 @@ export class EmployeeService {
           body: { email },
         }),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Coudln't delete employee: ", error);
       throw error;
     }
   }

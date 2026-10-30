@@ -31,8 +31,6 @@
   &__logo {
     color: #c6921d !important;
     font-family: 'Bodoni 72', Didot, 'Palatino Linotype', Georgia, serif;
-
-    // font-size: 16px;
     letter-spacing: 0.42em;
   }
 
@@ -45,9 +43,6 @@
 
     a {
       position: relative;
-
-      //   padding: 29px 0 12px;
-      //   font-size: 10px;
       letter-spacing: 0.08em;
       white-space: nowrap;
       transition: color 180ms ease;
@@ -57,8 +52,6 @@
         position: absolute;
         left: 0;
         right: 0;
-
-        // top: 10px;
         bottom: -5px;
         height: 1px;
         background: #b9891d;

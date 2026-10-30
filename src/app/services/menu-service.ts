@@ -59,10 +59,9 @@ export class MenuService {
           },
         }),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't get menu items: ", error);
       throw error;
     }
   }
@@ -80,10 +79,9 @@ export class MenuService {
       const res = await firstValueFrom(
         this.http.post<MenuItemDTO>(`${this.baseUrl}/api/menu`, request),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't add menu item: ", error);
       throw error;
     }
   }
@@ -93,10 +91,9 @@ export class MenuService {
       const res = await firstValueFrom(
         this.http.put<MenuItemDTO>(`${this.baseUrl}/api/menu`, request),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't update menu item: ", error);
       throw error;
     }
   }
@@ -106,10 +103,9 @@ export class MenuService {
       const res = await firstValueFrom(
         this.http.delete<GenericResponse>(`${this.baseUrl}/api/menu/${publicId}`),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't delete menu item: ", error);
       throw error;
     }
   }

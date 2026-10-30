@@ -27,12 +27,6 @@ export class Sidebar {
       icon: 'icons/sidebar/dashboard.svg',
       link: '/staff',
     },
-    // {
-    //   id: 2,
-    //   heading: 'Event Requests',
-    //   icon: 'icons/sidebar/event-requests.svg',
-    //   link: '/staff/event-requests'
-    // },
     {
       id: 3,
       heading: 'Events',

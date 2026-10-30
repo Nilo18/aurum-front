@@ -68,16 +68,14 @@ export class SupplierService {
       const res = await firstValueFrom(
         this.http.get<ProductSectionSupplierDTO[]>(`${this.baseUrl}/api/supplier/names`),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't get supplier names");
       throw error;
     }
   }
 
   getSuppliers(query: SupplierQuery) {
-    console.log('Fetching suppliers...');
     const cleanedQuery = this.queryFormatter.removeEmptyProperties(query);
     const httpParams = new HttpParams({ fromObject: cleanedQuery });
     return this.http.get<PageResponse<SupplierDTO>>(`${this.baseUrl}/api/supplier`, {
@@ -90,10 +88,9 @@ export class SupplierService {
       const res = await firstValueFrom(
         this.http.get<Set<ProductCategory>>(`${this.baseUrl}/api/supplier/available-categories`),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't get available product categories: ", error);
       throw error;
     }
   }
@@ -106,10 +103,9 @@ export class SupplierService {
           categories: Array.from(request.categories),
         }),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't add supplier: ", error);
       throw error;
     }
   }
@@ -122,10 +118,9 @@ export class SupplierService {
           categories: Array.from(request.categories),
         }),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't update supplier: ", error);
       throw error;
     }
   }
@@ -135,10 +130,9 @@ export class SupplierService {
       const res = await firstValueFrom(
         this.http.delete<GenericResponse>(`${this.baseUrl}/api/supplier/${publicId}`),
       );
-      console.log(res);
+
       return res;
     } catch (error) {
-      console.log("Couldn't delete supplier: ", error);
       throw error;
     }
   }

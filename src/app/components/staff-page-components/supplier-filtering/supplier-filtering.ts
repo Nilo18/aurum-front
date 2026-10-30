@@ -19,7 +19,6 @@ export class SupplierFiltering {
   }
 
   filter(field: ProductCategory | undefined) {
-    console.log('Filtering ', field);
     this.changed.emit({ productType: field });
   }
 }
