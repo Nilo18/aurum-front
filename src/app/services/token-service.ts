@@ -15,6 +15,6 @@ export class TokenService {
   }
 
   getToken() {
-    return localStorage.getItem('aurum_token')
+    return localStorage.getItem('auth_token')
   }
 }
