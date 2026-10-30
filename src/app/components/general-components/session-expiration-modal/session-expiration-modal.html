@@ -1,0 +1,30 @@
+<section class="session-expiration">
+  <div class="session-expiration__seal" aria-hidden="true">
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="24" cy="24" r="17" />
+      <path d="M24 13v12l7 4" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </div>
+  <p class="session-expiration__eyebrow">Aurum · Session ended</p>
+  <h2 id="session-expiration-title" class="session-expiration__title">Your session has expired</h2>
+  <span class="session-expiration__divider" aria-hidden="true"></span>
+  <p id="session-expiration-message" class="session-expiration__message">
+    Please sign in again to securely continue your work.
+  </p>
+  @if (redirectFailed()) {
+    <p class="session-expiration__error" role="alert">
+      We couldn't redirect you. Please try again.
+    </p>
+  }
+  <button
+    type="button"
+    class="session-expiration__button"
+    ngbAutofocus
+    [disabled]="redirecting()"
+    [attr.aria-busy]="redirecting()"
+    (click)="redirectUser()"
+  >
+    {{ redirecting() ? 'Redirecting…' : 'Continue to sign in' }}
+    <span aria-hidden="true">&#8594;</span>
+  </button>
+</section>

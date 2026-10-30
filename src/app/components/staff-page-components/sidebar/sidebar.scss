@@ -147,6 +147,21 @@
     flex-shrink: 0;
   }
 
+  &__icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-top: 4px;
+    flex-shrink: 0;
+    background-color: currentColor;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
   &__label {
     opacity: 1;
     transform: translateX(0);

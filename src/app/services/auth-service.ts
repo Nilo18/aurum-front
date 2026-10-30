@@ -6,6 +6,7 @@ import { OtpResponse } from './home-service';
 import { Router } from '@angular/router';
 import { EmployeeRole } from './employee-service';
 import { getRequestErrorMessage } from './request-error';
+import { jwtDecode } from 'jwt-decode';
 
 export function getAuthErrorMessage(error: unknown, fallback: string): string {
   const authFallback =
@@ -28,6 +29,15 @@ export interface AuthResponse {
   token: string;
 }
 
+export interface JwtPayload {
+  sub: string;
+  jti: string;
+  iat: number;
+  role: EmployeeRole;
+  employeeId?: number;
+  exp?: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -48,6 +58,21 @@ export class AuthService {
     }
   }
 
+  getRole(): EmployeeRole | null {
+    const token = localStorage.getItem('auth_token');
+
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const payload = jwtDecode<JwtPayload>(token);
+      return payload.role;
+    } catch {
+      return null;
+    }
+  }
+
   async login(request: LoginRequest) {
     try {
       const res = await firstValueFrom(
@@ -55,7 +80,7 @@ export class AuthService {
       );
       return res;
     } catch (error) {
-      console.log("Couldn't login: ", error)
+      console.log("Couldn't login: ", error);
       throw error;
     }
   }
@@ -67,11 +92,13 @@ export class AuthService {
 
   async loginAsDemo() {
     try {
-      const res = await firstValueFrom(this.http.get<AuthResponse>(`${this.baseUrl}/api/auth/demo`))
-      console.log(res)
-      return res
+      const res = await firstValueFrom(
+        this.http.get<AuthResponse>(`${this.baseUrl}/api/auth/demo`),
+      );
+      console.log(res);
+      return res;
     } catch (error) {
-      console.log("Couldn't login as demo: ", error)
+      console.log("Couldn't login as demo: ", error);
       throw error;
     }
   }

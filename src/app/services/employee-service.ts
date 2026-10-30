@@ -11,6 +11,7 @@ export enum EmployeeRole {
   OWNER,
   ADMIN,
   STAFF,
+  DEMO
 }
 
 export enum EmployeeType {

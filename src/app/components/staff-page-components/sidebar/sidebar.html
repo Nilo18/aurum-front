@@ -31,7 +31,12 @@
       [attr.aria-label]="section.heading"
       [attr.title]="collapse() ? section.heading : null"
     >
-      <span [innerHTML]="section.icon" class="staff-sidebar__icon"></span>
+      <span
+        class="staff-sidebar__icon"
+        [style.mask-image]="'url(' + section.icon + ')'"
+        [style.-webkit-mask-image]="'url(' + section.icon + ')'"
+        aria-hidden="true"
+      ></span>
       <span class="staff-sidebar__label">{{ section.heading }}</span>
     </button>
   }
