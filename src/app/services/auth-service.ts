@@ -61,7 +61,7 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('aurum_token');
+    localStorage.removeItem('auth_token');
     this.router.navigate(['/']);
   }
 
