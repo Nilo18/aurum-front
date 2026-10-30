@@ -11,14 +11,6 @@
       </p>
 
       <address class="contact__details">
-        <a href="tel:+995322000000">
-          <span aria-hidden="true">⌕</span>
-          +995 32 2 00 00 00
-        </a>
-        <a href="mailto:info@aurumi.ge">
-          <span aria-hidden="true">✉</span>
-          info&#64;aurumi.ge
-        </a>
         <a href="https://maps.google.com/?q=Tbilisi,Georgia" target="_blank" rel="noreferrer">
           <span aria-hidden="true">⌾</span>
           Tbilisi, Georgia
@@ -34,7 +26,12 @@
       </div>
     </div>
 
-    <form class="contact__form" (ngSubmit)="submitForm()" [formGroup]="contactForm">
+    <form
+      class="contact__form"
+      (ngSubmit)="submitForm()"
+      [formGroup]="contactForm"
+      [attr.aria-busy]="isSubmitting()"
+    >
       <div class="contact__row">
         <label>
           <span>First and last name</span>
@@ -95,10 +92,14 @@
         </p>
       </label>
 
-      <button type="submit">
-        Request a consultation
+      <button type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Sending verification code…' : 'Request a consultation' }}
         <span aria-hidden="true">→</span>
       </button>
+
+      @if (submissionError()) {
+        <p class="contact__error" role="alert">{{ submissionError() }}</p>
+      }
 
       <p class="contact__privacy">
         By submitting, you agree to our confidential consultation policy.

@@ -225,6 +225,11 @@
       &:focus-visible {
         background: #ddb448;
       }
+
+      &:disabled {
+        opacity: 0.65;
+        cursor: wait;
+      }
     }
   }
 
@@ -235,6 +240,7 @@
   }
 
   &__privacy,
+  &__error,
   &__success {
     margin-top: -3px;
     text-align: center;
@@ -249,6 +255,12 @@
 
   &__success {
     color: #c99a29;
+  }
+
+  &__error {
+    color: #f2a49a;
+    font-size: 12px;
+    line-height: 1.5;
   }
 }
 

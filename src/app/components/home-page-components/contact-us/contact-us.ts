@@ -1,16 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormValidatorService } from '../../../services/form-validator-service';
 import { HomeService } from '../../../services/home-service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContactUsVerificationModal } from '../contact-us-verification-modal/contact-us-verification-modal';
+import { getRequestErrorMessage } from '../../../services/request-error';
 
 @Component({
   selector: 'app-contact-us',
@@ -20,6 +14,8 @@ import { ContactUsVerificationModal } from '../contact-us-verification-modal/con
 })
 export class ContactUs {
   readonly submitted = signal(false);
+  readonly isSubmitting = signal(false);
+  readonly submissionError = signal('');
   private fb = inject(FormBuilder);
   private homeService = inject(HomeService);
   private modalService = inject(NgbModal);
@@ -36,26 +32,42 @@ export class ContactUs {
   }
 
   async submitForm() {
+    if (this.isSubmitting()) return;
+
+    this.submissionError.set('');
+
     if (this.contactForm.invalid) {
       this.contactForm.markAllAsTouched();
       return;
     }
 
+    this.isSubmitting.set(true);
+
     try {
       const res = await this.homeService.verifyContactRequest(this.contactForm.value.emailAddress);
 
       if (res) {
-        this.contactForm.addControl('transactionKey', new FormControl(res.transactionKey));
-        this.contactForm.addControl('otp', new FormControl(null));
-
         const modalRef = this.modalService.open(ContactUsVerificationModal, {
           centered: true,
           size: 'md',
           windowClass: 'aurum-verification-modal',
         });
 
-        modalRef.componentInstance.contactInfo = this.contactForm.value;
+        modalRef.componentInstance.contactInfo = {
+          ...this.contactForm.value,
+          transactionKey: res.transactionKey,
+          otp: null,
+        };
       }
-    } catch (error) {}
+    } catch (error) {
+      this.submissionError.set(
+        getRequestErrorMessage(
+          error,
+          'We could not send your verification code. Please try again.',
+        ),
+      );
+    } finally {
+      this.isSubmitting.set(false);
+    }
   }
 }
