@@ -5,6 +5,7 @@ import { HomeService } from '../../../services/home-service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ContactUsVerificationModal } from '../contact-us-verification-modal/contact-us-verification-modal';
 import { getRequestErrorMessage } from '../../../services/request-error';
+import { SuccessModal } from '../../general-components/success-modal/success-modal';
 
 @Component({
   selector: 'app-contact-us',
@@ -58,6 +59,28 @@ export class ContactUs {
           transactionKey: res.transactionKey,
           otp: null,
         };
+
+        void modalRef.result.then(
+          (result) => {
+            if (result !== 'verified') return;
+
+            this.submitted.set(true);
+            const successRef = this.modalService.open(SuccessModal, {
+              centered: true,
+              size: 'md',
+              windowClass: 'aurum-success-modal',
+              ariaLabelledBy: 'success-title',
+              ariaDescribedBy: 'success-message',
+            });
+            successRef.componentInstance.title = 'Your message has been sent';
+            successRef.componentInstance.msg =
+              'Thank you for contacting us. We’ll be in touch within 24 hours.';
+            void successRef.result.catch(() => {});
+          },
+          () => {
+            // Dismissing verification keeps the contact details available for another attempt.
+          },
+        );
       }
     } catch (error) {
       this.submissionError.set(

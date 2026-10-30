@@ -4,10 +4,19 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HomeService } from '../../../services/home-service';
 import { ContactUsVerificationModal } from '../contact-us-verification-modal/contact-us-verification-modal';
 import { ContactUs } from './contact-us';
+import { SuccessModal } from '../../general-components/success-modal/success-modal';
 describe('ContactUs', () => {
   function setup() {
     const verifyContactRequest = vi.fn().mockResolvedValue({ transactionKey: 'key' });
-    const ref = { componentInstance: {} };
+    let resolveVerification!: (result: string) => void;
+    let dismissVerification!: () => void;
+    const ref = {
+      componentInstance: {},
+      result: new Promise<string>((resolve, reject) => {
+        resolveVerification = resolve;
+        dismissVerification = () => reject('dismissed');
+      }),
+    };
     const open = vi.fn().mockReturnValue(ref);
     TestBed.configureTestingModule({
       providers: [
@@ -17,7 +26,15 @@ describe('ContactUs', () => {
     });
     const fixture = TestBed.createComponent(ContactUs);
     fixture.detectChanges();
-    return { fixture, component: fixture.componentInstance, verifyContactRequest, open, ref };
+    return {
+      fixture,
+      component: fixture.componentInstance,
+      verifyContactRequest,
+      open,
+      ref,
+      resolveVerification,
+      dismissVerification,
+    };
   }
   it('marks invalid fields and avoids sending incomplete contact details', async () => {
     const { component, verifyContactRequest, open } = setup();
@@ -60,6 +77,48 @@ describe('ContactUs', () => {
     expect(open).not.toHaveBeenCalled();
     expect(component.isSubmitting()).toBe(false);
     expect(component.submissionError()).toContain('Please try again');
+  });
+
+  it('opens the success modal only after the message is sent', async () => {
+    const { component, open, ref, resolveVerification } = setup();
+    component.contactForm.setValue({
+      fullName: 'Guest',
+      emailAddress: 'guest@example.com',
+      phoneNumber: '+995555123456',
+      message: 'Plan an event',
+    });
+    await component.submitForm();
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(component.submitted()).toBe(false);
+
+    const successRef = { componentInstance: {}, result: Promise.resolve() };
+    open.mockReturnValueOnce(successRef);
+    resolveVerification('verified');
+    await ref.result;
+
+    expect(open).toHaveBeenLastCalledWith(
+      SuccessModal,
+      expect.objectContaining({ windowClass: 'aurum-success-modal' }),
+    );
+    expect(successRef.componentInstance).toMatchObject({ title: 'Your message has been sent' });
+    expect(component.submitted()).toBe(true);
+  });
+
+  it('does not show success when verification is dismissed', async () => {
+    const { component, open, ref, dismissVerification } = setup();
+    component.contactForm.setValue({
+      fullName: 'Guest',
+      emailAddress: 'guest@example.com',
+      phoneNumber: '+995555123456',
+      message: 'Plan an event',
+    });
+    await component.submitForm();
+    dismissVerification();
+    await ref.result.catch(() => {});
+
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(component.submitted()).toBe(false);
+    expect(component.submissionError()).toBe('');
   });
 
   it('shows loading and prevents duplicate requests until verification completes', async () => {
